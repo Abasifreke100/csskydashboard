@@ -10,11 +10,11 @@ import { Toaster } from "./components/ui/toaster.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <MyProvider>
+    <MyProvider>
+      <Provider store={store}>
         <RouterProvider router={router} />
-        <Toaster/>
-      </MyProvider>
-    </Provider>
+        <Toaster />
+      </Provider>
+    </MyProvider>
   </React.StrictMode>
 );

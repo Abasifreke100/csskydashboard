@@ -11,23 +11,9 @@
       rel="stylesheet"
     />
     <title>Connect Surf Smile</title>
-
-    <!-- Vite and React Refresh Integration -->
-    <script type="module">
-      import RefreshRuntime from "/@react-refresh";
-      RefreshRuntime.injectIntoGlobalHook(window);
-      window.$RefreshReg$ = () => {};
-      window.$RefreshSig$ = () => (type) => type;
-      window.__vite_plugin_react_preamble_installed__ = true;
-    </script>
-
-    <!-- Vite Client Integration -->
-    <script type="module" src="/@vite/client"></script>
   </head>
   <body>
     <div id="root"></div>
-
-    <!-- Main React Application -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
