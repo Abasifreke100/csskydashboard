@@ -1,0 +1,42 @@
+import { Menu } from "lucide-react";
+import { Button } from "../ui/button";
+import { useProviderContext } from "../../constants";
+import AvatarDropdown from "../avatar-dropdown";
+import { Badge } from "../ui/badge";
+import { Input } from "../ui/input";
+import logo from "../../assets/cssMobileImage.png";
+import { IoIosNotificationsOutline } from "react-icons/io";
+
+const Navbar = () => {
+  const { setIsSidebarOpen } = useProviderContext();
+  return (
+    <div className="container h-14 bg-white rounded-xl shadow-md col-span-12 ">
+      <div className="flex items-center  h-full justify-between">
+        <img src={logo} alt="logo" className="w-16 h-full" />
+        <Input
+          type="search"
+          placeholder="Search"
+          className="max-w-[450px] ml-12 hidden lg:block h-8 px-5 text-[#8F8F8F] rounded-3xl border-none outline-none bg-[#F5F5F7]"
+        />
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <IoIosNotificationsOutline className="text-xl" />
+            <div className="w-2 h-2 bg-[#FF7F00] rounded-full absolute right-0.5 top-0" />
+          </div>
+          <Badge className="bg-[#FFFAEF] hidden md:block text-[#FF7F00] ">Tier 3</Badge>
+          <AvatarDropdown />
+          <Button
+            size="icon"
+            variant="ghost"
+            className="menuIcon  h-fit w-fit "
+            onClick={() => setIsSidebarOpen(true)}
+          >
+            <Menu size={20} />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;

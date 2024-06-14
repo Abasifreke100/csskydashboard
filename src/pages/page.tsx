@@ -1,0 +1,86 @@
+import { ChevronRight, CircleAlert } from "lucide-react";
+import CardComponent from "../components/reusables/card";
+import { BsFillPeopleFill } from "react-icons/bs";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { dashboardCardItems } from "../constants";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { MyLineChart } from "../components/charts/line-chart";
+import ComposedBarChart from "../components/charts/composed-bar-chart";
+
+const Home = () => {
+  return (
+    <div className="pb-7 h-screen customersContainer">
+      <div className="grid grid-cols-12 gap-5">
+        {dashboardCardItems.map((items, idx) => (
+          <CardComponent key={idx} {...items} />
+        ))}
+
+        <Card className="col-span-12 custom-md-col-span lg:col-span-4 row-span-2 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-md ">Total Registrations </CardTitle>
+          </CardHeader>
+          <CardContent>
+          <div className="w-full h-[200px]">
+            <ComposedBarChart/>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="col-span-12 custom-md-col-span  lg:col-span-8 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-md ">
+              <div className="flex items-center justify-between">
+                <p className="flex items-center">
+                  Recent Activity <CircleAlert className="h-3" />
+                </p>
+                <p className="flex items-center">
+                  See all <ChevronRight className="h-4" />
+                </p>
+              </div>
+            </CardTitle>
+            {/* <CardDescription>Card Description</CardDescription> */}
+          </CardHeader>
+          <CardContent className="flex  items-center justify-between">
+            <div className="flex items-center">
+              <Avatar>
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                />
+                <AvatarFallback>JD</AvatarFallback>
+              </Avatar>
+
+              <div className="ml-2">
+                <p className="text-md font-medium">Obi Wankenobi</p>
+                <p className="text-xs text-grey flex items-center">
+                  {" "}
+                  <BsFillPeopleFill />
+                  <span className="ml-2">Personal</span>
+                </p>
+              </div>
+            </div>
+
+            <p className="mr-3 text-xs font-medium">1H Ago</p>
+          </CardContent>
+        </Card>
+        <Card className="col-span-12 lg:col-span-12 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-md ">Total Registrations </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="w-full  h-[250px]">
+              <MyLineChart />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
