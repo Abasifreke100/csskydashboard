@@ -4,9 +4,9 @@ import { isAuthenticated } from "../features/auth/authSlice";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { useProviderContext } from "../constants";
-import { Sidebar } from "../components/sidebar";
 import Navbar from "../components/global/navbar";
 import { useScrollIntoView } from "../utils/scroll-into-view";
+import { Sidebar } from "../components/sidebar";
 
 
 const DashboardLayout = () => {
