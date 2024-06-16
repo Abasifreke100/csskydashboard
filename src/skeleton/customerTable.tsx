@@ -24,10 +24,10 @@ const CustomerTableSkeleton = () => {
               </Avatar>
               <div>
                 <p className="text-md font-medium">
-                  <div className="bg-gray-300 rounded-md h-[10px] shimmer w-24 " />
+                  <span className="bg-gray-300 rounded-md h-[10px] shimmer w-24 " />
                 </p>
                 <p className="text-xs text-grey mt-1">
-                  <div className="bg-gray-300 rounded h-2 w-20 shimmer" />
+                  <span className="bg-gray-300 rounded h-2 w-20 shimmer" />
                 </p>
               </div>
             </div>

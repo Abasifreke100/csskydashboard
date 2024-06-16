@@ -27,7 +27,7 @@ interface SidebarMobileProps {
   handleLogout: () => void;
 }
 
-export function SidebarMobile(props: SidebarMobileProps) {
+export function SidebarMobile({sidebarItems , handleLogout}: SidebarMobileProps) {
   const location = useLocation();
   const { isSidebarOpen, setIsSidebarOpen, setActive, setCurrentPage } =
     useProviderContext();
@@ -62,7 +62,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
         </SheetHeader>
         <div className="h-full">
           <div className="mt-5 flex flex-col w-full gap-1">
-            {props.sidebarItems.links.map((link, index) =>
+            {sidebarItems?.links?.map((link, index) =>
               link.children ? (
                 <Accordion
                   type="single"
@@ -103,26 +103,31 @@ export function SidebarMobile(props: SidebarMobileProps) {
                     <AccordionContent className="border-none h-fit mb-0  mt-1 outline-none">
                       {link.children.map((child, childIndex) => (
                         <Link key={childIndex} to={child.href}>
-                          <SheetClose className="w-full">
-                            <SidebarButton
-                              icon={child?.icon}
-                              onClick={() => setActive(child.label)}
-                              className={`w-full hover:bg-[#fffaef]  rounded-tr-2xl rounded-br-2xl  ${
-                                isActivePath(location.pathname, child.href) &&
-                                "text-primary "
-                              }`}
-                            >
-                              <span className=""> {child.label}</span>
-                            </SidebarButton>
-                          </SheetClose>
-                        </Link>
+                            <div>
+                        <SheetClose  className="w-full">
+                              <SidebarButton
+                                icon={child?.icon}
+                                onClick={() => {
+                                  setActive(child.label);
+                                  setValue(" ");
+                                }}
+                                className={`w-full hover:bg-[#fffaef]  rounded-tr-2xl rounded-br-2xl  ${
+                                  isActivePath(location.pathname, child.href) &&
+                                  "text-primary "
+                                }`}
+                              >
+                                <span className=""> {child.label}</span>
+                              </SidebarButton>
+                        </SheetClose>
+                            </div>
+                          </Link>
                       ))}
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               ) : (
-                <SheetClose>
-                  <Link key={index} to={link.href}>
+                <Link  key={index} to={link.href}>
+                <SheetClose  className="w-full">
                     <SidebarButton
                       onClick={() => setActive(link.label)}
                       icon={link.icon}
@@ -133,8 +138,8 @@ export function SidebarMobile(props: SidebarMobileProps) {
                     >
                       <span className="">{link.label}</span>
                     </SidebarButton>
-                  </Link>
                 </SheetClose>
+                  </Link>
               )
             )}
           </div>
@@ -161,9 +166,9 @@ export function SidebarMobile(props: SidebarMobileProps) {
                 <div className="flex flex-col space-y-2 mt-2">
                   <SidebarButtonSheet
                     size="sm"
-                    onClick={() => props.handleLogout()}
+                    onClick={handleLogout}
                     icon={LogOut}
-                    className="w-full"
+                    className="w-full cursor-pointer"
                   >
                     Log Out
                   </SidebarButtonSheet>

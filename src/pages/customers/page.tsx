@@ -105,6 +105,7 @@ const CustomersPage = () => {
     setCurrentPage(page);
   };
 
+
   return (
     <div className="h-screen screen-max-width">
       <p className="text-xl font-semibold">Customers</p>
@@ -176,9 +177,17 @@ const CustomersPage = () => {
                 <TableCell key={idx}>
                   <div className="flex  items-center gap-3">
                     <Avatar>
-                      <AvatarImage src="" alt="" />
+                      <AvatarImage src="https://github.com/shadcn.png" alt="" />
                       <AvatarFallback>
-                        {data.type == "individual" &&
+                        {(cellData as Response)?.firstName &&
+                        (cellData as Response)?.surName
+                          ? getInitials(
+                              `${(cellData as Response)?.firstName} ${
+                                (cellData as Response)?.surName
+                              }`
+                            )
+                          : getInitials(`${(cellData as Corporate)?.companyName} `)}
+                        {/* data.type == "individual" &&
                           (cellData as Response)?.firstName &&
                           (cellData as Response)?.surName &&
                           getInitials(
@@ -186,7 +195,7 @@ const CustomersPage = () => {
                               (cellData as Response)?.firstName +
                               (cellData as Response)?.surName
                             } `
-                          )}{" "}
+                          ) */}
                       </AvatarFallback>
                     </Avatar>
                     {!(cellData as Corporate).registrationNumber ? (

@@ -13,6 +13,7 @@ import ComposedBarChart from "../components/charts/composed-bar-chart";
 import { useEffect, useState } from "react";
 import axiosInstance from "../api/connectSurfApi";
 import { formatTitle } from "../constants";
+import GoToTop from "../utils/scroll-into-view";
 
 const Home = () => {
   const [overviewData, setOverviewData] = useState(null);
@@ -66,7 +67,7 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        <Card className="col-span-12 custom-md-col-span  lg:col-span-8 shadow-md">
+        <Card className="col-span-12 custom-md-col-span row-span-2 lg:row-span-1 lg:col-span-8 shadow-md">
           <CardHeader>
             <CardTitle className="text-md ">
               <div className="flex items-center justify-between">
@@ -114,6 +115,7 @@ const Home = () => {
           </CardContent>
         </Card>
       </div>
+      <GoToTop/>
     </div>
   );
 };

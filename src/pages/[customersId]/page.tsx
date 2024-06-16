@@ -15,17 +15,15 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../../components/ui/dialog";
-import {
-  Key,
-  useEffect,
-  useState,
-} from "react";
+import { Key, useEffect, useState } from "react";
 import axiosInstance from "../../api/connectSurfApi";
 import { ProfileInfo } from "../../components/profile-info";
 import {
   getCorporateSections,
   getIndividualSections,
 } from "../../utils/getSection";
+import { formatDate } from "../../utils/formatDate";
+import { getInitials } from "../../utils/getInitials";
 
 const CustomersIdPage = () => {
   const { type, customerId } = useParams<{
@@ -58,8 +56,6 @@ const CustomersIdPage = () => {
     }
   }, [type, customerId]);
 
-  console.log("customers personal details", data);
-
   const sections =
     type === "individual"
       ? getIndividualSections(data as Response)
@@ -77,23 +73,35 @@ const CustomersIdPage = () => {
         <div className="w-full overflow-x-auto">
           <div className="mt-3  bg-white px-4 w-fit lg:w-full gap-6 lg:gap-0 rounded-2xl shadow-md h-14 flex items-center justify-between">
             <ProfileInfo
-              label="John Doe"
+              label={
+                (data as Response)?.firstName ||
+                (data as Corporate)?.companyName
+              }
               value="Verified"
-              badgeClassName="bg-lightGreen text-deepGreen"
+              badgeClassName="bg-lightGreen text-deepGreen hover:bg-deepGreen hover:text-lightGreen"
             />
             <ProfileInfo
               label="Registration Type"
-              value="00123"
-              badgeClassName="bg-grey text-white rounded-md"
+              value={
+                (data as Response)?.nin ||
+                (data as Corporate)?.registrationNumber
+              }
+              badgeClassName="bg-grey hover:bg-grey hover:text-white text-white rounded-md"
             />
             <ProfileInfo
               label="Date Registered"
-              value="10/10/2023"
+              value={
+                formatDate((data as Response)?.createdAt) ||
+                (data as Corporate)?.createdAt
+              }
               badgeClassName="bg-grey text-white rounded-md"
             />
             <ProfileInfo
               label="Date Verified"
-              value="12/10/2023"
+              value={
+                formatDate((data as Response)?.updatedAt) ||
+                (data as Corporate)?.updatedAt
+              }
               badgeClassName="bg-grey text-white rounded-md"
             />
           </div>
@@ -138,36 +146,61 @@ const CustomersIdPage = () => {
                         <p className="text-grey text-sm">{field.label}</p>
                       )}
                       {section.label === "Image" ? (
-                        <div className="flex justify-center">
+                        <div className="flex justify-center order-last">
                           <div className="w-44 h-44 rounded-full overflow-hidden">
                             <Dialog>
                               <DialogTrigger asChild>
                                 {isLoading ? (
                                   <div className="object-cover bg-gray-300 shimmer cursor-pointer w-full h-full" />
-                                ) : (
+                                ) : field.value ? (
                                   <img
                                     src={field.value as string}
                                     alt={field.label}
-                                    className="object-cover  cursor-pointer w-full h-full"
+                                    className="object-cover order-last cursor-pointer w-full h-full"
                                   />
+                                ) : (
+                                  <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
+                                    {" "}
+                                    {(data as Response)?.firstName &&
+                                    (data as Response)?.surName
+                                      ? getInitials(
+                                          `${(data as Response)?.firstName} ${
+                                            (data as Response)?.surName
+                                          }`
+                                        )
+                                      : getInitials(
+                                          `${(data as Corporate)?.companyName} `
+                                        )}{" "}
+                                  </div>
                                 )}
                               </DialogTrigger>
-                              <DialogContent className=" w-[380px] lg:w-[600px]">
-                                <DialogHeader>
-                                  <DialogDescription>
-                                    <img
-                                      src={field.value as string}
-                                      alt={field.label}
-                                      className="object-cover w-full mt-4 h-full"
-                                    />
-                                  </DialogDescription>
-                                </DialogHeader>
-                              </DialogContent>
+                              {field.value && (
+                                <DialogContent className=" w-[380px] lg:w-[600px]">
+                                  <DialogHeader>
+                                    <DialogDescription>
+                                      <img
+                                        src={field.value as string}
+                                        alt={field.label}
+                                        className="object-cover w-full mt-4 h-full"
+                                      />
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                </DialogContent>
+                              )}
                             </Dialog>
                           </div>
                         </div>
                       ) : isLoading ? (
                         <p className="text-xs w-24 h-2 rounded-md shimmer mt-2 bg-gray-300 font-medium mb-3"></p>
+                      ) : field.label == "Company Website" ? (
+                        <a
+                          className="text-xs font-medium mb-3 hover:text-primary hover:underline"
+                          href={field.value as string || " "}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {field.value}
+                        </a>
                       ) : (
                         <p className="text-xs font-medium mb-3">
                           {field.value}

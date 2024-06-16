@@ -123,7 +123,7 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
             {/* <Separator className="absolute -top-3 left-0 w-full" /> */}
             <Popover>
               <PopoverTrigger className="h-10 w-full " asChild>
-                <div className="flex justify-between  mb-2 items-center w-full px-2">
+                <div className="flex justify-between cursor-pointer  mb-2 items-center w-full px-2">
                   <div className="flex items-center logOutAvatar">
                     <Avatar className="h-10 w-10 mr-1 ">
                       <AvatarImage src="https://github.com/max-programming.png" />
@@ -140,7 +140,7 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
                 className="mb-2 w-56 p-3 rounded-[1rem]"
               >
                 <div className="">
-                  <SidebarButton size="sm" onClick={() => props.handleLogout()} icon={LogOut} className="w-full ">
+                  <SidebarButton size="sm" onClick={() => props.handleLogout()} icon={LogOut} className="w-full cursor-pointer">
                     Log Out
                   </SidebarButton>
                 </div>

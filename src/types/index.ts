@@ -57,7 +57,7 @@ export type CellData = AvatarData | TextData | EmptyCell;
 
 export interface ProfileInfoProps {
   label: string;
-  value: string;
+  value: string | number;
   badgeClassName: string;
 }
 
