@@ -1,15 +1,18 @@
 // authThunks.ts
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
+import axiosInstance from "../../api/connectSurfApi";
+import { User, UsersResponse } from "../../types";
 
-interface User {
-  username: string;
-  email: string;
-  // Add more properties if needed
-}
+// interface User {
+//   username: string;
+//   email: string;
+//   // Add more properties if needed
+// }
 
 interface ErrorResponse {
   errors: string[];
+  message?: string; // Add this line
 }
 
 export const register = createAsyncThunk<User, FormData>(
@@ -25,22 +28,25 @@ export const register = createAsyncThunk<User, FormData>(
   }
 );
 
-export const login = createAsyncThunk<User, FormData>(
+export const login = createAsyncThunk<UsersResponse, FormData>(
   "auth/login",
   async (userData, thunkAPI) => {
     try {
-      const response = await axios.post<User>("/login", userData);
+      const response = await axiosInstance.post<UsersResponse>(
+        "/auth/login",
+        userData
+      );
       return response.data;
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError<ErrorResponse>;
 
-        console.error("Axios Error:", axiosError?.response);
+        console.error("Axios Error:", axiosError?.response?.data.message);
         if (axiosError.response) {
           return thunkAPI.rejectWithValue(
             axiosError?.response?.status +
               " " +
-              axiosError?.response?.statusText
+              axiosError?.response?.data.message
           );
         } else if (axiosError.request) {
           return thunkAPI.rejectWithValue("Network error occurred.");
@@ -75,5 +81,10 @@ export const getCurrentUser = createAsyncThunk<
 });
 
 export const loggedOut = createAsyncThunk<void>("auth/logout", async () => {
-  localStorage.removeItem("accessToken");
+  try {
+    await axiosInstance.post("/user/logout");
+  } catch (error) {
+    console.error("Error logging out:", error);
+    throw error;
+  }
 });

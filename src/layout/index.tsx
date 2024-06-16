@@ -8,12 +8,11 @@ import Navbar from "../components/global/navbar";
 import { useScrollIntoView } from "../utils/scroll-into-view";
 import { Sidebar } from "../components/sidebar";
 
-
 const DashboardLayout = () => {
   const loggedIn = useSelector((state: RootState) => isAuthenticated(state));
   const { active } = useProviderContext();
   // const scrollTargetRef = useRef<HTMLDivElement>(null);
-  const [scrollTargetRef, scrollTo] = useScrollIntoView(); // Call the custom hook
+  const [scrollTargetRef, scrollTo] = useScrollIntoView();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -35,23 +34,33 @@ const DashboardLayout = () => {
 
   useEffect(() => {
     scrollTo();
-  }, []); 
+  }, []);
+
+console.log("isloggedin" , loggedIn)
+  setTimeout(() => {
+    if (!loggedIn) {
+      window.location.href = "/login";
+    }
+  }, 1000);
 
   return (
     <div>
-      {loggedIn ? (
+      {!loggedIn ? (
         <div>
           <p>Welcome,!</p>
           <button>Logout</button>
         </div>
       ) : (
-        <div className="grid bg-[#F5F5F7] font-poppins grid-cols-12  h-screen overflow-hidden">
+        <div className="grid bg-[#F5F5F7] font-poppins grid-cols-12 h-screen overflow-hidden">
           <Navbar />
           <div className="col-span-12 flex flex-col overflow-hidden">
             <div className="grid-cols-sidebar-outlet flex flex-grow overflow-hidden">
               <Sidebar />
 
-              <div className="h-full  overflow-y-auto pt-3 px-6" ref={scrollTargetRef}>
+              <div
+                className="h-full  overflow-y-auto pt-3 px-6"
+                ref={scrollTargetRef}
+              >
                 <Outlet />
               </div>
             </div>

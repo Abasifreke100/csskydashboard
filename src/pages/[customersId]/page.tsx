@@ -1,6 +1,5 @@
 import { MoveLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { Badge } from "../../components/ui/badge";
 
 import {
   Card,
@@ -8,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { ProfileInfoProps } from "../../types";
+import { Corporate, FieldValue, Response } from "../../types";
 import {
   Dialog,
   DialogContent,
@@ -16,25 +15,55 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../../components/ui/dialog";
-import { cardData } from "../../constants";
-
-const ProfileInfo: React.FC<ProfileInfoProps> = ({
-  label,
-  value,
-  badgeClassName,
-}) => (
-  <div className="flex items-center gap-2">
-    <p className="text-grey text-sm font-semibold whitespace-nowrap">{label}</p>
-    <Badge className={badgeClassName}>{value}</Badge>
-  </div>
-);
+import {
+  Key,
+  useEffect,
+  useState,
+} from "react";
+import axiosInstance from "../../api/connectSurfApi";
+import { ProfileInfo } from "../../components/profile-info";
+import {
+  getCorporateSections,
+  getIndividualSections,
+} from "../../utils/getSection";
 
 const CustomersIdPage = () => {
-  const { customerId } = useParams();
+  const { type, customerId } = useParams<{
+    type: string;
+    customerId: string;
+  }>();
+  const [data, setData] = useState<Response | Corporate>();
+  const [isLoading, setIsLoading] = useState(false);
+  // const isPdfFile = (url: string) => url.endsWith(".pdf");
 
-  console.log(customerId);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get(`/${type}/${customerId}`);
+        if (response.data.success) {
+          setData(response.data.data);
+        } else {
+          console.error("Failed to fetch data:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const isPdfFile = (url: string) => url.endsWith(".pdf");
+    if (type === "corporate" || type === "individual") {
+      fetchData();
+    }
+  }, [type, customerId]);
+
+  console.log("customers personal details", data);
+
+  const sections =
+    type === "individual"
+      ? getIndividualSections(data as Response)
+      : getCorporateSections(data as Corporate);
 
   return (
     <div className="customersContainer  w-full">
@@ -73,73 +102,84 @@ const CustomersIdPage = () => {
         {/* cards */}
 
         <div className="mt-6 grid grid-cols-12 gap-5 pb-5">
-          {cardData.map((card, index) => (
+          {/* {Object.entries(data ?? {})?.map(([key, value]) => ( */}
+          {sections.map((section, index) => (
             <Card
               key={index}
-              className={`col-span-12 md:col-span-6 lg:col-span-4 ${
-                index > 2 && "h-fit"
-              }`}
+              className={`col-span-12 md:col-span-6 ${
+                index == 3 && "h-fit"
+              } lg:col-span-4`}
             >
               <CardHeader>
-                <CardTitle className="text-md">{card.title}</CardTitle>
+                <CardTitle className="text-md capitalize">
+                  {section.label}
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                {card.content
-                  ? card.content.map((detail, detailIndex) => (
-                      <div key={detailIndex} className="mb-2">
-                        <p className="text-grey text-sm">{detail.detailName}</p>
-                        {isPdfFile(detail.detailInfo) ? (
-                          <>
-                            <p className="text-xs font-medium mb-3">
-                              {" "}
-                              {detail.detailDescription || detail.detailName}
-                            </p>
-                            <iframe
-                              src={detail.detailInfo}
-                              width="100%"
-                              height="100px"
-                              title={
-                                detail.detailDescription || detail.detailName
-                              }
-                            />
-                          </>
-                        ) : (
-                          <span className="text-xs font-medium">
-                            {" "}
-                            {detail.detailInfo}
-                          </span>
-                        )}
-                      </div>
-                    ))
-                  : card.image && (
-                      <div className="flex justify-center">
-                        <div className="w-44 h-44 rounded-full overflow-hidden">
-                          <Dialog >
-                            <DialogTrigger asChild>
-                              <img
-                                src={card.image}
-                                alt={card.title}
-                                className="object-cover cursor-pointer w-full h-full"
-                              />
-                            </DialogTrigger>
-                            <DialogContent className=" w-[380px] lg:w-[600px]">
-                              <DialogHeader>
-                                <DialogDescription>
+                {section.fields.map(
+                  (
+                    field: {
+                      label: string;
+                      value: FieldValue;
+                    },
+                    idx: Key | null | undefined
+                  ) => (
+                    <div
+                      key={idx}
+                      className={` ${
+                        isLoading && (idx as number) >= 1 ? " mt-8" : "mb-2"
+                      }`}
+                    >
+                      {section.label === "Image" ? (
+                        ""
+                      ) : isLoading ? (
+                        <p className="text-grey h-3 rounded-lg w-36 shimmer text-sm"></p>
+                      ) : (
+                        <p className="text-grey text-sm">{field.label}</p>
+                      )}
+                      {section.label === "Image" ? (
+                        <div className="flex justify-center">
+                          <div className="w-44 h-44 rounded-full overflow-hidden">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                {isLoading ? (
+                                  <div className="object-cover bg-gray-300 shimmer cursor-pointer w-full h-full" />
+                                ) : (
                                   <img
-                                    src={card.image}
-                                    alt={card.title}
-                                    className="object-cover w-full mt-4 h-full"
+                                    src={field.value as string}
+                                    alt={field.label}
+                                    className="object-cover  cursor-pointer w-full h-full"
                                   />
-                                </DialogDescription>
-                              </DialogHeader>
-                            </DialogContent>
-                          </Dialog>
+                                )}
+                              </DialogTrigger>
+                              <DialogContent className=" w-[380px] lg:w-[600px]">
+                                <DialogHeader>
+                                  <DialogDescription>
+                                    <img
+                                      src={field.value as string}
+                                      alt={field.label}
+                                      className="object-cover w-full mt-4 h-full"
+                                    />
+                                  </DialogDescription>
+                                </DialogHeader>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      ) : isLoading ? (
+                        <p className="text-xs w-24 h-2 rounded-md shimmer mt-2 bg-gray-300 font-medium mb-3"></p>
+                      ) : (
+                        <p className="text-xs font-medium mb-3">
+                          {field.value}
+                        </p>
+                      )}
+                    </div>
+                  )
+                )}
               </CardContent>
             </Card>
           ))}
+          {/* ))} */}
         </div>
       </div>
     </div>

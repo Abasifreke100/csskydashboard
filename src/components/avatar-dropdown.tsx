@@ -7,8 +7,14 @@ import {
 } from "@radix-ui/react-icons";
 import { FaCaretDown } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { User } from "../types";
+import { getInitials } from "../utils/getInitials";
 
-const AvatarDropdown = () => {
+interface AvatarDropdownProps {
+  user: User;
+}
+
+const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
   const [bookmarksChecked, setBookmarksChecked] = React.useState(true);
   const [urlsChecked, setUrlsChecked] = React.useState(false);
   const [person, setPerson] = React.useState("pedro");
@@ -18,9 +24,9 @@ const AvatarDropdown = () => {
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>JD</AvatarFallback>
+          <AvatarFallback>{getInitials(user.role)}</AvatarFallback>
         </Avatar>
-        <p>John Doe</p>
+        <p>{user.role}</p>
         <DropdownMenu.Trigger asChild>
           <button
             className="border-none outline-none text-[#808080]"

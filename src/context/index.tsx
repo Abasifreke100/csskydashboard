@@ -5,7 +5,9 @@ const defaultContextValue: MyContextProps = {
   active: " ",
   setActive: () => {},
   isSidebarOpen: false,
-  setIsSidebarOpen: () => {}
+  setIsSidebarOpen: () => {},
+  currentPage: 1,
+  setCurrentPage: () => {},
 };
 
 const MyContext = createContext<MyContextProps>(defaultContextValue);
@@ -14,10 +16,18 @@ const MyContext = createContext<MyContextProps>(defaultContextValue);
 const MyProvider = ({ children }: { children: ReactNode }) => {
   const [active, setActive] = useState<string>("Dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   return (
     <MyContext.Provider
-      value={{ active, setActive, isSidebarOpen, setIsSidebarOpen }}
+      value={{
+        active,
+        setActive,
+        isSidebarOpen,
+        setIsSidebarOpen,
+        currentPage,
+        setCurrentPage,
+      }}
     >
       {children}
     </MyContext.Provider>

@@ -6,9 +6,13 @@ import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import logo from "../../assets/cssMobileImage.png";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 const Navbar = () => {
   const { setIsSidebarOpen } = useProviderContext();
+  const user = useSelector((state: RootState) => state.auth);  
+  
   return (
     <div className="container h-14 bg-white rounded-xl shadow-md col-span-12 ">
       <div className="flex items-center  h-full justify-between">
@@ -24,7 +28,7 @@ const Navbar = () => {
             <div className="w-2 h-2 bg-[#FF7F00] rounded-full absolute right-0.5 top-0" />
           </div>
           <Badge className="bg-[#FFFAEF] hidden md:block text-[#FF7F00] ">Tier 3</Badge>
-          <AvatarDropdown />
+          {user.user && <AvatarDropdown user={user.user} />}
           <Button
             size="icon"
             variant="ghost"

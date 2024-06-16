@@ -25,6 +25,8 @@ import InputToggle from "../../utils/input-toggle";
 import { clearError } from "../../features/auth/authSlice";
 import AlertError from "../../error/error-alert";
 import { useEffect, useState } from "react";
+import { useToast } from "../../components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
@@ -39,7 +41,8 @@ function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const dispatch = useAppDispatch();
   const authState = useSelector((state: RootState) => state.auth);
-
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,10 +76,13 @@ function LoginPage() {
     const rememberMePreference = localStorage.getItem("rememberMe");
     if (rememberMePreference === "true") {
       setRememberMe(true);
+    } else {
+      setRememberMe(false);
+      localStorage.removeItem("rememberedCredentials");
     }
   }, []);
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
@@ -90,7 +96,16 @@ function LoginPage() {
       localStorage.removeItem("rememberedCredentials");
     }
 
-    dispatch(login(formData));
+    try {
+     await dispatch(login(formData));
+      toast({
+        title: "Success",
+        description: "User successfully logged in ",
+      });
+      navigate("/");
+    } catch (err) {
+      console.log("error", err);
+    }
   };
 
   return (
@@ -130,11 +145,20 @@ function LoginPage() {
                 Welcome Back
               </h1>
 
+              {authState?.user?.message && (
+                <AlertError
+                  variant="default"
+                  title="Success"
+                  description={authState.user.message}
+                />
+              )}
+
               {authState.error && (
                 <AlertError
                   variant="destructive"
-                  title="Error"
+                  // title="Error"
                   description={authState.error}
+                  onClick={form.handleSubmit(onSubmit)}
                 />
               )}
 
