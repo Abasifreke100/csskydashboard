@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+  overflow: hidden;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -157,4 +161,20 @@
   .menuIcon {
     display: block;
   }
+}
+
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 1.5s infinite linear;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 20%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.1) 100%);
+  background-size: 200% 100%;
 }

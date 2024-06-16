@@ -7,26 +7,61 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { dashboardCardItems } from "../constants";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { MyLineChart } from "../components/charts/line-chart";
 import ComposedBarChart from "../components/charts/composed-bar-chart";
+import { useEffect, useState } from "react";
+import axiosInstance from "../api/connectSurfApi";
+import { formatTitle } from "../constants";
 
 const Home = () => {
+  const [overviewData, setOverviewData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchOverviewData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get("/overview");
+        setIsLoading(false);
+        setOverviewData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching overview data:", error);
+      }
+    };
+
+    fetchOverviewData();
+  }, []);
+
+  // if (!overviewData) {
+  //   return <div className="h-screen">Loading...</div>;
+  // }
+
   return (
     <div className="pb-7 h-screen customersContainer">
       <div className="grid grid-cols-12 gap-5">
-        {dashboardCardItems.map((items, idx) => (
-          <CardComponent key={idx} {...items} />
-        ))}
-
+        {!overviewData
+          ? Array.from({ length: 8 }).map((_, idx) => (
+              <CardComponent
+                key={idx}
+                isLoading={isLoading}
+              />
+            ))
+          : Object.keys(overviewData).map((key, idx) => (
+              <CardComponent
+                key={idx}
+                isLoading={isLoading}
+                title={formatTitle(key)}
+                value={overviewData[key]}
+              />
+            ))}
         <Card className="col-span-12 custom-md-col-span lg:col-span-4 row-span-2 shadow-md">
           <CardHeader>
             <CardTitle className="text-md ">Total Registrations </CardTitle>
           </CardHeader>
           <CardContent>
-          <div className="w-full h-[200px]">
-            <ComposedBarChart/>
+            <div className="w-full h-[200px]">
+              <ComposedBarChart />
             </div>
           </CardContent>
         </Card>

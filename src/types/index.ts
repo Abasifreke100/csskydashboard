@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, JSXElementConstructor, ReactElement, SetStateAction } from "react";
 import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -11,23 +11,25 @@ export type MyContextProps = {
   setActive: Dispatch<SetStateAction<string>>;
   isSidebarOpen: boolean;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
+  currentPage: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
 };
-
-export interface SidebarItems {
-  links: Array<{
-    label: string;
-    href: string;
-    icon?: LucideIcon;
-  }>;
-  extras?: ReactNode;
+export interface SidebarItem {
+  label: string;
+  href: string;
+  icon?: LucideIcon;
+  children?: SidebarItem[];
 }
 
+export interface SidebarItems {
+  links: SidebarItem[];
+  extras?: ReactNode;
+}
 
 export interface dashboardCardItemsProps {
   digit: string;
   tag: string;
 }
-
 
 export interface AvatarData {
   type: string;
@@ -41,7 +43,7 @@ export interface AvatarData {
 }
 
 export interface TextData {
-  type: "text" ;
+  type: "text";
   data: string;
   align?: "left" | "right" | "center";
 }
@@ -59,7 +61,6 @@ export interface ProfileInfoProps {
   badgeClassName: string;
 }
 
-
 export type ContentDetail = {
   detailName: string;
   detailInfo: string;
@@ -71,3 +72,142 @@ export type CardData = {
   content?: ContentDetail[];
   image?: string;
 };
+
+export interface User {
+  _id: string;
+  role: string;
+  email: string;
+  message?: string;
+}
+
+export interface UsersResponse {
+  success: boolean;
+  data: {
+    user: User;
+    accessToken: string;
+  };
+  message: string;
+}
+
+export interface CustomerIndividualResponse {
+  success: boolean;
+  data: Data;
+  message: null;
+  type: 'individual';
+}
+
+export interface Data {
+  response: Response[];
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  total: number;
+  currentPage: number;
+  size: number;
+}
+
+export interface Response {
+  _id: string;
+  title: string;
+  firstName: string;
+  surName: string;
+  dob: string;
+  nationality: string;
+  gender: string;
+  employmentStatus: string;
+  email: string;
+  phone: string;
+  alternativePhone: string;
+  nin?: number;
+  residential: Residential;
+  documents: Documents;
+  biometrics: Biometrics;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Biometrics {
+  selfie: boolean;
+  fingerPrint: boolean;
+}
+
+export interface Documents {
+  identity: string;
+}
+
+export interface Residential {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  landMark: string;
+}
+
+
+export interface Corporate {
+  _id: string;
+  companyName: string;
+  companyWebsite: string;
+  registrationNumber: string;
+  companyPhoneNumber: string;
+  address: {
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    landMark: string;
+  };
+  contact: {
+    nameOfContact: string;
+    designation: string;
+    phoneNumber: string;
+    email: string;
+  };
+  director: {
+    directorName: string;
+    designation: string;
+    phoneNumber: string;
+    email: string;
+    nin: number | null;
+    isNinVerified: boolean;
+  };
+  documents: {
+    type: string;
+    identity: string;
+  };
+  bioMetrics: {
+    selfie: boolean;
+    fingerPrint: boolean;
+  };
+  createdAt: string; // Assuming createdAt and updatedAt are strings in ISO format
+  updatedAt: string;
+  __v: number;
+}
+
+export interface CorporateResponse {
+  success: boolean;
+  data: {
+    response: Corporate[];
+    pagination: {
+      total: number;
+      currentPage: number;
+      size: number;
+    };
+
+  };
+  type: 'corporate';
+  message: string | null;
+}
+
+export type CustomerResponse = CustomerIndividualResponse | CorporateResponse;
+
+export type FieldValue =
+| string
+| number
+| boolean
+| ReactElement<any, string | JSXElementConstructor<any>>
+| Iterable<ReactNode>
+| null
+| undefined;

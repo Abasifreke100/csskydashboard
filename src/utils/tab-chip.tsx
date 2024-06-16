@@ -6,10 +6,12 @@ export const Chip = ({
     text,
     selected,
     setSelected,
+    totalItems
   }: {
     text: string;
     selected: boolean;
     setSelected: Dispatch<SetStateAction<string>>;
+    totalItems: number;
   }) => {
     let badgeColor;
     let number;
@@ -17,7 +19,7 @@ export const Chip = ({
     switch (text) {
       case "All":
         badgeColor = "bg-[#FFFAEF] hover:bg-primary /75 text-[#FF7F00]";
-        number = 213403;
+        number = totalItems;
         break;
       case "Verified":
         badgeColor = "bg-lightGreen hover:bg-deepGreen/75 text-deepGreen";

@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { MyContext } from "../context";
-import { CardData, CellData, dashboardCardItemsProps } from "../types";
-import usersTestImage from "../assets/cSS.png";
-import pdfFile from "../assets/S-34_E_104.pdf";
+import {  CellData, dashboardCardItemsProps } from "../types";
+// import usersTestImage from "../assets/cSS.png";
+// import pdfFile from "../assets/S-34_E_104.pdf";
 
 export const useProviderContext = () => {
   return useContext(MyContext);
@@ -86,107 +86,30 @@ export  const tableHeader = [
 ];
 
 
-export const cardData: CardData[] = [
-  {
-    title: "Corporate Details",
-    content: [
-      {
-        detailName: "Company Name",
-        detailInfo: "John",
-      },
-      {
-        detailName: "Company Website",
-        detailInfo: "Doe",
-      },
-      {
-        detailName: "Registration Number",
-        detailInfo: "29/09/1989",
-      },
-      {
-        detailName: "Company Phone Number",
-        detailInfo: "Nigerian",
-      },
-    ],
-  },
-  {
-    title: "Corporate Address",
-    content: [
-      {
-        detailName: "Address Line",
-        detailInfo: "123 Maryland Onigbongbo",
-      },
-      {
-        detailName: "City",
-        detailInfo: "Ikeja",
-      },
-      {
-        detailName: "State",
-        detailInfo: "Lagos",
-      },
-      {
-        detailName: "Zip Code",
-        detailInfo: "577347",
-      },
-    ],
-  },
-  {
-    title: "Image",
-    image: usersTestImage,
-  },
-  {
-    title: "Contact Individual",
-    content: [
-      {
-        detailName: "Name of Contact Person",
-        detailInfo: "John",
-      },
-      {
-        detailName: "Phone Number",
-        detailInfo: "Ikeja",
-      },
-      {
-        detailName: "Designation",
-        detailInfo: "29/09/1989",
-      },
-      {
-        detailName: "Email Address",
-        detailInfo: "577347",
-      },
-    ],
-  },
-  {
-    title: "Director Details",
-    content: [
-      {
-        detailName: "Director Name",
-        detailInfo: "John",
-      },
-      {
-        detailName: "Designation",
-        detailInfo: "29/09/1989",
-      },
-      {
-        detailName: "Phone Number",
-        detailInfo: "Lagos",
-      },
-      {
-        detailName: "Email Address",
-        detailInfo: "Nigerian",
-      },
-      {
-        detailName: "NIN",
-        detailInfo: "Nigerian",
-      },
-    ],
-  },
-  {
-    title: "Document",
-    content: [
-      {
-        detailName: "Selected Document",
-        detailDescription: "CAC Registration Certificate",
-        detailInfo: pdfFile,
-      },
-    ],
-  },
-];
+
+export const tabs = ["All", "Verified", "Pending", "Failed"];
+
+
+export function formatTitle(key: string): string {
+  // Example transformation, adjust as per your specific needs
+  switch (key) {
+    case 'totalIndividuals':
+      return 'Total Individuals';
+    case 'totalCorporates':
+      return 'Total Corporates';
+    case 'individualsToday':
+      return 'Individuals Today';
+    case 'corporatesToday':
+      return 'Corporates Today';
+    case 'individualsThisWeek':
+      return 'Individuals This Week';
+    case 'corporatesThisWeek':
+      return 'Corporates This Week';
+    case 'individualsThisMonth':
+      return 'Individuals This Month';
+    case 'corporatesThisMonth':
+      return 'Corporates This Month';
+    default:
+      return key; // Fallback to key if no transformation is defined
+  }
+}
