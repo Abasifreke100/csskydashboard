@@ -5,12 +5,11 @@ export default function ErrorPage() {
   console.error(error);
 
   return (
-    <div id="error-page">
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>
-        <i>{error?.statusText || error?.message}</i>
-      </p>
+    <div className="grid h-screen place-content-center bg-white px-4">
+      <h1 className="uppercase tracking-widest text-gray-500">
+        404 | Not Found
+      </h1>
+      <i>{error?.statusText || error?.message}</i>
     </div>
   );
 }

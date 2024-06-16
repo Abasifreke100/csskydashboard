@@ -1,13 +1,18 @@
-import { useRef, RefObject } from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-export function useScrollIntoView(): [RefObject<HTMLDivElement>, () => void] {
-  const ref = useRef<HTMLDivElement>(null);
+const GoToTop: React.FC = () => {
+  const routePath = useLocation();
 
-  const scrollTo = () => {
-    if (ref.current) {
-      ref.current.scrollIntoView({ behavior: "smooth" });
-    }
+  const onTop = (): void => {
+    window.scrollTo(0, 0);
   };
 
-  return [ref, scrollTo];
-}
+  useEffect(() => {
+    onTop();
+  }, [routePath]);
+
+  return null;
+};
+
+export default GoToTop;
