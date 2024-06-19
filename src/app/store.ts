@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../features/auth/authSlice'
-import tokenExpirationMiddleware from '../api/tokenExpiration'
+// import tokenExpirationMiddleware from '../api/tokenExpiration'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tokenExpirationMiddleware),
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tokenExpirationMiddleware),
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
