@@ -1,16 +1,6 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
-
 import { useEffect, useState } from "react";
 import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
-import { EllipsisVertical, Eye, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -19,12 +9,6 @@ import {
 import { Corporate, CustomerResponse, Response } from "../../types";
 import { tableHeader, tabs, useProviderContext } from "../../constants";
 import { Chip } from "../../utils/tab-chip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../components/ui/popover";
-import { Button } from "../../components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Breadcrumb,
@@ -37,42 +21,49 @@ import {
 import axiosInstance from "../../api/connectSurfApi";
 import { getInitials } from "../../utils/getInitials";
 import { formatDate } from "../../utils/formatDate";
-import CustomerTableSkeleton from "../../skeleton/customerTable";
 import CustomPaginationContent from "../../utils/pagination";
+import { Checkbox } from "../../components/checkbox";
+import { CustomerTableSkeleton } from "../../skeleton/customerTable";
+import Header from "../../components/global/header";
 
 const renderCellContent = (cellData: Response | Corporate): JSX.Element => {
   let badgeBgColor = "";
+  let badgeText = "";
 
   if (
-    "biometrics" in cellData &&
-    cellData.biometrics?.fingerPrint &&
-    cellData.biometrics?.selfie
+    (cellData as Response)?.isNinVerified ||
+    (cellData as Corporate)?.director?.isNinVerified
   ) {
     badgeBgColor = "bg-lightGreen hover:bg-lightGreen text-deepGreen";
-  } else if ("companyName" in cellData) {
+    badgeText = "Verified";
+  } else if (
+    (cellData as Response)?.nin == undefined ||
+    (cellData as Corporate)?.director?.nin == undefined
+  ) {
     badgeBgColor = "bg-secondary hover:bg-secondary text-primary";
-  } else {
+    badgeText = "Pending";
+  } else if (
+    ((cellData as Response)?.nin !== undefined &&
+      (cellData as Response)?.isNinVerified === false) ||
+    ((cellData as Corporate)?.director?.nin !== undefined &&
+      (cellData as Corporate)?.director?.isNinVerified === false)
+  ) {
     badgeBgColor = "bg-lightRed hover:bg-lightRed text-deepRed";
+    badgeText = "Failed";
   }
 
-  return (
-    <Badge className={badgeBgColor}>
-      {"biometrics" in cellData &&
-      cellData.biometrics?.fingerPrint &&
-      cellData.biometrics?.selfie
-        ? "Verified"
-        : "Failed"}
-    </Badge>
-  );
+  return <Badge className={badgeBgColor}>{badgeText}</Badge>;
 };
 
 const CustomersPage = () => {
   const { type } = useParams<{ type: "individual" | "corporate" }>();
   const [selected, setSelected] = useState(tabs[0]);
-  const navigate = useNavigate();
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
   const [data, setData] = useState<CustomerResponse | null>(null);
   const { currentPage, setCurrentPage } = useProviderContext();
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,14 +96,37 @@ const CustomersPage = () => {
     setCurrentPage(page);
   };
 
+  const handleRowClick = (
+    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+    cellData: Response | Corporate
+  ) => {
+    const checkboxClicked = (event.target as HTMLElement).closest(
+      'input[type="checkbox"]'
+    );
+
+    if (!checkboxClicked) {
+      navigate(`/customers/${type}/${cellData._id}`);
+    }
+  };
+
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(
+        data?.data?.response.map((cellData) => cellData._id) || []
+      );
+    }
+    setSelectAll(!selectAll);
+  };
 
   return (
     <div className="h-screen screen-max-width">
-      <p className="text-xl font-semibold">Customers</p>
-      <Breadcrumb className="mt-4">
+      <Header title="Customers" />
+      <Breadcrumb className="mt-4 ">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            <BreadcrumbLink onClick={() => navigate("/")}>Home</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -127,8 +141,8 @@ const CustomersPage = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center w-full gap-3 ">
-        <div className="overflow-hidden">
-          <div className=" py-10 whitespace-nowrap overflow-x-auto flex items-center flex-nowrap gap-2">
+        <div className="overflow-hidden flex-col lg:flex-row w-full gap-4 flex items-center">
+          <div className="w-full pt-6 lg:py-6 whitespace-nowrap overflow-x-auto flex items-center flex-nowrap gap-2">
             {tabs.map((tab) => (
               <Chip
                 text={tab}
@@ -139,46 +153,84 @@ const CustomersPage = () => {
               />
             ))}
           </div>
-        </div>
-        <div className="flex-1 hidden">
-          <div className="flex bg-white rounded-xl py-2 px-1 items-center">
-            <Search className="h-4 text-grey" />
-            <Input
-              className="h-6 border-none bg-transparent outline-none text-grey w-full"
-              type="text"
-              placeholder="Search Customer"
-            />
+          <div className="flex-1  w-full">
+            <div className="bg-white flex w-full items-center   px-1 py-1 rounded-xl gap-2">
+              <div className="flex-1 ">
+                <div className="flex text-grey items-center">
+                  <Search className="h-5" />
+                  <input
+                    type="text"
+                    name=""
+                    id=""
+                    placeholder="Search Customer "
+                    className="flex-1 lg:ml-2 border-none h-7 text-xs placeholder:text-sm outline-none"
+                  />
+                </div>
+              </div>
+              <p className="bg-grey rounded-[12px] text-white py-1.5 px-2 text-xs h-full">
+                Search
+              </p>
+            </div>
           </div>
         </div>
       </div>
-      <Table className="bg-white rounded-tl-2xl  rounded-tr-2xl shadow-2xl">
-        <TableHeader>
-          <TableRow className="border-none hover:bg-transparent">
-            {tableHeader.map((header, idx) => (
-              <TableHead
-                key={idx}
-                className={`${
-                  idx == 0 && "rounded-l-2xl "
-                } whitespace-nowrap text-white  bg-primary ${
-                  idx === 6 && "rounded-r-2xl"
-                }`}
-              >
-                {header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            <CustomerTableSkeleton />
-          ) : (data?.data?.response?.length ?? 0) > 0 ? (
-            data?.data?.response.map((cellData, idx) => (
-              <TableRow key={idx} className="bg-transparent">
-                <TableCell key={idx}>
-                  <div className="flex  items-center gap-3">
-                    <Avatar>
+
+      <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border oveflow-hidden rounded-lg">
+        <table className="w-full text-sm  text-gray-500">
+          <thead className="text-xs  uppercase  bg-[#F5F5F7]">
+            <tr className="font-medium border-b border-gray-200 text-muted-foreground">
+              <th className="px-2 py-[9px] font-medium text-muted-foreground">
+                <Checkbox
+                  id="select-all"
+                  isChecked={selectAll}
+                  onChange={() => handleSelectAllChange()}
+                />
+              </th>
+              {tableHeader.map((header, idx) => (
+                <th
+                  scope="col"
+                  key={idx}
+                  className={`${
+                    idx == 0 && " "
+                  } whitespace-nowrap px-6  capitalize font-medium py-[9px] text-[#000000E5] text-sm ${
+                    header == "Name" && "text-start"
+                  }   ${idx === 6 && ""}`}
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <CustomerTableSkeleton />
+            ) : (data?.data?.response?.length ?? 0) > 0 ? (
+              data?.data?.response.map((cellData, idx) => (
+                <tr
+                  key={idx}
+                  onClick={(event) => handleRowClick(event, cellData)}
+                  className="border group border-b cursor-pointer transition-colors  hover:bg-muted/50 data-[state=selected]:bg-muted bg-white border-[#F5F5F7]"
+                >
+                  <td className="px-2 py-2">
+                    <Checkbox
+                      id={cellData._id}
+                      isChecked={selectedRows.includes(cellData._id)}
+                      onChange={(id, isChecked) => {
+                        // Toggle selection
+                        if (isChecked) {
+                          setSelectedRows((prev) => [...prev, id]);
+                        } else {
+                          setSelectedRows((prev) =>
+                            prev.filter((item) => item !== id)
+                          );
+                        }
+                      }}
+                    />
+                  </td>
+                  <td className="px-6 py-2 flex items-center gap-2">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src="https://github.com/shadcn.png" alt="" />
-                      <AvatarFallback>
+                      <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                         {(cellData as Response)?.firstName &&
                         (cellData as Response)?.surName
                           ? getInitials(
@@ -186,86 +238,65 @@ const CustomersPage = () => {
                                 (cellData as Response)?.surName
                               }`
                             )
-                          : getInitials(`${(cellData as Corporate)?.companyName} `)}
-                        {/* data.type == "individual" &&
-                          (cellData as Response)?.firstName &&
-                          (cellData as Response)?.surName &&
-                          getInitials(
-                            `${
-                              (cellData as Response)?.firstName +
-                              (cellData as Response)?.surName
-                            } `
-                          ) */}
+                          : getInitials(
+                              `${(cellData as Corporate)?.companyName} `
+                            )}
                       </AvatarFallback>
                     </Avatar>
                     {!(cellData as Corporate).registrationNumber ? (
-                      <div>
-                        <p className="text-md font-medium">{`${
+                      <div className="">
+                        <p className="text-xs text-black font-medium group-hover:text-grey">{`${
                           (cellData as Response)?.title
                         } ${(cellData as Response)?.firstName} ${(
                           cellData as Response
                         ).surName?.substring(0, 10)}`}</p>
-                        <p className="text-xs text-grey">
+                        <p className="text-xs text-grey ">
                           {(cellData as Response).email?.substring(0, 20)}...
                         </p>
                       </div>
                     ) : (
                       <div>
-                        <p className="text-md font-medium">{`${
-                          (cellData as Corporate).companyName
+                        <p className="text-xs text-black font-medium group-hover:text-grey">{`${
+                          (cellData as Corporate).companyName?.length > 20
+                            ? (cellData as Corporate).companyName?.substring(
+                                0,
+                                20
+                              ) + "..."
+                            : (cellData as Corporate).companyName
                         }`}</p>
-                        <p className="text-xs text-grey">
+                        <p className="text-[10px] text-grey">
                           {(cellData as Corporate).companyWebsite}...
                         </p>
                       </div>
                     )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {(cellData as Response)?.nin
-                    ? (cellData as Response)?.nin
-                    : (cellData as Corporate)?.registrationNumber}
-                </TableCell>
-                <TableCell>{renderCellContent(cellData)}</TableCell>
-                <TableCell className="text-grey">
-                  {formatDate(cellData.createdAt)}
-                </TableCell>
-                <TableCell className="text-grey">
-                  {formatDate(cellData.createdAt)}
-                </TableCell>
-                <TableCell className="capitalize">{type}</TableCell>
-                <TableCell>
-                  <Popover>
-                    <PopoverTrigger>
-                      <EllipsisVertical className="h-5" />
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="end"
-                      className="w-fit bg-white h-fit p-0"
-                    >
-                      <Button
-                        className="flex justify-between bg-white gap-3 w-full  text-sm hover:bg-white"
-                        onClick={() => {
-                          navigate(`/customers/${type}/${cellData._id}`);
-                        }}
-                      >
-                        {" "}
-                        <Eye /> View Customer
-                      </Button>
-                    </PopoverContent>
-                  </Popover>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={7}>
-                <p className="text-center text-grey py-4">No data found</p>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                  </td>
+                  <td className="px-6 py-2 text-center">
+                    {(cellData as Response)?.nin
+                      ? (cellData as Response)?.nin
+                      : (cellData as Corporate)?.registrationNumber}
+                  </td>
+                  <td className="px-6 py-2">{renderCellContent(cellData)}</td>
+                  <td className="px-6 py-2 text-center">
+                    {formatDate(cellData.createdAt)}
+                  </td>{" "}
+                  <td className="px-6 py-2 text-center">
+                    {formatDate(cellData.createdAt)}
+                  </td>
+                  <td className="px-6 py-2 capitalize text-grey text-sm">
+                    {type}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7}>
+                  <p className="text-center text-grey py-4">No data found</p>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
       <CustomPaginationContent
         currentPage={currentPage}
         totalItems={totalItems}

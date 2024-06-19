@@ -14,16 +14,21 @@ export type MyContextProps = {
   currentPage: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
 };
+export interface SidebarItems {
+  theme: Theme[];
+  extras?: ReactNode;
+}
+
+export interface Theme {
+  title: string;
+  links: SidebarItem[];
+}
+
 export interface SidebarItem {
   label: string;
   href: string;
   icon?: LucideIcon;
   children?: SidebarItem[];
-}
-
-export interface SidebarItems {
-  links: SidebarItem[];
-  extras?: ReactNode;
 }
 
 export interface dashboardCardItemsProps {
@@ -118,6 +123,7 @@ export interface Response {
   employmentStatus: string;
   email: string;
   phone: string;
+  isNinVerified: boolean;
   alternativePhone: string;
   nin?: number;
   residential: Residential;
@@ -211,3 +217,15 @@ export type FieldValue =
 | Iterable<ReactNode>
 | null
 | undefined;
+
+
+export interface OverviewData {
+  totalIndividuals: number;
+  totalCorporates: number;
+  individualsToday: number;
+  corporatesToday: number;
+  corporatesThisMonth: number;
+  corporatesThisWeek: number;
+  individualsThisMonth: number;
+  individualsThisWeek: number;
+}

@@ -4,9 +4,9 @@ import {
   LayoutDashboard,
   MoreHorizontal,
   UserCheck,
-  // Sparkles,
-  // TrendingUp,
-  // Unplug
+  Sparkles,
+  TrendingUp,
+  Unplug,
 } from "lucide-react";
 import { SidebarButton } from "./sidebar-button";
 import { useMediaQuery } from "usehooks-ts";
@@ -18,34 +18,47 @@ import { useToast } from "./ui/use-toast";
 import { loggedOut } from "../features/auth/authActions";
 
 const sidebarItems: SidebarItems = {
-  links: [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  theme: [
     {
-      label: "Customers",
-      href: "/customers",
-      icon: Globe,
-      children: [
-        { label: "Cooperate", href: "/customers/corporate", icon: Building2 },
-        { label: "Individual", href: "/customers/individual", icon: UserCheck },
-        // Add more customer links as needed
+      title: "KYC",
+      links: [
+        { label: "Dashboard", href: "/", icon: LayoutDashboard },
+        {
+          label: "Customers",
+          href: "/customers",
+          icon: Globe,
+          children: [
+            {
+              label: "Cooperate",
+              href: "/customers/corporate",
+              icon: Building2,
+            },
+            {
+              label: "Individual",
+              href: "/customers/individual",
+              icon: UserCheck,
+            },
+          ],
+        },
+        { label: "Insights", href: "/insights", icon: TrendingUp },
+        {
+          href: "/tasks",
+          icon: Sparkles,
+          label: "Tasks",
+        },
+        {
+          href: "/api-bindings",
+          icon: Unplug,
+          label: "API Bindings",
+        },
+        {
+          href: "/more",
+          icon: LayoutDashboard,
+          label: "More",
+        },
       ],
     },
-    // { label: 'Insights', href: '/insights', icon: TrendingUp },
-    // {
-    //   href: '/tasks',
-    //   icon: Sparkles,
-    //   label: 'Tasks',
-    // },
-    // {
-    //   href: '/api-bindings',
-    //   icon: Unplug,
-    //   label: 'API Bindings',
-    // },
-    // {
-    //   href: '/more',
-    //   icon: Globe,
-    //   label: 'More',
-    // }
+    // Add more themes as needed
   ],
   extras: (
     <div className="flex flex-col gap-2">
@@ -61,12 +74,11 @@ const sidebarItems: SidebarItems = {
     </div>
   ),
 };
-
 export function Sidebar() {
   const isDesktop = useMediaQuery("(min-width: 640px)", {
     initializeWithValue: false,
   });
-  const { toast } = useToast()
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
 
   const handleLogOut = () => {
@@ -86,12 +98,13 @@ export function Sidebar() {
       });
   };
 
-
-
-
   if (isDesktop) {
-    return <SidebarDesktop sidebarItems={sidebarItems} handleLogout={handleLogOut} />;
+    return (
+      <SidebarDesktop sidebarItems={sidebarItems} handleLogout={handleLogOut} />
+    );
   }
 
-  return <SidebarMobile sidebarItems={sidebarItems} handleLogout={handleLogOut} />;
+  return (
+    <SidebarMobile sidebarItems={sidebarItems} handleLogout={handleLogOut} />
+  );
 }

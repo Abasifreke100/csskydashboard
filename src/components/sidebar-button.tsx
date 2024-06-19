@@ -17,13 +17,35 @@ export function SidebarButton({
   return (
     <div
       className={cn(
-        "inline-flex h-10 px-4 py-2 items-center gap-2 justify-start whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-10 lg:px-4 py-2  items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       onClick={onClick} // Assign onClick handler to div
     >
       {Icon && <Icon size={20} />}
-      <div>{children}</div>
+      <div className="hidden lg:block">{children}</div>
+    </div>
+  );
+
+}
+
+
+export function SidebarMobileButton({
+  icon: Icon,
+  className,
+  children,
+  onClick, // Destructure onClick from props
+}: SidebarButtonProps) {
+  return (
+    <div
+      className={cn(
+        "inline-flex h-10 px-4 py-2  items-center gap-2 justify-start whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        className
+      )}
+      onClick={onClick} // Assign onClick handler to div
+    >
+      {Icon && <Icon size={20} />}
+      <div className="">{children}</div>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { MoveLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 import {
@@ -24,6 +23,7 @@ import {
 } from "../../utils/getSection";
 import { formatDate } from "../../utils/formatDate";
 import { getInitials } from "../../utils/getInitials";
+import Header from "../../components/global/header";
 
 const CustomersIdPage = () => {
   const { type, customerId } = useParams<{
@@ -64,18 +64,16 @@ const CustomersIdPage = () => {
   return (
     <div className="customersContainer  w-full">
       <div className="h-screen w-full">
-        <p
-          className="flex items-center gap-3 mt-3 text-xl font-semibold cursor-pointer"
-          onClick={() => window.history.back()}
-        >
-          <MoveLeft /> Customer Profile
-        </p>
-        <div className="w-full overflow-x-auto">
-          <div className="mt-3  bg-white px-4 w-fit lg:w-full gap-6 lg:gap-0 rounded-2xl shadow-md h-14 flex items-center justify-between">
+        <Header title="Customer Profile" icon={true} />
+        <div className="w-full mt-3 bg-white overflow-x-auto  rounded-2xl shadow-md">
+          <div className="  px-4 w-fit lg:w-full gap-6 lg:gap-0 h-12 flex items-center justify-between">
             <ProfileInfo
               label={
-                (data as Response)?.firstName ||
-                (data as Corporate)?.companyName
+                type == "individual " ? 
+                ((data as Response)?.firstName ?? "N/A") +
+                  " " +
+                  ((data as Response)?.surName ?? "N/A") :
+                ((data as Corporate)?.companyName ?? "N/A")
               }
               value="Verified"
               badgeClassName="bg-lightGreen text-deepGreen hover:bg-deepGreen hover:text-lightGreen"
@@ -86,7 +84,9 @@ const CustomersIdPage = () => {
                 (data as Response)?.nin ||
                 (data as Corporate)?.registrationNumber
               }
-              badgeClassName="bg-grey hover:bg-grey hover:text-white text-white rounded-md"
+              badgeClassName={`bg-grey ${
+                isLoading ? "h-5 shimmer w-24" : ""
+              } hover:bg-grey hover:text-white text-white rounded-md`}
             />
             <ProfileInfo
               label="Date Registered"
@@ -94,7 +94,9 @@ const CustomersIdPage = () => {
                 formatDate((data as Response)?.createdAt) ||
                 (data as Corporate)?.createdAt
               }
-              badgeClassName="bg-grey text-white rounded-md"
+              badgeClassName={`bg-grey ${
+                isLoading ? "h-5 shimmer w-24" : ""
+              } hover:bg-grey hover:text-white text-white rounded-md`}
             />
             <ProfileInfo
               label="Date Verified"
@@ -102,7 +104,9 @@ const CustomersIdPage = () => {
                 formatDate((data as Response)?.updatedAt) ||
                 (data as Corporate)?.updatedAt
               }
-              badgeClassName="bg-grey text-white rounded-md"
+              badgeClassName={`bg-grey ${
+                isLoading ? "h-5 shimmer w-24" : ""
+              } hover:bg-grey hover:text-white text-white rounded-md`}
             />
           </div>
         </div>
@@ -110,13 +114,20 @@ const CustomersIdPage = () => {
         {/* cards */}
 
         <div className="mt-6 grid grid-cols-12 gap-5 pb-5">
-          {/* {Object.entries(data ?? {})?.map(([key, value]) => ( */}
           {sections.map((section, index) => (
             <Card
               key={index}
-              className={`col-span-12 md:col-span-6 ${
-                index == 3 && "h-fit"
-              } lg:col-span-4`}
+              className={`col-span-12 ${
+                section?.label == "Biodata" && "row-span-2 lg:row-span-3 "
+              } ${
+                section?.label == "Document" && type == "individual"
+                  ? "row-span-2 col-span-12 lg:col-span-4"
+                  : "md:col-span-6  lg:col-span-4"
+              } 
+              
+              ${section.label == "Document" && type == "corporate" && "h-fit"}
+
+              `}
             >
               <CardHeader>
                 <CardTitle className="text-md capitalize">
@@ -135,18 +146,69 @@ const CustomersIdPage = () => {
                     <div
                       key={idx}
                       className={` ${
-                        isLoading && (idx as number) >= 1 ? " mt-8" : "mb-2"
+                        isLoading && (idx as number) >= 1 ? " mt-6" : "mb-2"
                       }`}
                     >
-                      {section.label === "Image" ? (
+                      {section.label === "Document" ||
+                      section.label == "Image" ? (
                         ""
                       ) : isLoading ? (
                         <p className="text-grey h-3 rounded-lg w-36 shimmer text-sm"></p>
                       ) : (
-                        <p className="text-grey text-sm">{field.label}</p>
+                        <p className="text-grey  text-sm">{field.label}</p>
                       )}
-                      {section.label === "Image" ? (
-                        <div className="flex justify-center order-last">
+                      {section.label === "Document" ? (
+                        <div className="flex justify-between  flex-col  h-full order-last">
+                          <p className="mb-2">National ID</p>
+                          <div
+                            className={`w-3/4 border rounded-md overflow-hidden ${
+                              isLoading ? "h-40" : "h-28"
+                            }`}
+                          >
+                            <Dialog>
+                              <DialogTrigger className="w-full h-full" asChild>
+                                {isLoading ? (
+                                  <div className="object-cover bg-gray-300 shimmer cursor-pointer w-full " />
+                                ) : field.value ? (
+                                  <img
+                                    src={field.value as string}
+                                    alt={field.label}
+                                    className="object-cover order-last cursor-pointer flex-1 w-full h-full"
+                                  />
+                                ) : (
+                                  <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
+                                    {" "}
+                                    {(data as Response)?.firstName &&
+                                    (data as Response)?.surName
+                                      ? getInitials(
+                                          `${(data as Response)?.firstName} ${
+                                            (data as Response)?.surName
+                                          }`
+                                        )
+                                      : getInitials(
+                                          `${(data as Corporate)?.companyName} `
+                                        )}{" "}
+                                  </div>
+                                )}
+                              </DialogTrigger>
+                              {field.value && (
+                                <DialogContent className=" w-[380px] lg:w-[600px]">
+                                  <DialogHeader>
+                                    <DialogDescription>
+                                      <img
+                                        src={field.value as string}
+                                        alt={field.label}
+                                        className="object-cover w-full mt-4 h-full"
+                                      />
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                </DialogContent>
+                              )}
+                            </Dialog>
+                          </div>
+                        </div>
+                      ) : section.label == "Image" ? (
+                        <div className="flex justify-center ">
                           <div className="w-44 h-44 rounded-full overflow-hidden">
                             <Dialog>
                               <DialogTrigger asChild>
@@ -156,7 +218,7 @@ const CustomersIdPage = () => {
                                   <img
                                     src={field.value as string}
                                     alt={field.label}
-                                    className="object-cover order-last cursor-pointer w-full h-full"
+                                    className="object-cover  cursor-pointer w-full h-full"
                                   />
                                 ) : (
                                   <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
@@ -195,14 +257,18 @@ const CustomersIdPage = () => {
                       ) : field.label == "Company Website" ? (
                         <a
                           className="text-xs font-medium mb-3 hover:text-primary hover:underline"
-                          href={field.value as string || " "}
+                          href={(field.value as string) || " "}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           {field.value}
                         </a>
                       ) : (
-                        <p className="text-xs font-medium mb-3">
+                        <p
+                          className={`text-xs ${
+                            field.label == "Email" ? " " : "capitalize"
+                          } font-medium mb-3`}
+                        >
                           {field.value}
                         </p>
                       )}
@@ -212,7 +278,6 @@ const CustomersIdPage = () => {
               </CardContent>
             </Card>
           ))}
-          {/* ))} */}
         </div>
       </div>
     </div>
