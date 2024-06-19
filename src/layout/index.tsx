@@ -47,11 +47,17 @@ const DashboardLayout = () => {
     }
   }, [location]);
 
-  setTimeout(() => {
-    if (!loggedIn) {
-      window.location.href = "/login";
-    }
-  }, 2000);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (!loggedIn) {
+        window.location.href = "/login";
+      }
+    }, 2000);
+
+    return () => {
+      clearTimeout(timeoutId); // Cleanup timeout on component unmount
+    };
+  }, [loggedIn]);
 
   return (
     <div>
