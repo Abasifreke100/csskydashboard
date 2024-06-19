@@ -7,10 +7,7 @@ import {
 } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { LogOut, MoreHorizontal, X } from "lucide-react";
-import {
-  SidebarButtonSheet,
-  SidebarMobileButton,
-} from "./sidebar-button";
+import { SidebarMobileButton } from "./sidebar-button";
 import { Separator } from "./ui/separator";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -65,87 +62,6 @@ export function SidebarMobile(props: SidebarMobileProps) {
         </SheetHeader>
         <div className="h-full">
           <div className="mt-5 flex flex-col w-full gap-1">
-            {/* {sidebarItems?.links?.map((link, index) =>
-              link.children ? (
-                <Accordion
-                  type="single"
-                  className="no-underline"
-                  collapsible
-                  key={index}
-                  value={`item-${value}`}
-                  onValueChange={() => {
-                    if (value == " ") {
-                      setValue(`${index}`);
-                      setCurrentPage(1);
-                    } else {
-                      setValue(" ");
-                      setCurrentPage(1);
-                    }
-                  }}
-                >
-                  <AccordionItem
-                    className="no-underline border-none"
-                    value={`item-${index}`}
-                  >
-                    <AccordionTrigger
-                      className={`no-underline hover:no-underline pr-3 w-full rounded-none hover:bg-[#FF7F00]/45 text-grey h-12 rounded-tr-2xl rounded-br-2xl ${
-                        isActivePath(location.pathname, link.href) &&
-                        "bg-[#FF7F00] shadow-md text-white hover:bg-[#FF7F00] hover:text-white"
-                      } `}
-                    >
-                      <SidebarButton
-                        icon={link.icon}
-                        className={`hover:bg-transparent text-black hover:text-black bg-transparent ${
-                          isActivePath(location.pathname, link.href) &&
-                          "text-white hover:text-white"
-                        } `}
-                      >
-                        <span className=" no-underline">{link.label}</span>
-                      </SidebarButton>
-                    </AccordionTrigger>
-                    <AccordionContent className="border-none h-fit mb-0  mt-1 outline-none">
-                      {link.children.map((child, childIndex) => (
-                        <Link key={childIndex} to={child.href}>
-                            <div>
-                        <SheetClose  className="w-full">
-                              <SidebarButton
-                                icon={child?.icon}
-                                onClick={() => {
-                                  setActive(child.label);
-                                  setValue(" ");
-                                }}
-                                className={`w-full hover:bg-[#fffaef]  rounded-tr-2xl rounded-br-2xl  ${
-                                  isActivePath(location.pathname, child.href) &&
-                                  "text-primary "
-                                }`}
-                              >
-                                <span className=""> {child.label}</span>
-                              </SidebarButton>
-                        </SheetClose>
-                            </div>
-                          </Link>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              ) : (
-                <Link  key={index} to={link.href}>
-                <SheetClose  className="w-full">
-                    <SidebarButton
-                      onClick={() => setActive(link.label)}
-                      icon={link.icon}
-                      className={`w-full rounded-none hover:bg-[#FF7F00]/45 text-grey h-12 rounded-tr-2xl rounded-br-2xl ${
-                        isActivePath(location.pathname, link.href) &&
-                        "bg-[#FF7F00] shadow-md text-white hover:bg-[#FF7F00] hover:text-white"
-                      }`}
-                    >
-                      <span className="">{link.label}</span>
-                    </SidebarButton>
-                </SheetClose>
-                  </Link>
-              )
-                  
-            )} */}
             {props.sidebarItems.theme.map(
               (theme: Theme, themeIndex: number) => (
                 <div key={themeIndex} className=" px-2">
@@ -262,14 +178,14 @@ export function SidebarMobile(props: SidebarMobileProps) {
               </DrawerTrigger>
               <DrawerContent className="mb-2 p-2">
                 <div className="flex flex-col space-y-2 mt-2">
-                  <SidebarButtonSheet
+                  <SidebarMobileButton
                     size="sm"
                     onClick={() => props.handleLogout()}
                     icon={LogOut}
                     className="w-full cursor-pointer"
                   >
                     Log Out
-                  </SidebarButtonSheet>
+                  </SidebarMobileButton>
                 </div>
               </DrawerContent>
             </Drawer>

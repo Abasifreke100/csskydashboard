@@ -61,6 +61,13 @@ const CustomersIdPage = () => {
       ? getIndividualSections(data as Response)
       : getCorporateSections(data as Corporate);
 
+  const label =
+    type === "individual"
+      ? `${(data as Response)?.firstName ?? "N/A"} ${
+          (data as Response)?.surName ?? "N/A"
+        }`
+      : (data as Corporate)?.companyName ?? "N/A";
+
   return (
     <div className="customersContainer  w-full">
       <div className="h-screen w-full">
@@ -68,13 +75,7 @@ const CustomersIdPage = () => {
         <div className="w-full mt-3 bg-white overflow-x-auto  rounded-2xl shadow-md">
           <div className="  px-4 w-fit lg:w-full gap-6 lg:gap-0 h-12 flex items-center justify-between">
             <ProfileInfo
-              label={
-                type == "individual " ? 
-                ((data as Response)?.firstName ?? "N/A") +
-                  " " +
-                  ((data as Response)?.surName ?? "N/A") :
-                ((data as Corporate)?.companyName ?? "N/A")
-              }
+              label={label}
               value="Verified"
               badgeClassName="bg-lightGreen text-deepGreen hover:bg-deepGreen hover:text-lightGreen"
             />
