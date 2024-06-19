@@ -215,13 +215,14 @@ const CustomersIdPage = () => {
                               <DialogTrigger asChild>
                                 {isLoading ? (
                                   <div className="object-cover bg-gray-300 shimmer cursor-pointer w-full h-full" />
-                                ) : field.value ? (
-                                  <img
-                                    src={field.value as string}
-                                    alt={field.label}
-                                    className="object-cover  cursor-pointer w-full h-full"
-                                  />
                                 ) : (
+                                  // : field.value ? (
+                                  //   <img
+                                  //     src={field.value as string}
+                                  //     alt={field.label}
+                                  //     className="object-cover  cursor-pointer w-full h-full"
+                                  //   />
+                                  // )
                                   <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
                                     {" "}
                                     {(data as Response)?.firstName &&
@@ -237,7 +238,7 @@ const CustomersIdPage = () => {
                                   </div>
                                 )}
                               </DialogTrigger>
-                              {field.value && (
+                              {/* {field.value  && (
                                 <DialogContent className=" w-[380px] lg:w-[600px]">
                                   <DialogHeader>
                                     <DialogDescription>
@@ -249,7 +250,7 @@ const CustomersIdPage = () => {
                                     </DialogDescription>
                                   </DialogHeader>
                                 </DialogContent>
-                              )}
+                              )} */}
                             </Dialog>
                           </div>
                         </div>
