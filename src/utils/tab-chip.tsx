@@ -48,7 +48,14 @@ export const Chip = ({
       } text-xs flex items-center  transition-colors px-2.5 py-0.5 rounded-md border-none outline-none  relative`}
     >
       <span className="relative z-10 text-md flex items-center">
-        {Icon && <Icon className={`inline-flex h-5 text-[16px] mr-1 ${selected && "text-primary"}`} />} {text}
+        {Icon && (
+          <Icon
+            className={`inline-flex h-5 text-[16px] mr-1 ${
+              selected && "text-primary"
+            }`}
+          />
+        )}
+        {text}
       </span>
 
       {number && (
