@@ -1,13 +1,14 @@
 import { Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import { useProviderContext } from "../../constants";
-import AvatarDropdown from "../avatar-dropdown";
-import { Badge } from "../ui/badge";
+import AvatarDropdown from "../dropdowns/avatar-dropdown";
+// import { Badge } from "..//ui/badge";
 import { Input } from "../ui/input";
 import logo from "../../assets/cssMobileImage.png";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import TierDropdown from "../dropdowns/tier-dropdown";
 
 const Navbar = () => {
   const { setIsSidebarOpen } = useProviderContext();
@@ -27,7 +28,7 @@ const Navbar = () => {
             <IoIosNotificationsOutline className="text-xl" />
             <div className="w-2 h-2 bg-[#FF7F00] rounded-full absolute right-0.5 top-0" />
           </div>
-          <Badge className="bg-[#FFFAEF] hidden md:block text-[#FF7F00] ">Tier 3</Badge>
+          {user.user && <TierDropdown user={user.user} />}
           {user.user && <AvatarDropdown user={user.user} />}
           <Button
             size="icon"

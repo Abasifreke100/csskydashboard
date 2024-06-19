@@ -4,22 +4,22 @@ import { LucideIcon } from "lucide-react";
 
 type IconType = React.ComponentType<SVGProps<SVGSVGElement>>;
 
-interface CardComponentProps {
+interface InsightCardComponentProps {
   isLoading: boolean;
   value?: string | number;
   title?: string;
   icon: IconType | LucideIcon | any;
 }
 
-const CardComponent = ({
+const InsightCardComponent = ({
   isLoading,
   value,
   title,
   icon: Icon,
-}: CardComponentProps) => {
+}: InsightCardComponentProps) => {
   return (
     <Card
-      className={`shadow-md rounded-xl  lg:col-span-4 ${(title == "Total Corporates" || "Total Individuals") && "h-fit"} ${
+      className={`shadow-md rounded-xl  lg:col-span-4 ${(title == "Total Corporates" || "Total Individuals") && ""} ${
         title == "Total Individuals" ? "col-span-12" : "custom-md-col-span"
       }`}
     >
@@ -55,4 +55,4 @@ const CardComponent = ({
   );
 };
 
-export default CardComponent;
+export default InsightCardComponent;

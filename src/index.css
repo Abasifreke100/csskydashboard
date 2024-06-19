@@ -193,3 +193,16 @@ body{
   }
 }
 
+
+ .recharts-cartesian-axis-tick-value{
+  font-size: 12px;
+ }
+
+ .recharts-wrapper{
+  padding: 0;
+  left: 0;
+  /* max-width: 450px !important; */
+ }
+ .recharts-surface{
+  padding: 0;
+ }

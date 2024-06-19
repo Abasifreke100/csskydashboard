@@ -7,12 +7,15 @@ import {
 } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { LogOut, MoreHorizontal, X } from "lucide-react";
-import { SidebarButton, SidebarButtonSheet } from "./sidebar-button";
+import {
+  SidebarButtonSheet,
+  SidebarMobileButton,
+} from "./sidebar-button";
 import { Separator } from "./ui/separator";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link, useLocation } from "react-router-dom";
-import { SidebarItems } from "../types";
+import { SidebarItems, Theme } from "../types";
 import { useProviderContext } from "../constants";
 import {
   Accordion,
@@ -27,7 +30,7 @@ interface SidebarMobileProps {
   handleLogout: () => void;
 }
 
-export function SidebarMobile({sidebarItems , handleLogout}: SidebarMobileProps) {
+export function SidebarMobile(props: SidebarMobileProps) {
   const location = useLocation();
   const { isSidebarOpen, setIsSidebarOpen, setActive, setCurrentPage } =
     useProviderContext();
@@ -62,7 +65,7 @@ export function SidebarMobile({sidebarItems , handleLogout}: SidebarMobileProps)
         </SheetHeader>
         <div className="h-full">
           <div className="mt-5 flex flex-col w-full gap-1">
-            {sidebarItems?.links?.map((link, index) =>
+            {/* {sidebarItems?.links?.map((link, index) =>
               link.children ? (
                 <Accordion
                   type="single"
@@ -141,6 +144,101 @@ export function SidebarMobile({sidebarItems , handleLogout}: SidebarMobileProps)
                 </SheetClose>
                   </Link>
               )
+                  
+            )} */}
+            {props.sidebarItems.theme.map(
+              (theme: Theme, themeIndex: number) => (
+                <div key={themeIndex} className=" px-2">
+                  <h3 className="text-xs text-start font-semibold lg:px-4 py-2">
+                    {theme.title}
+                  </h3>
+                  {theme.links.map((link, index) =>
+                    link.children ? (
+                      <Accordion
+                        type="single"
+                        className={`no-underline ${index > 0 && "mt-2"}`}
+                        collapsible
+                        key={index}
+                        value={`item-${value}`}
+                        onValueChange={() => {
+                          if (value == " ") {
+                            setValue(`${index}`);
+                            setCurrentPage(1);
+                          } else {
+                            setValue(" ");
+                            setCurrentPage(1);
+                          }
+                        }}
+                      >
+                        <AccordionItem
+                          className="no-underline border-none"
+                          value={`item-${index}`}
+                        >
+                          <AccordionTrigger
+                            className={`no-underline hover:no-underline pr-3 w-full hover:text-grey hover:bg-gray-200 text-grey h-12 rounded-xl ${
+                              isActivePath(location.pathname, link.href) &&
+                              "bg-[#FFFAEF] hover:bg-[#FFFAEF] text-[#FF7F00] hover:text-[#FF7F00]"
+                            } `}
+                          >
+                            <SidebarMobileButton
+                              onClick={() => setValue("")}
+                              icon={link.icon}
+                              className={`hover:bg-transparent  bg-transparent ${
+                                isActivePath(location.pathname, link.href) &&
+                                "tex"
+                              } `}
+                            >
+                              <span className=" no-underline">
+                                {link.label}
+                              </span>
+                            </SidebarMobileButton>
+                          </AccordionTrigger>
+                          <AccordionContent className="border-none h-fit mb-0 mt-1 outline-none">
+                            {link.children.map((child, childIndex) => (
+                              <Link key={childIndex} to={child.href}>
+                                <SheetClose className="w-full">
+                                  <SidebarMobileButton
+                                    icon={child?.icon}
+                                    onClick={() => {
+                                      setActive(child.label);
+                                      setValue(" ");
+                                    }}
+                                    className={`w-full hover:text-grey hover:bg-gray-200 text-grey rounded-2xl ${
+                                      isActivePath(
+                                        location.pathname,
+                                        child.href
+                                      ) && "text-primary"
+                                    }`}
+                                  >
+                                    <span className=""> {child.label}</span>
+                                  </SidebarMobileButton>
+                                </SheetClose>
+                              </Link>
+                            ))}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ) : (
+                      <Link key={index} to={link.href}>
+                        <SheetClose className="w-full">
+                          <SidebarMobileButton
+                            onClick={() => setActive(link.label)}
+                            icon={link.icon}
+                            className={`w-full ${
+                              index > 0 && "mt-2"
+                            }  hover:bg-gray-200 text-grey h-12 rounded-xl  ${
+                              isActivePath(location.pathname, link.href) &&
+                              "bg-[#FFFAEF] hover:bg-[#FFFAEF] text-[#FF7F00] hover:text-[#FF7F00]"
+                            }`}
+                          >
+                            <span className="">{link.label}</span>
+                          </SidebarMobileButton>
+                        </SheetClose>
+                      </Link>
+                    )
+                  )}
+                </div>
+              )
             )}
           </div>
           <div className="absolute w-full bottom-4 px-1 left-0">
@@ -166,7 +264,7 @@ export function SidebarMobile({sidebarItems , handleLogout}: SidebarMobileProps)
                 <div className="flex flex-col space-y-2 mt-2">
                   <SidebarButtonSheet
                     size="sm"
-                    onClick={handleLogout}
+                    onClick={() => props.handleLogout()}
                     icon={LogOut}
                     className="w-full cursor-pointer"
                   >

@@ -6,6 +6,11 @@ import DashboardLayout from "../layout";
 import Home from "../pages/page";
 import CustomersPage from "../pages/customers/page";
 import CustomersIdPage from "../pages/[customersId]/page";
+import Insights from "../pages/insights/page";
+import Tasks from "../pages/tasks/page";
+import ApiBindings from "../pages/api-bindings/page";
+import More from "../pages/more/page";
+import TaskID from "../pages/[taskId]/page";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +36,26 @@ export const router = createBrowserRouter([
       {
         path: "/customers/:type/:customerId",
         element: <CustomersIdPage />,
+      },
+      {
+        path: "/insights",
+        element: <Insights />,
+      },
+      {
+        path: "/tasks",
+        element: <Tasks />,
+      },
+      {
+        path: "/tasks/:taskID",
+        element: <TaskID />,
+      },
+      {
+        path: "/api-bindings",
+        element: <ApiBindings />,
+      },
+      {
+        path: "/more",
+        element: <More />,
       },
     ],
     errorElement: <ErrorPage />,
