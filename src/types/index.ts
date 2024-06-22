@@ -1,4 +1,9 @@
-import { Dispatch, JSXElementConstructor, ReactElement, SetStateAction } from "react";
+import {
+  Dispatch,
+  JSXElementConstructor,
+  ReactElement,
+  SetStateAction,
+} from "react";
 import { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -98,11 +103,13 @@ export interface CustomerIndividualResponse {
   success: boolean;
   data: Data;
   message: null;
-  type: 'individual';
+  type: "individual";
 }
 
 export interface Data {
+  pendingIndividual: number;
   response: Response[];
+  verifiedIndividual: number;
   pagination: Pagination;
 }
 
@@ -151,7 +158,6 @@ export interface Residential {
   landMark: string;
 }
 
-
 export interface Corporate {
   _id: string;
   companyName: string;
@@ -195,29 +201,29 @@ export interface Corporate {
 export interface CorporateResponse {
   success: boolean;
   data: {
+    pendingCorporate: number;
     response: Corporate[];
+    verifiedCorporate: number;
     pagination: {
       total: number;
       currentPage: number;
       size: number;
     };
-
   };
-  type: 'corporate';
+  type: "corporate";
   message: string | null;
 }
 
 export type CustomerResponse = CustomerIndividualResponse | CorporateResponse;
 
 export type FieldValue =
-| string
-| number
-| boolean
-| ReactElement<any, string | JSXElementConstructor<any>>
-| Iterable<ReactNode>
-| null
-| undefined;
-
+  | string
+  | number
+  | boolean
+  | ReactElement<any, string | JSXElementConstructor<any>>
+  | Iterable<ReactNode>
+  | null
+  | undefined;
 
 export interface OverviewData {
   totalIndividuals: number;

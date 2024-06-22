@@ -1,10 +1,10 @@
-export const CustomerTableSkeleton = () => {
+export const  CustomerTableSkeleton = () => {
   return (
     <>
       {Array.from({ length: 10 }).map((_, idx) => (
         <tr
           key={idx}
-          className="bg-gray-100 h-16 w-full border group border-b cursor-pointer transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted  border-[#F5F5F7]"
+          className="bg-white h-16 w-full border group border-b cursor-pointer transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted  border-[#F5F5F7]"
         >
           <td className="px-2  py-2">
             <div className=" w-8 h-8 flex items-center justify-center">

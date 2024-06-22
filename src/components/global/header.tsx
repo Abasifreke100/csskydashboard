@@ -3,14 +3,14 @@ import { ChevronLeft } from "lucide-react";
 const Header = ({ title, icon }: { title: string; icon?: boolean }) => {
   return (
     <p
-      className={`text-md font-medium mt-5 ${
-        icon && "flex items-center  gap-1 cursor-pointer"
+      className={`text-md font-medium mt-5 capitalize ${
+        icon && "flex items-center  gap-1 cursor-pointer "
       }`}
       onClick={() => window.history.back()}
     >
       {" "}
       {icon && <ChevronLeft />}
-      {title}
+      {title == "individual" ? "Individuals" : title}
     </p>
   );
 };

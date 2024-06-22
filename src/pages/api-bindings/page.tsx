@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Checkbox } from "../../components/checkbox";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button } from "../../components/ui/button";
 
@@ -16,7 +16,7 @@ const tableHeader = ["Endpoint", "Method", "Description"];
 const ApiBindings = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-    const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const data = {
     data: {
@@ -26,6 +26,30 @@ const ApiBindings = () => {
           endPoint: "/authenticate",
           method: "POST",
           description: "Authenticate user and obtain token",
+        },
+        {
+          _id: "2",
+          endPoint: "/verify-document",
+          method: "POST",
+          description: "Submit document for verification.",
+        },
+        {
+          _id: "3",
+          endPoint: "/status",
+          method: "GET",
+          description: "Check verification status",
+        },
+        {
+          _id: "4",
+          endPoint: "/logout",
+          method: "POST",
+          description: "Logout user",
+        },
+        {
+          _id: "5",
+          endPoint: "/corporate",
+          method: "POST",
+          description: "Get all coporate customers",
         },
         // Add more task objects as needed
       ],
@@ -41,28 +65,25 @@ const ApiBindings = () => {
     setSelectAll(!selectAll);
   };
 
-  const handleRowClick = (
-    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    task: { _id: string; endPoint: string; method: string; description: string }
-  ) => {
-    const checkboxClicked = (event.target as HTMLElement).closest(
-      'input[type="checkbox"]'
-    );
+  // const handleRowClick = (
+  //   event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+  //   task: { _id: string; endPoint: string; method: string; description: string }
+  // ) => {
+  //   const checkboxClicked = (event.target as HTMLElement).closest(
+  //     'input[type="checkbox"]'
+  //   );
 
-    if (!checkboxClicked) {
-      navigate(`/tasks/${task?._id}`);
-    }
-  };
+  // };
 
   const baseURL = import.meta.env.VITE_APP_BASE_URL;
 
   return (
-    <div className="h-screen">
+    <div className="h-screen mb-16">
       <Header title="API Overview" />
       <div className="grid grid-cols-12 gap-5 mt-4">
         <Card className="col-span-12 md:col-span-6 lg:col-span-4 row-span-2 shadow-md">
           <CardHeader>
-            <CardTitle className="text-md">
+            <CardTitle className="text-md ">
               <div className="bg-[#FFF7EF] w-fit p-2 rounded-md flex items-center justify-center text-[#FF7F00]">
                 <ExternalLink />
               </div>
@@ -109,16 +130,23 @@ const ApiBindings = () => {
               {data.data.response.map((task) => (
                 <tr
                   key={task._id}
-                  onClick={(event) => handleRowClick(event, task)}
+                  onClick={() => {
+                    setSelectedRows((prevSelectedRows) =>
+                      prevSelectedRows.includes(task._id)
+                        ? prevSelectedRows.filter((id) => id !== task._id)
+                        : [...prevSelectedRows, task._id]
+                    );
+                  }}
+                  // onClick={(event) => handleRowClick(event, task)}
                   className="border group border-b cursor-pointer transition-colors  hover:bg-muted/50 data-[state=selected]:bg-muted bg-white border-[#F5F5F7]"
                 >
-                  <td className="px-2 py-[9px]  flex items-center justify-center font-medium text-muted-foreground">
+                  <td className="px-2 py-4  flex items-center justify-center font-medium text-muted-foreground">
                     <Checkbox
                       id={`select-task-${task._id}`}
                       isChecked={selectedRows.includes(task._id)}
                       onChange={() => {
                         setSelectedRows((prevSelectedRows) =>
-                           prevSelectedRows.includes(task._id)
+                          prevSelectedRows.includes(task._id)
                             ? prevSelectedRows.filter((id) => id !== task._id)
                             : [...prevSelectedRows, task._id]
                         );
@@ -128,7 +156,7 @@ const ApiBindings = () => {
                   <td className="whitespace-nowrap px-6 py-[9px]">
                     {task.endPoint}
                   </td>
-                  <td className="whitespace-nowrap px-6 text-center py-[9px]">
+                  <td className="whitespace-nowrap px-6  py-[9px]">
                     {task.method}
                   </td>
                   <td className="whitespace-nowrap px-6 py-[9px]">
@@ -140,7 +168,7 @@ const ApiBindings = () => {
           </table>
         </div>
 
-        <Button className="mt-8 text-white transform transition-transform duration-200 ease-in-out hover:scale-105">
+        <Button className="mt-8 text-white text-sm transform transition-transform duration-200 ease-in-out hover:scale-95">
           <a
             target="_blank"
             href={baseURL}
@@ -148,8 +176,8 @@ const ApiBindings = () => {
             className="flex items-center space-x-2"
           >
             <span>Access API Documentation</span>
-            <div className="bg-primary w-fit p-2 rounded-md flex items-center justify-center text-white">
-              <ExternalLink />
+            <div className=" w-fit p-2  rounded-md flex items-center justify-center text-white">
+              <ExternalLink className="h-4"/>
             </div>
           </a>
         </Button>

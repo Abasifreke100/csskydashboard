@@ -92,7 +92,7 @@ export const tableHeader = [
   // "Action",
 ];
 
-export const tabs = ["All", "Verified", "Pending", "Failed"];
+export const tabs = ["all", "verified", "pending"];
 
 export function formatTitle(key: string): string {
   // Example transformation, adjust as per your specific needs

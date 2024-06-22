@@ -68,27 +68,33 @@ const CustomersIdPage = () => {
         }`
       : (data as Corporate)?.companyName ?? "N/A";
 
+
+      const verificationStatus =
+      (data as Response)?.isNinVerified ||
+      (data as Corporate)?.director?.isNinVerified
+        ? "Verified"
+        : "Pending"; 
+
   return (
     <div className="customersContainer  w-full">
       <div className="h-screen w-full">
         <Header title="Customer Profile" icon={true} />
         <div className="w-full mt-3 bg-white overflow-x-auto  rounded-2xl shadow-md">
           <div className="  px-4 w-fit lg:w-full gap-6 lg:gap-0 h-12 flex items-center justify-between">
-            <ProfileInfo
+          <ProfileInfo
               label={label}
-              value="Verified"
-              badgeClassName="bg-lightGreen text-deepGreen hover:bg-deepGreen hover:text-lightGreen"
+              value={verificationStatus}
+              badgeClassName=""
             />
-            <ProfileInfo
-              label="Registration Type"
-              value={
-                (data as Response)?.nin ||
-                (data as Corporate)?.registrationNumber
-              }
-              badgeClassName={`bg-grey ${
-                isLoading ? "h-5 shimmer w-24" : ""
-              } hover:bg-grey hover:text-white text-white rounded-md`}
-            />
+            {(data as Corporate)?.registrationNumber && (
+              <ProfileInfo
+                label="Registration Type"
+                value={(data as Corporate)?.registrationNumber}
+                badgeClassName={`bg-grey ${
+                  isLoading ? "h-5 shimmer w-24" : ""
+                } hover:bg-grey hover:text-white text-white rounded-md`}
+              />
+            )}
             <ProfileInfo
               label="Date Registered"
               value={

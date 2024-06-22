@@ -28,7 +28,7 @@ const moreCard = [
 
 const More = () => {
   return (
-    <div className="h-screen">
+    <div className="md:h-screen mb-16 lg:mb-0">
       <Header title="More Options" />
       <div className="grid grid-cols-12 gap-5 mt-4">
         <Card className="col-span-12  h-44 flex py-4 items-center justify-center  md:col-span-6  lg:col-span-4  shadow-md">
