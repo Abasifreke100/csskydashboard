@@ -21,19 +21,15 @@ import { PasswordExpired } from "../lib/icons/passport-expired-icon";
 import { CoporateIcon } from "../lib/icons/coporate-icon";
 import { PersonIcon } from "../lib/icons/person-icon";
 import { useNavigate } from "react-router-dom";
+import { Corporate, Response, TransformedOverviewData } from "../types";
+import { getInitials } from "../utils/getInitials";
+import { formatRelativeTime } from "../utils/readableDateFormat";
+import { renderSkeletonLoader } from "../skeleton/recent-registrations";
 
 const tabs = ["Coporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
 
 // Define a type for the transformed data
-interface TransformedOverviewData {
-  totalRegistrations: number;
-  validRegistrations: number;
-  invalidRegistrations: number;
-  totalCorporates: number;
-  totalIndividuals: number;
-}
-
 const Home = () => {
   const [dashboardOverview, setDashboardOverview] = useState<
     TransformedOverviewData | undefined
@@ -45,10 +41,12 @@ const Home = () => {
     Array<{ month: number; count: number }> | undefined
   >(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(tabs[0]);
   const [combinedRegistrationData, setCombinedRegistrationData] = useState<
-    Array<any>
+    Array<Response | Corporate>
   >([]);
+
   // const [selectedItem, setSelectedItem] = useState("Daily");
 
   // const handleMenuItemClick = (item: string) => {
@@ -86,7 +84,7 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
+        setLoading(true);
 
         const [corporateResponse, individualResponse] = await Promise.all([
           axiosInstance.get("/corporate"),
@@ -103,7 +101,7 @@ const Home = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -126,9 +124,15 @@ const Home = () => {
     "totalIndividuals",
   ];
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  console.log("response", combinedRegistrationData);
+  const handleItemClick = (item: Response | Corporate) => {
+    const isCorporate = (item as Corporate).registrationNumber !== undefined;
+    const route = isCorporate
+      ? `/customers/corporate/${item._id}`
+      : `/customers/individual/${item._id}`;
+    navigate(route);
+  };
   return (
     <div className="pb-7 md:h-screen customersContainer">
       <div className="grid grid-cols-12 gap-5">
@@ -154,7 +158,11 @@ const Home = () => {
               />
             ))}
 
-        <Card className="col-span-12  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md">
+        <Card
+          className={`col-span-12 ${
+            isLoading && loading ? "h-[260px]" : "h-[338px]"
+          } overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
+        >
           <CardHeader>
             <CardTitle className="text-sm">
               <div className="flex items-center justify-between">
@@ -162,40 +170,87 @@ const Home = () => {
                   Recent Registrations{" "}
                   <CircleAlert className="h-3 text-[#808080]" />
                 </p>
-                <p className="flex items-center cursor-pointer" onClick={() => navigate("/customers/individual")}>
+                <p
+                  className="flex items-center cursor-pointer"
+                  onClick={() => navigate("/customers/individual")}
+                >
                   See All <ChevronRight className="h-4" />
                 </p>
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            {combinedRegistrationData.length === 0 ? (
+          <CardContent className="px-2">
+            {loading ? (
+              renderSkeletonLoader()
+            ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
                 <p className="text-sm text-gray-500">No recent registrations</p>
               </div>
             ) : (
               combinedRegistrationData.map((item, index) => (
-                <div className="flex items-center justify-between mb-4" key={index}>
-                  <div className="flex items-center">
-                    <Avatar className="w-10 h-10">
+                <div
+                  className="flex items-center justify-between mb-4  hover:scale-95 group cursor-pointer transition-transform duration-300 px-2 rounded-md py-1 hover:bg-white data-[state=selected]:bg-muted"
+                  key={index}
+                  onClick={() => handleItemClick(item)}
+                >
+                  <div className="flex items-start">
+                    <Avatar className="w-10 h-10 group-hover:bg-gray-300">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
                         alt="@shadcn"
                       />
-                      <AvatarFallback>{item.firstName[0]}{item.surName[0]}</AvatarFallback>
+                      <AvatarFallback>
+                        {(item as Response)?.firstName &&
+                        (item as Response)?.surName
+                          ? getInitials(
+                              `${(item as Response)?.firstName} ${
+                                (item as Response)?.surName
+                              }`
+                            )
+                          : getInitials(`${(item as Corporate)?.companyName} `)}
+                      </AvatarFallback>
                     </Avatar>
-
                     <div className="ml-2">
-                      <p className="text-xs font-medium">{`${item.firstName} ${item.surName}`}</p>
+                      {!(item as Corporate).registrationNumber ? (
+                        <div className="">
+                          <p className="text-xs text-black font-medium group-hover:text-grey">{`${
+                            (item as Response)?.title
+                          } ${(item as Response)?.firstName} ${(
+                            item as Response
+                          ).surName?.substring(0, 10)}`}</p>
+                          <p className="text-xs text-grey ">
+                            {(item as Response).email?.substring(0, 20)}...
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-xs text-black font-medium group-hover:text-grey">{`${
+                            (item as Corporate).companyName?.length > 20
+                              ? (item as Corporate).companyName?.substring(
+                                  0,
+                                  20
+                                ) + "..."
+                              : (item as Corporate).companyName
+                          }`}</p>
+                          <p className="text-[10px] text-grey">
+                            {(item as Corporate).companyWebsite}...
+                          </p>
+                        </div>
+                      )}
                       <p className="text-xs text-grey flex items-center">
                         <BsFillPeopleFill />
-                        <span className="ml-2">{item.isNinVerified ? "Verified" : "Pending"}</span>
+                        <span className="ml-2">
+                          {(item as Response)?.isNinVerified ||
+                          (item as Corporate)?.director?.isNinVerified
+                            ? "Verified"
+                            : "Pending"}
+                        </span>
                       </p>
                     </div>
                   </div>
-
-                  <p className="mr-3 text-[10px] font-medium text-[#000000E5]">
-                    {new Date(item.createdAt).toLocaleString()}
+                  <p className="mr-3 text-xs font-medium text-[#000000E5]">
+                    {formatRelativeTime((item as Response)?.createdAt) ||
+                      (item as Corporate)?.createdAt}
                   </p>
                 </div>
               ))

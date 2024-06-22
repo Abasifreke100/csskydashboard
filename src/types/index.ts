@@ -235,3 +235,13 @@ export interface OverviewData {
   individualsThisMonth: number;
   individualsThisWeek: number;
 }
+
+
+
+export interface TransformedOverviewData {
+  totalRegistrations: number;
+  validRegistrations: number;
+  invalidRegistrations: number;
+  totalCorporates: number;
+  totalIndividuals: number;
+}
