@@ -159,9 +159,7 @@ const Home = () => {
             ))}
 
         <Card
-          className={`col-span-12 ${
-            isLoading && loading ? "h-[260px]" : "h-[338px]"
-          } overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
+          className={`col-span-12 h-[290px] overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
         >
           <CardHeader>
             <CardTitle className="text-sm">
@@ -180,7 +178,7 @@ const Home = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="px-2">
-            {loading ? (
+            {(loading && isLoading) ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
