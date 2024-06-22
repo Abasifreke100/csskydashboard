@@ -159,7 +159,7 @@ const Home = () => {
             ))}
 
         <Card
-          className={`col-span-12 h-[290px] overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
+          className={`col-span-12 h-[287px] overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
         >
           <CardHeader>
             <CardTitle className="text-sm">

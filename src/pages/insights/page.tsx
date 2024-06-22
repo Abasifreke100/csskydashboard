@@ -16,13 +16,16 @@ import { Chip } from "../../utils/tab-chip";
 import BarChartComponent from "../../components/charts/stacked-bar-chart";
 import { useNavigate } from "react-router-dom";
 import { renderSkeletonLoader } from "../../skeleton/recent-registrations";
-import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import { getInitials } from "../../utils/getInitials";
 import { formatRelativeTime } from "../../utils/readableDateFormat";
 // import InsightPieChart from "../../components/charts/insight-chart";
 // import InsightLineChart from "../../components/charts/insight-line-chart";
 // import SubsidiaryInsightBarChart from "../../components/charts/subsidiary-insight-chart";
-
 
 const tabs = ["Coporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
@@ -42,8 +45,8 @@ const Insights = () => {
   >(undefined);
   const [selected, setSelected] = useState(tabs[0]);
   const [combinedRegistrationData, setCombinedRegistrationData] = useState<
-  Array<Response | Corporate>
->([]);
+    Array<Response | Corporate>
+  >([]);
 
   const handleMenuItemClick = (item: SetStateAction<string>) => {
     setSelectedItem(item);
@@ -105,8 +108,7 @@ const Insights = () => {
     fetchData();
   }, []);
 
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   const handleItemClick = (item: Response | Corporate) => {
     const isCorporate = (item as Corporate).registrationNumber !== undefined;
@@ -137,14 +139,16 @@ const Insights = () => {
                 key={idx}
                 isLoading={isLoading}
                 title={formatTitle(key)}
-                value={insightOverview[key as keyof TransformedOverviewData] ?? 0}
+                value={
+                  insightOverview[key as keyof TransformedOverviewData] ?? 0
+                }
                 icon={icons[idx % icons.length]} // Pass the icon based on idx
                 order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))}
-        <Card className="col-span-12  row-span-2 order-6 lg:order-5 md:col-span-6 lg:col-span-8 shadow-md">
+        <Card className="col-span-12 h-[287px] overflow-y-auto row-span-2 order-6 lg:order-5 md:col-span-6 lg:col-span-8 shadow-md">
           <CardHeader className="">
-          <CardTitle className="text-sm">
+            <CardTitle className="text-sm">
               <div className="flex items-center justify-between">
                 <p className="flex items-center text-sm font-semibold">
                   Recent Registrations{" "}
@@ -161,7 +165,7 @@ const Insights = () => {
             {/* <CardDescription>Card Description</CardDescription> */}
           </CardHeader>
           <CardContent className="px-2">
-            {(loading && isLoading) ? (
+            {loading && isLoading ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
