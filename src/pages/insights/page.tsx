@@ -12,8 +12,9 @@ import {
 } from "../../components/ui/card";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { ChevronRight, MapPin } from "lucide-react";
-import InsightPieChart from "../../components/charts/insight-chart";
-import InsightLineChart from "../../components/charts/insight-line-chart";
+// import InsightPieChart from "../../components/charts/insight-chart";
+// import InsightLineChart from "../../components/charts/insight-line-chart";
+import SubsidiaryInsightBarChart from "../../components/charts/subsidiary-insight-chart";
 
 const Insights = () => {
   const [selectedItem, setSelectedItem] = useState("This Year");
@@ -61,13 +62,14 @@ const Insights = () => {
         selectedItem={selectedItem}
         handleMenuItemClick={handleMenuItemClick}
       />
-      <div className="grid grid-cols-12  gap-5  mt-4">
+      <div className="grid grid-cols-12 gap-5">
         {!overviewData
           ? Array.from({ length: 5 }).map((_, idx) => (
               <InsightCardComponent
                 key={idx}
                 isLoading={isLoading}
                 icon={icons[idx % icons.length]}
+                order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))
           : keysToDisplay.map((key, idx) => (
@@ -76,24 +78,11 @@ const Insights = () => {
                 isLoading={isLoading}
                 title={formatTitle(key)}
                 value={overviewData[key as keyof OverviewData] ?? 0}
-                icon={icons[idx % icons.length]}
+                icon={icons[idx % icons.length]} // Pass the icon based on idx
+                order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))}
-
-        <Card className="col-span-12  lg:col-span-8 h-fit shadow-md">
-          <CardHeader>
-            <CardTitle className="text-md ">
-              Verification Status Breakdown{" "}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="w-full h-[200px]">
-              <InsightPieChart />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-12 lg:col-span-4  shadow-md">
+        <Card className="col-span-12  row-span-2 order-6 lg:order-5 md:col-span-6 lg:col-span-8 shadow-md">
           <CardHeader className="px-0">
             <CardTitle className="text-sm px-0">
               <div className="flex items-center w-full px-0  justify-between">
@@ -123,17 +112,18 @@ const Insights = () => {
             <p className="mr-3 text-[10px] font-medium text-[#000000E5]">1st</p>
           </CardContent>
         </Card>
-        <Card className="col-span-12 mb-12 px-0 lg:col-span-12 shadow-md">
+
+        <Card className="col-span-12 mb-12 px-0 lg:col-span-12 shadow-md order-last">
           <CardHeader>
             <CardTitle className="text-md ">Total Registrations </CardTitle>
           </CardHeader>
           <CardContent className="px-0">
             <div className="w-full h-[230px] md:h-[450px] pb-4">
-              <InsightLineChart />
+              {/* <InsightLineChart /> */}
+              <SubsidiaryInsightBarChart />
             </div>
           </CardContent>
         </Card>
-        <div></div>
       </div>
     </div>
   );

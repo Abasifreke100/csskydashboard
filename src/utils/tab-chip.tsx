@@ -3,6 +3,7 @@ import { Badge } from "../components/ui/badge";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { IconType } from "react-icons/lib";
+import { CorporateResponse, CustomerIndividualResponse, Data } from "../types";
 
 export const Chip = ({
   text,
@@ -10,33 +11,41 @@ export const Chip = ({
   setSelected,
   totalItems,
   icon,
+  data,
 }: {
   text: string;
   selected: boolean;
   setSelected: Dispatch<SetStateAction<string>>;
   totalItems?: number;
   icon?: LucideIcon | IconType;
+  data?: CustomerIndividualResponse | CorporateResponse | null;
 }) => {
   let badgeColor;
   let number;
   let Icon = icon;
   switch (text) {
-    case "All":
+    case "all":
       badgeColor = "bg-[#FFFAEF] hover:bg-primary /75 text-[#FF7F00]";
       number = totalItems;
       break;
-    case "Verified":
+    case "verified":
       badgeColor = "bg-lightGreen hover:bg-deepGreen/75 text-deepGreen";
-      number = 2203;
+      number =
+        (data?.data as Data)?.verifiedIndividual
+        ? ((data?.data as Data)?.verifiedIndividual ?? 0)
+        : (data as CorporateResponse)?.data.verifiedCorporate ?? 0;
       break;
-    case "Pending":
+    case "pending":
       badgeColor = "bg-secondary hover:bg-primary/75 text-primary";
-      number = 2203;
+      number =
+        (data?.data as Data)?.pendingIndividual
+        ? ((data?.data as Data)?.pendingIndividual ?? 0)
+        : (data as CorporateResponse)?.data.pendingCorporate ?? 0;
       break;
-    case "Failed":
-      badgeColor = "bg-lightRed hover:bg-deepRed/75 text-deepRed";
-      number = 2203;
-      break;
+    // case "failed":
+    //   badgeColor = "bg-lightRed hover:bg-deepRed/75 text-deepRed";
+    //   number = 2203;
+    //   break;
     default:
       badgeColor = "bg-[#FFFAEF] text-[#FF7F00]";
   }
@@ -47,10 +56,10 @@ export const Chip = ({
         selected ? "" : "text-slate-400 "
       } text-xs flex items-center  transition-colors px-2.5 py-0.5 rounded-md border-none outline-none  relative`}
     >
-      <span className="relative z-10 text-md flex items-center">
+      <span className="relative capitalize z-10 text-md flex items-center">
         {Icon && (
           <Icon
-            className={`inline-flex h-5 text-[16px] mr-1 ${
+            className={`inline-flex h-5 text-[16px] mr-1  ${
               selected && "text-primary"
             }`}
           />
@@ -58,11 +67,14 @@ export const Chip = ({
         {text}
       </span>
 
-      {number && (
+      {number && number > 0 ? (
         <Badge className={`${badgeColor} ml-3 hover:text-white`}>
           {number}
         </Badge>
+      ) : (
+        " "
       )}
+
       {selected && (
         <motion.span
           layoutId="pill-tab"

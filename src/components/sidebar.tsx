@@ -29,7 +29,7 @@ const sidebarItems: SidebarItems = {
           icon: Globe,
           children: [
             {
-              label: "Cooperate",
+              label: "Corporate",
               href: "/customers/corporate",
               icon: Building2,
             },
@@ -42,7 +42,7 @@ const sidebarItems: SidebarItems = {
         },
         { label: "Insights", href: "/insights", icon: TrendingUp },
         {
-          href: "/tasks",
+          href: "#",
           icon: Sparkles,
           label: "Tasks",
         },

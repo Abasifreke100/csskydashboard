@@ -1,6 +1,7 @@
+import  { useEffect, useState } from "react";
 import { Building2, ChevronRight, CircleAlert } from "lucide-react";
-import CardComponent from "../components/reusables/card";
 import { BsFillPeopleFill, BsPersonArmsUp } from "react-icons/bs";
+import CardComponent from "../components/reusables/card";
 import {
   Card,
   CardContent,
@@ -8,14 +9,11 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import ComposedBarChart from "../components/charts/composed-bar-chart";
-import { SetStateAction, useEffect, useState } from "react";
 import axiosInstance from "../api/connectSurfApi";
 import { formatTitle } from "../constants";
 import GoToTop from "../utils/scroll-into-view";
 import BarChartComponent from "../components/charts/stacked-bar-chart";
 import { Chip } from "../utils/tab-chip";
-import { OverviewData } from "../types";
 import DropdownComponent from "../components/dropdowns/dropdown";
 import { ValidPassportIcon } from "../lib/icons/valid-passport-icon";
 import { Passport } from "../lib/icons/passport-icon";
@@ -25,47 +23,54 @@ import { PersonIcon } from "../lib/icons/person-icon";
 
 const tabs = ["Coporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
+
+// Define a type for the transformed data
+interface TransformedOverviewData {
+  totalRegistrations: number;
+  validRegistrations: number;
+  invalidRegistrations: number;
+  totalCorporates: number;
+  totalIndividuals: number;
+}
+
 const Home = () => {
-  const [overviewData, setOverviewData] = useState<OverviewData | null>(null);
+  const [dashboardOverview, setDashboardOverview] = useState<TransformedOverviewData | undefined>(undefined);
+  const [corporateBarchart, setCorporateBarchart] = useState<Array<{ month: number; count: number }> | undefined>(undefined);
+  const [individualBarchart, setIndividualBarchart] = useState<Array<{ month: number; count: number }> | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState(tabs[0]);
-  const [selectedItem, setSelectedItem] = useState("My Account");
+  const [selectedItem, setSelectedItem] = useState("Daily");
 
-  const handleMenuItemClick = (item: SetStateAction<string>) => {
+  const handleMenuItemClick = (item: string) => {
     setSelectedItem(item);
-    // You can perform additional actions here if needed
   };
 
   useEffect(() => {
-    const fetchOverviewData = async () => {
+    const fetchDashboardData = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance.get("/overview");
+        const response = await axiosInstance.get("/dashboard");
         setIsLoading(false);
         const data = response.data.data;
-        const keysToDisplay: (keyof OverviewData)[] = [
-          "totalIndividuals",
-          "totalCorporates",
-          "individualsToday",
-          "corporatesToday",
-          "corporatesThisMonth",
-          "corporatesThisWeek",
-          "individualsThisMonth",
-          "individualsThisWeek",
-        ];
-        // Create transformedData based on keysToDisplay
-        const transformedData: Partial<OverviewData> = {};
-        keysToDisplay.forEach((key) => {
-          transformedData[key] = data[key] || 0; // Assign 0 if the key doesn't exist in data
-        });
 
-        setOverviewData(transformedData as OverviewData);
+        // Transform data to match keysToDisplay
+        const transformedData: TransformedOverviewData = {
+          totalRegistrations: data.totalRegistration || 0,
+          validRegistrations: data.totalVerified || 0,
+          invalidRegistrations: data.totalInvalid || 0,
+          totalCorporates: data.corporates || 0,
+          totalIndividuals: data.individuals || 0,
+        };
+
+        setDashboardOverview(transformedData);
+        setCorporateBarchart(data.corporateBarchart || []);
+        setIndividualBarchart(data.individualBarchart || []);
       } catch (error) {
-        console.error("Error fetching overview data:", error);
+        console.error("Error fetching dashboard data:", error);
       }
     };
 
-    fetchOverviewData();
+    fetchDashboardData();
   }, []);
 
   const icons = [
@@ -75,6 +80,7 @@ const Home = () => {
     CoporateIcon,
     PersonIcon,
   ];
+
   const keysToDisplay = [
     "totalRegistrations",
     "validRegistrations",
@@ -82,15 +88,20 @@ const Home = () => {
     "totalCorporates",
     "totalIndividuals",
   ];
+
+  console.log("corporateBarChart ==>" , corporateBarchart)
+  console.log("individualBarChart ==>" , individualBarchart)
+
   return (
-    <div className="pb-7 h-screen customersContainer">
-      <div className="grid grid-cols-12  gap-5 ">
-        {!overviewData
+    <div className="pb-7 md:h-screen customersContainer">
+      <div className="grid grid-cols-12 gap-5">
+        {!dashboardOverview
           ? Array.from({ length: 5 }).map((_, idx) => (
               <CardComponent
                 key={idx}
                 isLoading={isLoading}
                 icon={icons[idx % icons.length]}
+                order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))
           : keysToDisplay.map((key, idx) => (
@@ -98,24 +109,15 @@ const Home = () => {
                 key={idx}
                 isLoading={isLoading}
                 title={formatTitle(key)}
-                value={overviewData[key as keyof OverviewData] ?? 0}
-                icon={icons[idx % icons.length]} // Pass the icon based on idx
+                value={dashboardOverview[key as keyof TransformedOverviewData] ?? 0}
+                icon={icons[idx % icons.length]}
+                order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))}
-        <Card className="col-span-12  md:col-span-6  lg:col-span-4 row-span-2 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-md ">Total Registrations </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="w-full h-[300px]">
-              <ComposedBarChart />
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="col-span-12 lg:h-[250px] row-span-2 lg:row-span-1 md:col-span-6 lg:col-span-8  shadow-md">
+        <Card className="col-span-12  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md">
           <CardHeader>
-            <CardTitle className="text-sm ">
+            <CardTitle className="text-sm">
               <div className="flex items-center justify-between">
                 <p className="flex items-center text-sm font-semibold">
                   Recent Registrations{" "}
@@ -126,9 +128,8 @@ const Home = () => {
                 </p>
               </div>
             </CardTitle>
-            {/* <CardDescription>Card Description</CardDescription> */}
           </CardHeader>
-          <CardContent className="flex  items-center justify-between">
+          <CardContent className="flex items-center justify-between">
             <div className="flex items-center">
               <Avatar className="w-10 h-10">
                 <AvatarImage
@@ -153,14 +154,15 @@ const Home = () => {
             </p>
           </CardContent>
         </Card>
-        <Card className="col-span-12 mb-12 px-0 lg:col-span-12 shadow-md">
+
+        <Card className="col-span-12 mb-12 px-0 lg:col-span-12 shadow-md order-last">
           <CardHeader>
-            <CardTitle className="text-md ">Total Registrations </CardTitle>
+            <CardTitle className="text-md">Total Registrations</CardTitle>
           </CardHeader>
-          <CardContent className="px-0">
-            <div className="w-full h-[230px] md:h-[450px] pb-4">
+          <CardContent className="px-0 w-full">
+            <div className="w-full px-0 h-[360px] md:h-[450px] pb-10 pr-4">
               <div className="lg:px-6 overflow-hidden flex flex-col-reverse md:flex-row lg:items-center justify-between">
-                <div className=" flex  whitespace-nowrap overflow-x-auto  flex-nowrap gap-2">
+                <div className="flex whitespace-nowrap overflow-x-auto flex-nowrap gap-2">
                   {tabs.map((tab, idx) => (
                     <Chip
                       text={tab}
@@ -179,8 +181,9 @@ const Home = () => {
                   />
                 </div>
               </div>
-              <BarChartComponent />
-            </div>
+              <BarChartComponent
+                data={selected === "Coporate" ? corporateBarchart ?? [] : individualBarchart ?? []}
+              />            </div>
           </CardContent>
         </Card>
       </div>

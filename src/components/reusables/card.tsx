@@ -9,6 +9,7 @@ interface CardComponentProps {
   value?: string | number;
   title?: string;
   icon: IconType | LucideIcon | any;
+  order?: number;
 }
 
 const CardComponent = ({
@@ -16,13 +17,16 @@ const CardComponent = ({
   value,
   title,
   icon: Icon,
+  order
 }: CardComponentProps) => {
   return (
     <Card
-      className={`shadow-md rounded-xl  lg:col-span-4 ${(title == "Total Corporates" || "Total Individuals") && "h-fit"} ${
-        title == "Total Individuals" ? "col-span-12" : "custom-md-col-span"
-      }`}
-    >
+    className={`shadow-md rounded-xl lg:col-span-4 ${
+      (title == "Total Corporates" || "Total Individuals") && "h-fit"
+    } ${
+      title == "Total Individuals" ? "custom-md-col-span" : "custom-md-col-span"
+    } ${order !== undefined ? `order-${order}` : ""}`}
+  >
       <CardHeader>
         <CardTitle>
           {isLoading ? (

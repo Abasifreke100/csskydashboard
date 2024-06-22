@@ -17,21 +17,21 @@ interface DataItem {
 
 const data02: DataItem[] = [
   {
-    name: 'Group A',
+    name: 'Mobile Phone Registrations',
     value: 2400,
   },
   {
-    name: 'Group B',
+    name: 'Tablet Registrations',
     value: 4567,
   },
   {
-    name: 'Group C',
+    name: 'Desktop Signups',
     value: 1398,
   },
 ];
 
 const totalValue: number = data02.reduce((sum, { value }) => sum + value, 0);
-const colors: string[] = ['#FF7F00', '#FFD9B4', '#6A441F'];
+const colors: string[] = ['#6A441F', '#FFD9B4', '#FF7F00'];
 
 const ComposedBarChart: React.FC = () => {
   return (

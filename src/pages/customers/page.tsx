@@ -69,9 +69,18 @@ const CustomersPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance.get(
-          `/${type}?currentPage=${currentPage}`
-        );
+  
+        // Determine the status parameter based on the selected tab
+        let statusParam = "";
+        if (selected === "pending") {
+          statusParam = "&isNinVerified=0";
+        } else if (selected === "verified") {
+          statusParam = "&isNinVerified=1";
+        }
+        const url = `/${type}?currentPage=${currentPage}${statusParam}`;
+  
+        // Fetch data from the API
+        const response = await axiosInstance.get(url);
         if (response.data.success) {
           setData(response.data);
         } else {
@@ -83,11 +92,12 @@ const CustomersPage = () => {
         setIsLoading(false);
       }
     };
-
+  
     if (type === "corporate" || type === "individual") {
       fetchData();
     }
-  }, [type, currentPage]);
+  }, [type, currentPage, selected]);
+  
 
   const itemsPerPage = 10;
   const totalItems = data?.data?.pagination?.total || 0;
@@ -120,9 +130,11 @@ const CustomersPage = () => {
     setSelectAll(!selectAll);
   };
 
+  const fixedType = type as string;
+
   return (
     <div className="h-screen screen-max-width">
-      <Header title="Customers" />
+      <Header title={fixedType} />
       <Breadcrumb className="mt-4 ">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -150,6 +162,7 @@ const CustomersPage = () => {
                 setSelected={setSelected}
                 key={tab}
                 totalItems={totalItems}
+                data={data}
               />
             ))}
           </div>
@@ -216,7 +229,6 @@ const CustomersPage = () => {
                       id={cellData._id}
                       isChecked={selectedRows.includes(cellData._id)}
                       onChange={(id, isChecked) => {
-                        // Toggle selection
                         if (isChecked) {
                           setSelectedRows((prev) => [...prev, id]);
                         } else {
@@ -271,16 +283,21 @@ const CustomersPage = () => {
                     )}
                   </td>
                   <td className="px-6 py-2 text-center">
-                    {(cellData as Response)?.nin
-                      ? (cellData as Response)?.nin
+                    {(cellData as Response)?._id
+                      ? `${
+                          (cellData as Response)._id.length > 20
+                            ? (cellData as Response)._id?.substring(0, 20) +
+                              "..."
+                            : (cellData as Response)?._id
+                        }`
                       : (cellData as Corporate)?.registrationNumber}
                   </td>
                   <td className="px-6 py-2">{renderCellContent(cellData)}</td>
                   <td className="px-6 py-2 text-center">
                     {formatDate(cellData.createdAt)}
-                  </td>{" "}
+                  </td>
                   <td className="px-6 py-2 text-center">
-                    {formatDate(cellData.createdAt)}
+                    {formatDate(cellData.updatedAt)}
                   </td>
                   <td className="px-6 py-2 capitalize text-grey text-sm">
                     {type}
@@ -288,7 +305,7 @@ const CustomersPage = () => {
                 </tr>
               ))
             ) : (
-              <tr>
+              <tr className="bg-white">
                 <td colSpan={7}>
                   <p className="text-center text-grey py-4">No data found</p>
                 </td>

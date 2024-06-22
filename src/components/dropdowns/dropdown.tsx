@@ -6,6 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { FaCheck } from "react-icons/fa"; // Make sure you have the appropriate icon library installed
 
 interface DropdownComponentProps {
   selectedItem: string;
@@ -16,6 +17,8 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({
   selectedItem,
   handleMenuItemClick,
 }) => {
+  const items = ["Daily", "Weekly", "Monthly", "Yearly"];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="border-transparent outline-none">
@@ -39,18 +42,18 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({
       <DropdownMenuContent sideOffset={5} align="end">
         <DropdownMenuLabel className="font-medium">Select an Option</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => handleMenuItemClick("Daily")}>
-          Daily
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleMenuItemClick("Weekly")}>
-          Weekly
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleMenuItemClick("Monthly")}>
-          Monthly
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleMenuItemClick("Yearly")}>
-          Yearly
-        </DropdownMenuItem>
+        {items.map((item) => (
+          <DropdownMenuItem
+            key={item}
+            onClick={() => handleMenuItemClick(item)}
+            className={`flex justify-between items-center ${
+              selectedItem === item ? "bg-secondary text-primary" : ""
+            }`}
+          >
+            {item}
+            {selectedItem === item && <FaCheck className="ml-2" />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
