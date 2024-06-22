@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Building2, ChevronRight, CircleAlert } from "lucide-react";
 import { BsFillPeopleFill, BsPersonArmsUp } from "react-icons/bs";
 import CardComponent from "../components/reusables/card";
@@ -14,12 +14,13 @@ import { formatTitle } from "../constants";
 import GoToTop from "../utils/scroll-into-view";
 import BarChartComponent from "../components/charts/stacked-bar-chart";
 import { Chip } from "../utils/tab-chip";
-import DropdownComponent from "../components/dropdowns/dropdown";
+// import DropdownComponent from "../components/dropdowns/dropdown";
 import { ValidPassportIcon } from "../lib/icons/valid-passport-icon";
 import { Passport } from "../lib/icons/passport-icon";
 import { PasswordExpired } from "../lib/icons/passport-expired-icon";
 import { CoporateIcon } from "../lib/icons/coporate-icon";
 import { PersonIcon } from "../lib/icons/person-icon";
+import { useNavigate } from "react-router-dom";
 
 const tabs = ["Coporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
@@ -34,16 +35,25 @@ interface TransformedOverviewData {
 }
 
 const Home = () => {
-  const [dashboardOverview, setDashboardOverview] = useState<TransformedOverviewData | undefined>(undefined);
-  const [corporateBarchart, setCorporateBarchart] = useState<Array<{ month: number; count: number }> | undefined>(undefined);
-  const [individualBarchart, setIndividualBarchart] = useState<Array<{ month: number; count: number }> | undefined>(undefined);
+  const [dashboardOverview, setDashboardOverview] = useState<
+    TransformedOverviewData | undefined
+  >(undefined);
+  const [corporateBarchart, setCorporateBarchart] = useState<
+    Array<{ month: number; count: number }> | undefined
+  >(undefined);
+  const [individualBarchart, setIndividualBarchart] = useState<
+    Array<{ month: number; count: number }> | undefined
+  >(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState(tabs[0]);
-  const [selectedItem, setSelectedItem] = useState("Daily");
+  const [combinedRegistrationData, setCombinedRegistrationData] = useState<
+    Array<any>
+  >([]);
+  // const [selectedItem, setSelectedItem] = useState("Daily");
 
-  const handleMenuItemClick = (item: string) => {
-    setSelectedItem(item);
-  };
+  // const handleMenuItemClick = (item: string) => {
+  //   setSelectedItem(item);
+  // };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -73,6 +83,33 @@ const Home = () => {
     fetchDashboardData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+
+        const [corporateResponse, individualResponse] = await Promise.all([
+          axiosInstance.get("/corporate"),
+          axiosInstance.get("/individual"),
+        ]);
+
+        const corporateData = corporateResponse.data.data.response.slice(0, 2);
+        const individualData = individualResponse.data.data.response.slice(
+          0,
+          2
+        );
+
+        setCombinedRegistrationData([...corporateData, ...individualData]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const icons = [
     Passport,
     ValidPassportIcon,
@@ -89,9 +126,9 @@ const Home = () => {
     "totalIndividuals",
   ];
 
-  console.log("corporateBarChart ==>" , corporateBarchart)
-  console.log("individualBarChart ==>" , individualBarchart)
+  const navigate = useNavigate()
 
+  console.log("response", combinedRegistrationData);
   return (
     <div className="pb-7 md:h-screen customersContainer">
       <div className="grid grid-cols-12 gap-5">
@@ -109,7 +146,9 @@ const Home = () => {
                 key={idx}
                 isLoading={isLoading}
                 title={formatTitle(key)}
-                value={dashboardOverview[key as keyof TransformedOverviewData] ?? 0}
+                value={
+                  dashboardOverview[key as keyof TransformedOverviewData] ?? 0
+                }
                 icon={icons[idx % icons.length]}
                 order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
@@ -123,39 +162,48 @@ const Home = () => {
                   Recent Registrations{" "}
                   <CircleAlert className="h-3 text-[#808080]" />
                 </p>
-                <p className="flex items-center cursor-pointer">
+                <p className="flex items-center cursor-pointer" onClick={() => navigate("/customers/individual")}>
                   See All <ChevronRight className="h-4" />
                 </p>
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="w-10 h-10">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
-
-              <div className="ml-2">
-                <p className="text-xs font-medium">Obi Wankenobi</p>
-                <p className="text-xs text-grey flex items-center">
-                  {" "}
-                  <BsFillPeopleFill />
-                  <span className="ml-2">Personal</span>
-                </p>
+          <CardContent>
+            {combinedRegistrationData.length === 0 ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-gray-500">No recent registrations</p>
               </div>
-            </div>
+            ) : (
+              combinedRegistrationData.map((item, index) => (
+                <div className="flex items-center justify-between mb-4" key={index}>
+                  <div className="flex items-center">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage
+                        src="https://github.com/shadcn.png"
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback>{item.firstName[0]}{item.surName[0]}</AvatarFallback>
+                    </Avatar>
 
-            <p className="mr-3 text-[10px] font-medium text-[#000000E5]">
-              1H Ago
-            </p>
+                    <div className="ml-2">
+                      <p className="text-xs font-medium">{`${item.firstName} ${item.surName}`}</p>
+                      <p className="text-xs text-grey flex items-center">
+                        <BsFillPeopleFill />
+                        <span className="ml-2">{item.isNinVerified ? "Verified" : "Pending"}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="mr-3 text-[10px] font-medium text-[#000000E5]">
+                    {new Date(item.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
-        <Card className="col-span-12 mb-12 px-0 lg:col-span-12 shadow-md order-last">
+        <Card className="col-span-12 mb-12  px-0 lg:col-span-12 shadow-md order-last">
           <CardHeader>
             <CardTitle className="text-md">Total Registrations</CardTitle>
           </CardHeader>
@@ -174,16 +222,21 @@ const Home = () => {
                   ))}
                 </div>
 
-                <div className="self-end">
+                {/* <div className="self-end">
                   <DropdownComponent
                     selectedItem={selectedItem}
                     handleMenuItemClick={handleMenuItemClick}
                   />
-                </div>
+                </div> */}
               </div>
               <BarChartComponent
-                data={selected === "Coporate" ? corporateBarchart ?? [] : individualBarchart ?? []}
-              />            </div>
+                data={
+                  selected === "Coporate"
+                    ? corporateBarchart ?? []
+                    : individualBarchart ?? []
+                }
+              />{" "}
+            </div>
           </CardContent>
         </Card>
       </div>
