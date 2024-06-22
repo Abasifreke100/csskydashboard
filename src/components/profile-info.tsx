@@ -1,11 +1,13 @@
 import { ProfileInfoProps } from "../types";
 import { Badge } from "./ui/badge";
 
-const getBadgeDetails = (value: string) => {
+const getBadgeDetails = (value: string | number) => {
   let badgeBgColor = "";
   let badgeText = "";
 
-  switch (value?.toLowerCase()) {
+  const valueStr = String(value).toLowerCase();
+
+  switch (valueStr) {
     case "verified":
       badgeBgColor = "bg-lightGreen hover:bg-lightGreen text-deepGreen";
       badgeText = "Verified";
@@ -20,11 +22,12 @@ const getBadgeDetails = (value: string) => {
       break;
     default:
       badgeBgColor = "bg-grey hover:bg-grey text-white";
-      badgeText = value;
+      badgeText = valueStr;
   }
 
   return { badgeBgColor, badgeText };
 };
+
 
 export const ProfileInfo: React.FC<ProfileInfoProps> = ({
   label,
