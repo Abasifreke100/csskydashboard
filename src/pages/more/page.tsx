@@ -26,6 +26,12 @@ const moreCard = [
   },
 ];
 
+const handleCardClick = (title: string) => {
+  if (title === "Documentation") {
+    window.open("https://documenter.getpostman.com/view/7257932/2sA2r82Pmm", "_blank");
+  }
+};
+
 const More = () => {
   return (
     <div className="md:h-screen mb-16 lg:mb-0">
@@ -55,7 +61,8 @@ const More = () => {
           return (
             <Card
               key={index}
-              className="col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md"
+              className={`${card.title == "Documentation" && "cursor-pointer"}col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md`}
+              onClick={() => handleCardClick(card.title)}
             >
               <CardContent className="flex flex-col items-center justify-center mt-2">
                 <div className="bg-[#FFF7EF] w-fit p-3 rounded-md flex items-center justify-center text-[#FF7F00]">

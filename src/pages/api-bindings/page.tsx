@@ -78,7 +78,7 @@ const ApiBindings = () => {
   const baseURL = import.meta.env.VITE_APP_BASE_URL;
 
   return (
-    <div className="h-screen mb-16">
+    <div className="h-screen pb-16">
       <Header title="API Overview" />
       <div className="grid grid-cols-12 gap-5 mt-4">
         <Card className="col-span-12 md:col-span-6 lg:col-span-4 row-span-2 shadow-md">
@@ -168,7 +168,7 @@ const ApiBindings = () => {
           </table>
         </div>
 
-        <Button className="mt-8 text-white text-sm transform transition-transform duration-200 ease-in-out hover:scale-95">
+        <Button className="mt-8 mb-12 text-white text-sm transform transition-transform duration-200 ease-in-out hover:scale-95">
           <a
             target="_blank"
             href={baseURL}
