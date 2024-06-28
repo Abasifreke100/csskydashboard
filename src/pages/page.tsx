@@ -41,7 +41,6 @@ const Home = () => {
     Array<{ month: number; count: number }> | undefined
   >(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(tabs[0]);
   const [combinedRegistrationData, setCombinedRegistrationData] = useState<
     Array<Response | Corporate>
@@ -185,7 +184,7 @@ const Home = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="px-2">
-            {(loading && isLoading) ? (
+            {( isLoading) ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
