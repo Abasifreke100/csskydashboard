@@ -68,12 +68,16 @@ const CustomersIdPage = () => {
         }`
       : (data as Corporate)?.companyName ?? "N/A";
 
+  const verificationStatus =
+    (data as Response)?.isNinVerified ||
+    (data as Corporate)?.director?.isNinVerified
+      ? "Verified"
+      : "Pending";
 
-      const verificationStatus =
-      (data as Response)?.isNinVerified ||
-      (data as Corporate)?.director?.isNinVerified
-        ? "Verified"
-        : "Pending"; 
+  const documentType =
+    (data as Response)?.documents?.documentType?.trim() ||
+    (data as Corporate)?.documents?.type?.trim() ||
+    "Not Provided";
 
   return (
     <div className="customersContainer  w-full">
@@ -81,7 +85,7 @@ const CustomersIdPage = () => {
         <Header title="Customer Profile" icon={true} />
         <div className="w-full mt-3 bg-white overflow-x-auto  rounded-2xl shadow-md">
           <div className="  px-4 w-fit lg:w-full gap-6 lg:gap-0 h-12 flex items-center justify-between">
-          <ProfileInfo
+            <ProfileInfo
               label={label}
               value={verificationStatus}
               badgeClassName=""
@@ -166,7 +170,7 @@ const CustomersIdPage = () => {
                       )}
                       {section.label === "Document" ? (
                         <div className="flex justify-between  flex-col  h-full order-last">
-                          <p className="mb-2">National ID</p>
+                          <p className="mb-2 text-sm">{documentType}</p>
                           <div
                             className={`w-3/4 border rounded-md overflow-hidden ${
                               isLoading ? "h-40" : "h-28"
@@ -199,9 +203,9 @@ const CustomersIdPage = () => {
                                 )}
                               </DialogTrigger>
                               {field.value && (
-                                <DialogContent className=" w-[380px] lg:w-[600px]">
+                                <DialogContent className=" w-[380px] lg:w-[600px] h-[500px]">
                                   <DialogHeader>
-                                    <DialogDescription>
+                                    <DialogDescription className="h-[400px]">
                                       <img
                                         src={field.value as string}
                                         alt={field.label}
@@ -221,14 +225,13 @@ const CustomersIdPage = () => {
                               <DialogTrigger asChild>
                                 {isLoading ? (
                                   <div className="object-cover bg-gray-300 shimmer cursor-pointer w-full h-full" />
+                                ) : field.value ? (
+                                  <img
+                                    src={field.value as string}
+                                    alt={field.label}
+                                    className="object-cover  cursor-pointer w-full h-full"
+                                  />
                                 ) : (
-                                  // : field.value ? (
-                                  //   <img
-                                  //     src={field.value as string}
-                                  //     alt={field.label}
-                                  //     className="object-cover  cursor-pointer w-full h-full"
-                                  //   />
-                                  // )
                                   <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
                                     {" "}
                                     {(data as Response)?.firstName &&
@@ -240,11 +243,11 @@ const CustomersIdPage = () => {
                                         )
                                       : getInitials(
                                           `${(data as Corporate)?.companyName} `
-                                        )}{" "}
+                                        )}
                                   </div>
                                 )}
                               </DialogTrigger>
-                              {/* {field.value  && (
+                              {field.value && (
                                 <DialogContent className=" w-[380px] lg:w-[600px]">
                                   <DialogHeader>
                                     <DialogDescription>
@@ -256,7 +259,7 @@ const CustomersIdPage = () => {
                                     </DialogDescription>
                                   </DialogHeader>
                                 </DialogContent>
-                              )} */}
+                              )}
                             </Dialog>
                           </div>
                         </div>
@@ -265,7 +268,14 @@ const CustomersIdPage = () => {
                       ) : field.label == "Company Website" ? (
                         <a
                           className="text-xs font-medium mb-3 hover:text-primary hover:underline"
-                          href={(field.value as string) || " "}
+                          href={
+                            typeof field.value === "string" &&
+                            field.value.trim() !== ""
+                              ? field.value.startsWith("http")
+                                ? field.value
+                                : `https://${field.value}`
+                              : "about:blank"
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                         >

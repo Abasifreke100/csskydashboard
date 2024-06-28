@@ -65,39 +65,38 @@ const CustomersPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-  
-        // Determine the status parameter based on the selected tab
-        let statusParam = "";
-        if (selected === "pending") {
-          statusParam = "&isNinVerified=0";
-        } else if (selected === "verified") {
-          statusParam = "&isNinVerified=1";
-        }
-        const url = `/${type}?currentPage=${currentPage}${statusParam}`;
-  
-        // Fetch data from the API
-        const response = await axiosInstance.get(url);
-        if (response.data.success) {
-          setData(response.data);
-        } else {
-          console.error("Failed to fetch data:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+
+      // Determine the status parameter based on the selected tab
+      let statusParam = "";
+      if (selected === "pending") {
+        statusParam = "&isNinVerified=0";
+      } else if (selected === "verified") {
+        statusParam = "&isNinVerified=1";
       }
-    };
-  
+      const url = `/${type}?currentPage=${currentPage}${statusParam}`;
+
+      // Fetch data from the API
+      const response = await axiosInstance.get(url);
+      if (response.data.success) {
+        setData(response.data);
+      } else {
+        console.error("Failed to fetch data:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (type === "corporate" || type === "individual") {
       fetchData();
     }
   }, [type, currentPage, selected]);
-  
 
   const itemsPerPage = 10;
   const totalItems = data?.data?.pagination?.total || 0;
@@ -130,7 +129,35 @@ const CustomersPage = () => {
     setSelectAll(!selectAll);
   };
 
+  const handleVerifySelected = async () => {
+    try {
+      const endpoint = `/${type}/verify/nin`;
+      console.log("selectedRows", selectedRows);
+      const verificationPromises = selectedRows.map((id) =>
+        axiosInstance.post(`${endpoint}/${id}`)
+      );
+      await Promise.all(verificationPromises);
+      // Optionally, after all verifications are done, you may want to fetch updated data
+      // Example: refetchData();
+    } catch (error) {
+      console.error("Error verifying individuals:", error);
+      // Handle error, show error message, etc.
+    } finally {
+      setSelectAll(false);
+      setSelectedRows([]);
+
+      fetchData();
+    }
+  };
+
   const fixedType = type as string;
+
+  // clear selected checkbox
+
+  useEffect(() => {
+    setSelectAll(false);
+    setSelectedRows([]);
+  }, [selected]);
 
   return (
     <div className="h-screen screen-max-width">
@@ -138,7 +165,12 @@ const CustomersPage = () => {
       <Breadcrumb className="mt-4 ">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink onClick={() => navigate("/")}>Home</BreadcrumbLink>
+            <BreadcrumbLink
+              className="cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              Home
+            </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -153,20 +185,19 @@ const CustomersPage = () => {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center w-full gap-3 ">
-        <div className="overflow-hidden flex-col lg:flex-row w-full gap-4 flex items-center">
-          <div className="w-full pt-6 lg:py-6 whitespace-nowrap overflow-x-auto flex items-center flex-nowrap gap-2">
+        <div className="overflow-hidden flex-col lg:flex-row w-full  lg:justify-between flex lg:items-center flex-nowrap gap-2">
+          <div className="w-fit pt-6 lg:py-6 whitespace-nowrap overflow-x-auto flex items-center flex-nowrap gap-2">
             {tabs.map((tab) => (
               <Chip
                 text={tab}
                 selected={selected === tab}
                 setSelected={setSelected}
                 key={tab}
-                totalItems={totalItems}
                 data={data}
               />
             ))}
           </div>
-          <div className="flex-1  w-full">
+          <div className="w-full lg:w-[500px]">
             <div className="bg-white flex w-full items-center   px-1 py-1 rounded-xl gap-2">
               <div className="flex-1 ">
                 <div className="flex text-grey items-center">
@@ -185,10 +216,24 @@ const CustomersPage = () => {
               </p>
             </div>
           </div>
+          {selectedRows.length > 0 && selected === "pending" && (
+            <div className="w-full  mt-4 lg:mt-0 lg:w-fit h-fit p-0  flex justify-end ">
+              <button
+                className="relative bg-primary h-fit mt-0 text-white text-xs px-4 py-2 shadow rounded-md overflow-hidden group transform transition duration-300 ease-in-out"
+                onClick={handleVerifySelected}
+              >
+                <span className="absolute inset-0  opacity-0 transition-opacity duration-300 group-hover:opacity-10"></span>
+                <span className="relative group-hover:scale-105 group-focus:scale-105">
+                  Verify Selected{" "}
+                  {type === "individual" ? "Individuals" : "Corporate"}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border oveflow-hidden rounded-lg">
+      <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border  rounded-lg">
         <table className="w-full text-sm  text-gray-500">
           <thead className="text-xs  uppercase  bg-[#F5F5F7]">
             <tr className="font-medium border-b border-gray-200 text-muted-foreground">
@@ -204,10 +249,10 @@ const CustomersPage = () => {
                   scope="col"
                   key={idx}
                   className={`${
-                    idx == 0 && " "
-                  } whitespace-nowrap px-6  capitalize font-medium py-[9px] text-[#000000E5] text-sm ${
-                    header == "Name" && "text-start"
-                  }   ${idx === 6 && ""}`}
+                    idx === 0 ? "" : "whitespace-nowrap"
+                  } px-6 capitalize font-medium py-[9px] text-[#000000E5] text-sm ${
+                    header === "Name" ? "text-start" : ""
+                  } ${idx === 6 ? "" : ""}`}
                 >
                   {header}
                 </th>

@@ -26,7 +26,7 @@ import { getInitials } from "../utils/getInitials";
 import { formatRelativeTime } from "../utils/readableDateFormat";
 import { renderSkeletonLoader } from "../skeleton/recent-registrations";
 
-const tabs = ["Coporate", "Individual"];
+const tabs = ["Corporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
 
 // Define a type for the transformed data
@@ -84,24 +84,31 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
 
         const [corporateResponse, individualResponse] = await Promise.all([
-          axiosInstance.get("/corporate"),
-          axiosInstance.get("/individual"),
+          axiosInstance.get<{ data: { response: Corporate[] } }>("/corporate"),
+          axiosInstance.get<{ data: { response: Response[] } }>("/individual"),
         ]);
 
-        const corporateData = corporateResponse.data.data.response.slice(0, 2);
-        const individualData = individualResponse.data.data.response.slice(
-          0,
-          2
-        );
+        console.log("Corporate Response:", corporateResponse.data);
+        console.log("Individual Response:", individualResponse.data);
 
-        setCombinedRegistrationData([...corporateData, ...individualData]);
+        const corporateData = corporateResponse.data.data.response
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 2);
+          console.log("corporateData", corporateData)
+          
+          const individualData = individualResponse.data.data.response
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 2);
+
+          console.log("individualData", individualData)
+          setCombinedRegistrationData([...corporateData, ...individualData]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -284,7 +291,7 @@ const Home = () => {
               </div>
               <BarChartComponent
                 data={
-                  selected === "Coporate"
+                  selected === "Corporate"
                     ? corporateBarchart ?? []
                     : individualBarchart ?? []
                 }

@@ -142,12 +142,13 @@ export interface Response {
 }
 
 export interface Biometrics {
-  selfie: boolean;
+  selfie: string;
   fingerPrint: boolean;
 }
 
 export interface Documents {
   identity: string;
+  documentType: string;
 }
 
 export interface Residential {
@@ -190,7 +191,7 @@ export interface Corporate {
     identity: string;
   };
   bioMetrics: {
-    selfie: boolean;
+    selfie: string;
     fingerPrint: boolean;
   };
   createdAt: string; // Assuming createdAt and updatedAt are strings in ISO format
@@ -235,8 +236,6 @@ export interface OverviewData {
   individualsThisMonth: number;
   individualsThisWeek: number;
 }
-
-
 
 export interface TransformedOverviewData {
   totalRegistrations: number;
