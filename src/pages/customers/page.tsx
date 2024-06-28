@@ -60,6 +60,7 @@ const CustomersPage = () => {
   const [selected, setSelected] = useState(tabs[0]);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<CustomerResponse | null>(null);
   const { currentPage, setCurrentPage } = useProviderContext();
   const [isLoading, setIsLoading] = useState(false);
@@ -136,6 +137,7 @@ const CustomersPage = () => {
       const verificationPromises = selectedRows.map((id) =>
         axiosInstance.post(`${endpoint}/${id}`)
       );
+      setLoading(true);
       await Promise.all(verificationPromises);
       // Optionally, after all verifications are done, you may want to fetch updated data
       // Example: refetchData();
@@ -145,7 +147,7 @@ const CustomersPage = () => {
     } finally {
       setSelectAll(false);
       setSelectedRows([]);
-
+      setLoading(false);
       fetchData();
     }
   };
@@ -219,13 +221,15 @@ const CustomersPage = () => {
           {selectedRows.length > 0 && selected === "pending" && (
             <div className="w-full  mt-4 lg:mt-0 lg:w-fit h-fit p-0  flex justify-end ">
               <button
-                className="relative bg-primary h-fit mt-0 text-white text-xs px-4 py-2 shadow rounded-md overflow-hidden group transform transition duration-300 ease-in-out"
+                className="relative bg-primary hover:scale-95 h-fit w-[200px] mt-0 text-white text-xs px-4 py-2 shadow rounded-md overflow-hidden group transform transition duration-300 ease-in-out"
                 onClick={handleVerifySelected}
               >
                 <span className="absolute inset-0  opacity-0 transition-opacity duration-300 group-hover:opacity-10"></span>
                 <span className="relative group-hover:scale-105 group-focus:scale-105">
-                  Verify Selected{" "}
-                  {type === "individual" ? "Individuals" : "Corporate"}
+                  {loading
+                    ? "Verifying..."
+                    : ` Verify Selected
+                  ${type === "individual" ? "Individuals" : "Corporate"}`}
                 </span>
               </button>
             </div>
