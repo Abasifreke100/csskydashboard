@@ -10,10 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { BsFillPeopleFill, BsPersonArmsUp } from "react-icons/bs";
-import { Building2, ChevronRight, CircleAlert } from "lucide-react";
-import { Chip } from "../../utils/tab-chip";
-import BarChartComponent from "../../components/charts/stacked-bar-chart";
+import { BsFillPeopleFill } from "react-icons/bs";
+import { ChevronRight, CircleAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { renderSkeletonLoader } from "../../skeleton/recent-registrations";
 import {
@@ -23,12 +21,10 @@ import {
 } from "../../components/ui/avatar";
 import { getInitials } from "../../utils/getInitials";
 import { formatRelativeTime } from "../../utils/readableDateFormat";
+import InsightLineChart from "../../components/charts/insight-line-chart";
 // import InsightPieChart from "../../components/charts/insight-chart";
 // import InsightLineChart from "../../components/charts/insight-line-chart";
 // import SubsidiaryInsightBarChart from "../../components/charts/subsidiary-insight-chart";
-
-const tabs = ["Coporate", "Individual"];
-const tabIcons = [Building2, BsPersonArmsUp];
 
 const Insights = () => {
   const [selectedItem, setSelectedItem] = useState("This Year");
@@ -43,7 +39,6 @@ const Insights = () => {
   const [individualBarchart, setIndividualBarchart] = useState<
     Array<{ month: number; count: number }> | undefined
   >(undefined);
-  const [selected, setSelected] = useState(tabs[0]);
   const [combinedRegistrationData, setCombinedRegistrationData] = useState<
     Array<Response | Corporate>
   >([]);
@@ -248,20 +243,8 @@ const Insights = () => {
             <CardTitle className="text-md ">Total Registrations </CardTitle>
           </CardHeader>
           <CardContent className="px-0 w-full">
-            <div className="w-full px-0 h-[360px] md:h-[450px] pb-10 pr-4">
+            <div className="w-full px-0 h-[360px] md:h-[450px] pb-0 pr-2">
               <div className="lg:px-6 overflow-hidden flex flex-col-reverse md:flex-row lg:items-center justify-between">
-                <div className="flex whitespace-nowrap overflow-x-auto flex-nowrap gap-2">
-                  {tabs.map((tab, idx) => (
-                    <Chip
-                      text={tab}
-                      selected={selected === tab}
-                      setSelected={setSelected}
-                      key={tab}
-                      icon={tabIcons[idx]}
-                    />
-                  ))}
-                </div>
-
                 {/* <div className="self-end">
                   <DropdownComponent
                     selectedItem={selectedItem}
@@ -269,13 +252,10 @@ const Insights = () => {
                   />
                 </div> */}
               </div>
-              <BarChartComponent
-                data={
-                  selected === "Coporate"
-                    ? corporateBarchart ?? []
-                    : individualBarchart ?? []
-                }
-              />{" "}
+              <InsightLineChart
+                corporateData={corporateBarchart}
+                individualData={individualBarchart}
+              />
             </div>
           </CardContent>
         </Card>

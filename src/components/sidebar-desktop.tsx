@@ -85,7 +85,7 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
                             </span>
                           </SidebarButton>
                         </AccordionTrigger>
-                        <AccordionContent className="border-none h-fit mb-0 mt-1 outline-none">
+                        <AccordionContent className="border-none p-0 h-fit mb-0 mt-1 outline-none">
                           {link.children.map((child, childIndex) => (
                             <Link key={childIndex} to={child.href}>
                               <SidebarButton

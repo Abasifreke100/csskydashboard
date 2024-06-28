@@ -9,38 +9,41 @@ export const Chip = ({
   text,
   selected,
   setSelected,
-  totalItems,
   icon,
   data,
 }: {
   text: string;
   selected: boolean;
   setSelected: Dispatch<SetStateAction<string>>;
-  totalItems?: number;
   icon?: LucideIcon | IconType;
   data?: CustomerIndividualResponse | CorporateResponse | null;
 }) => {
   let badgeColor;
   let number;
   let Icon = icon;
+
+  const verifiedCount =
+  (data?.data as Data)?.verifiedIndividual ??
+  (data as CorporateResponse)?.data.verifiedCorporate ??
+  0;
+
+const pendingCount =
+  (data?.data as Data)?.pendingIndividual ??
+  (data as CorporateResponse)?.data.pendingCorporate ??
+  0;
+
   switch (text) {
     case "all":
       badgeColor = "bg-[#FFFAEF] hover:bg-primary /75 text-[#FF7F00]";
-      number = totalItems;
+      number = verifiedCount + pendingCount;
       break;
     case "verified":
       badgeColor = "bg-lightGreen hover:bg-deepGreen/75 text-deepGreen";
-      number =
-        (data?.data as Data)?.verifiedIndividual
-        ? ((data?.data as Data)?.verifiedIndividual ?? 0)
-        : (data as CorporateResponse)?.data.verifiedCorporate ?? 0;
+      number = verifiedCount
       break;
     case "pending":
       badgeColor = "bg-secondary hover:bg-primary/75 text-primary";
-      number =
-        (data?.data as Data)?.pendingIndividual
-        ? ((data?.data as Data)?.pendingIndividual ?? 0)
-        : (data as CorporateResponse)?.data.pendingCorporate ?? 0;
+      number = pendingCount;
       break;
     // case "failed":
     //   badgeColor = "bg-lightRed hover:bg-deepRed/75 text-deepRed";
@@ -54,9 +57,9 @@ export const Chip = ({
       onClick={() => setSelected(text)}
       className={`${
         selected ? "" : "text-slate-400 "
-      } text-xs flex items-center  transition-colors px-2.5 py-0.5 rounded-md border-none outline-none  relative`}
+      } text-xs flex items-center  transition-colors px-2.5 py-0.5 rounded-md border-none h-7 outline-none  relative`}
     >
-      <span className="relative capitalize z-10 text-md flex items-center">
+      <span className="relative capitalize z-10   text-md flex items-center">
         {Icon && (
           <Icon
             className={`inline-flex h-5 text-[16px] mr-1  ${
