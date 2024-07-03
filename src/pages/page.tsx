@@ -94,16 +94,22 @@ const Home = () => {
         console.log("Individual Response:", individualResponse.data);
 
         const corporateData = corporateResponse.data.data.response
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
           .slice(0, 2);
-          console.log("corporateData", corporateData)
-          
-          const individualData = individualResponse.data.data.response
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        console.log("corporateData", corporateData);
+
+        const individualData = individualResponse.data.data.response
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
           .slice(0, 2);
 
-          console.log("individualData", individualData)
-          setCombinedRegistrationData([...corporateData, ...individualData]);
+        console.log("individualData", individualData);
+        setCombinedRegistrationData([...corporateData, ...individualData]);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -184,7 +190,7 @@ const Home = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="px-2">
-            {( isLoading) ? (
+            {isLoading ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
@@ -200,7 +206,11 @@ const Home = () => {
                   <div className="flex items-start">
                     <Avatar className="w-10 h-10 group-hover:bg-gray-300">
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
+                        src={
+                          (item as Response)?.biometrics?.selfie
+                            ? (item as Response)?.biometrics?.selfie
+                            : (item as Corporate)?.bioMetrics?.selfie
+                        }
                         alt="@shadcn"
                       />
                       <AvatarFallback>
