@@ -176,7 +176,11 @@ const Insights = () => {
                   <div className="flex items-start">
                     <Avatar className="w-10 h-10 group-hover:bg-gray-300">
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
+                        src={
+                          (item as Response)?.biometrics?.selfie
+                            ? (item as Response)?.biometrics?.selfie
+                            : (item as Corporate)?.bioMetrics?.selfie
+                        }
                         alt="@shadcn"
                       />
                       <AvatarFallback>
