@@ -66,6 +66,10 @@ const CustomersPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setCurrentPage(1); // Reset the current page to 1 when type changes
+  }, [selected]);
+
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -160,6 +164,11 @@ const CustomersPage = () => {
     setSelectAll(false);
     setSelectedRows([]);
   }, [selected]);
+
+  useEffect(() => {
+setSelected(tabs[0])
+  },[type])
+
 
   return (
     <div className="h-screen screen-max-width">
@@ -290,7 +299,13 @@ const CustomersPage = () => {
                   </td>
                   <td className="px-6 py-2 flex items-center gap-2">
                     <Avatar className="w-10 h-10">
-                      <AvatarImage src="https://github.com/shadcn.png" alt="" />
+                      <AvatarImage
+                        src={
+                          (cellData as Response)?.biometrics?.selfie
+                            ? (cellData as Response)?.biometrics?.selfie
+                            : (cellData as Corporate)?.bioMetrics?.selfie
+                        }
+                      />
                       <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                         {(cellData as Response)?.firstName &&
                         (cellData as Response)?.surName
