@@ -10,6 +10,7 @@ interface CardComponentProps {
   title?: string;
   icon: IconType | LucideIcon | any;
   order?: number;
+  valueClassName?: string;
 }
 
 const CardComponent = ({
@@ -17,7 +18,8 @@ const CardComponent = ({
   value,
   title,
   icon: Icon,
-  order
+  order,
+  valueClassName
 }: CardComponentProps) => {
   return (
     <Card
@@ -43,17 +45,18 @@ const CardComponent = ({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent >
         {isLoading ? (
-          <p className="font-semibold text-xl bg-gray-300 shimmer w-36 h-2 rounded-md"></p>
+          <p className="font-semibold text-xl bg-gray-300 shimmer w-36 mt-3 h-3 rounded-md"></p>
         ) : (
-          <p className="font-semibold text-xl">{value}</p>
+          <p className={`font-semibold text-xl ${valueClassName}`}>{value ?? "..."}</p>
         )}
         {isLoading ? (
-          <p className="font-semibold text-xl bg-gray-300 shimmer w-24 mt-1 h-2 rounded-md"></p>
+          <p className="font-semibold text-xl bg-gray-300 shimmer w-24 mt-2 h-3 rounded-md"></p>
         ) : (
-          <p className="text-[#000000E5] text-xs font-poppins">{title}</p>
-        )}
+          <p className={`text-[#000000E5] text-xs font-poppins ${title === "..." ? "text-4xl" : ""}`}>
+          {title ?? "..."}
+        </p>        )}
       </CardContent>
     </Card>
   );

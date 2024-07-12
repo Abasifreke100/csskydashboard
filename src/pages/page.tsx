@@ -14,7 +14,6 @@ import { formatTitle } from "../constants";
 import GoToTop from "../utils/scroll-into-view";
 import BarChartComponent from "../components/charts/stacked-bar-chart";
 import { Chip } from "../utils/tab-chip";
-// import DropdownComponent from "../components/dropdowns/dropdown";
 import { ValidPassportIcon } from "../lib/icons/valid-passport-icon";
 import { Passport } from "../lib/icons/passport-icon";
 import { PasswordExpired } from "../lib/icons/passport-expired-icon";
@@ -45,12 +44,6 @@ const Home = () => {
   const [combinedRegistrationData, setCombinedRegistrationData] = useState<
     Array<Response | Corporate>
   >([]);
-
-  // const [selectedItem, setSelectedItem] = useState("Daily");
-
-  // const handleMenuItemClick = (item: string) => {
-  //   setSelectedItem(item);
-  // };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -90,16 +83,12 @@ const Home = () => {
           axiosInstance.get<{ data: { response: Response[] } }>("/individual"),
         ]);
 
-        console.log("Corporate Response:", corporateResponse.data);
-        console.log("Individual Response:", individualResponse.data);
-
         const corporateData = corporateResponse.data.data.response
           .sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
           .slice(0, 2);
-        console.log("corporateData", corporateData);
 
         const individualData = individualResponse.data.data.response
           .sort(
@@ -108,7 +97,6 @@ const Home = () => {
           )
           .slice(0, 2);
 
-        console.log("individualData", individualData);
         setCombinedRegistrationData([...corporateData, ...individualData]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -159,9 +147,9 @@ const Home = () => {
             ))
           : keysToDisplay.map((key, idx) => (
               <CardComponent
-                key={idx}
+                key={key}
                 isLoading={isLoading}
-                title={formatTitle(key)}
+                title={formatTitle(key) ?? "..."}
                 value={
                   dashboardOverview[key as keyof TransformedOverviewData] ?? 0
                 }
@@ -171,7 +159,7 @@ const Home = () => {
             ))}
 
         <Card
-          className={`col-span-12 h-[287px] overflow-y-auto  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
+          className={`col-span-12 h-full  row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
         >
           <CardHeader>
             <CardTitle className="text-sm">
@@ -180,16 +168,16 @@ const Home = () => {
                   Recent Registrations{" "}
                   <CircleAlert className="h-3 text-[#808080]" />
                 </p>
-                <p
+                <button
                   className="flex items-center cursor-pointer"
                   onClick={() => navigate("/customers/individual")}
                 >
                   See All <ChevronRight className="h-4" />
-                </p>
+                </button>
               </div>
             </CardTitle>
           </CardHeader>
-          <CardContent className="px-2">
+          <CardContent className="px-2  h-[270px] overflow-y-auto ">
             {isLoading ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
@@ -197,10 +185,10 @@ const Home = () => {
                 <p className="text-sm text-gray-500">No recent registrations</p>
               </div>
             ) : (
-              combinedRegistrationData.map((item, index) => (
-                <div
-                  className="flex items-center justify-between mb-4  hover:scale-95 group cursor-pointer transition-transform duration-300 px-2 rounded-md py-1 hover:bg-white data-[state=selected]:bg-muted"
-                  key={index}
+              combinedRegistrationData.map((item) => (
+                <button
+                  className="flex items-center justify-between mb-4  w-full  group cursor-pointer  px-2 rounded-md py-1 hover:bg-white data-[state=selected]:bg-muted"
+                  key={item._id}
                   onClick={() => handleItemClick(item)}
                 >
                   <div className="flex items-start">
@@ -224,7 +212,7 @@ const Home = () => {
                           : getInitials(`${(item as Corporate)?.companyName} `)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="ml-2">
+                    <div className="ml-2 text-start">
                       {!(item as Corporate).registrationNumber ? (
                         <div className="">
                           <p className="text-xs text-black font-medium group-hover:text-grey">{`${
@@ -266,7 +254,7 @@ const Home = () => {
                     {formatRelativeTime((item as Response)?.createdAt) ||
                       (item as Corporate)?.createdAt}
                   </p>
-                </div>
+                </button>
               ))
             )}
           </CardContent>
