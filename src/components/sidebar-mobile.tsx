@@ -3,7 +3,6 @@ import {
   SheetClose,
   SheetContent,
   SheetHeader,
-  // SheetTrigger,
 } from "./ui/sheet";
 import { Button } from "./ui/button";
 import { LogOut, MoreHorizontal, X } from "lucide-react";
@@ -27,7 +26,7 @@ interface SidebarMobileProps {
   handleLogout: () => void;
 }
 
-export function SidebarMobile(props: SidebarMobileProps) {
+export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
   const location = useLocation();
   const { isSidebarOpen, setIsSidebarOpen, setActive, setCurrentPage } =
     useProviderContext();
@@ -48,7 +47,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
 
   return (
     <Sheet open={isSidebarOpen} onOpenChange={() => setIsSidebarOpen(false)}>
-      <SheetContent side="left" className="px-3 py-4" hideClose>
+      <SheetContent side="left" className="px-1 py-4" hideClose>
         <SheetHeader className="flex flex-row justify-end items-center space-y-0">
           <SheetClose asChild>
             <Button
@@ -61,11 +60,11 @@ export function SidebarMobile(props: SidebarMobileProps) {
           </SheetClose>
         </SheetHeader>
         <div className="h-full">
-          <div className="mt-5 flex flex-col w-full gap-1">
+          <div className="mt-5 flex flex-col  h-[46] w-full gap-1">
             {props.sidebarItems.theme.map(
-              (theme: Theme, themeIndex: number) => (
-                <div key={themeIndex} className=" px-2">
-                  <h3 className="text-xs text-start font-semibold lg:px-4 py-2">
+              (theme: Theme) => (
+                <div key={theme.title} className=" px-2">
+                  <h3 className="text-xs text-start font-semibold my-1 px-4 py-2">
                     {theme.title}
                   </h3>
                   {theme.links.map((link, index) =>
@@ -74,7 +73,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
                         type="single"
                         className={`no-underline ${index > 0 && "mt-2"}`}
                         collapsible
-                        key={index}
+                        key={link.label}
                         value={`item-${value}`}
                         onValueChange={() => {
                           if (value == " ") {
@@ -89,8 +88,10 @@ export function SidebarMobile(props: SidebarMobileProps) {
                         <AccordionItem
                           className="no-underline border-none"
                           value={`item-${index}`}
+
                         >
                           <AccordionTrigger
+                           isExpanded={true}
                             className={`no-underline hover:no-underline pr-3 w-full hover:text-grey hover:bg-gray-200 text-grey h-12 rounded-xl ${
                               isActivePath(location.pathname, link.href) &&
                               "bg-[#FFFAEF] hover:bg-[#FFFAEF] text-[#FF7F00] hover:text-[#FF7F00]"
@@ -110,8 +111,8 @@ export function SidebarMobile(props: SidebarMobileProps) {
                             </SidebarMobileButton>
                           </AccordionTrigger>
                           <AccordionContent className="border-none h-fit mb-0 mt-1 outline-none">
-                            {link.children.map((child, childIndex) => (
-                              <Link key={childIndex} to={child.href}>
+                            {link.children.map((child) => (
+                              <Link key={child.label} to={child.href}>
                                 <SheetClose className="w-full">
                                   <SidebarMobileButton
                                     icon={child?.icon}
@@ -135,7 +136,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
                         </AccordionItem>
                       </Accordion>
                     ) : (
-                      <Link key={index} to={link.href}>
+                      <Link key={link.label} to={link.href}>
                         <SheetClose className="w-full">
                           <SidebarMobileButton
                             onClick={() => setActive(link.label)}
@@ -157,7 +158,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
               )
             )}
           </div>
-          <div className="absolute w-full bottom-4 px-1 left-0">
+          <div className="absolute w-full bottom-0 py-2 bg-white px-1 left-0">
             <Separator className="absolute -top-3 left-0 w-full" />
             <Drawer>
               <DrawerTrigger asChild>

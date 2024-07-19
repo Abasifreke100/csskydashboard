@@ -8,8 +8,10 @@ interface CardComponentProps {
   isLoading: boolean;
   value?: string | number;
   title?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: IconType | LucideIcon | any;
   order?: number;
+  valueClassName?: string;
 }
 
 const CardComponent = ({
@@ -17,16 +19,16 @@ const CardComponent = ({
   value,
   title,
   icon: Icon,
-  order
+  order,
+  valueClassName,
 }: CardComponentProps) => {
   return (
     <Card
-    className={`shadow-md rounded-xl lg:col-span-4 ${
-      (title == "Total Corporates" || "Total Individuals") && "h-fit"
-    } ${
-      title == "Total Individuals" ? "custom-md-col-span" : "custom-md-col-span"
-    } ${order !== undefined ? `order-${order}` : ""}`}
-  >
+      className={`shadow-md rounded-xl lg:col-span-4 ${
+        (title === "Total Corporates" || title === "Total Individuals") &&
+        "h-fit"
+      } custom-md-col-span ${order !== undefined ? `order-${order}` : ""}`}
+    >
       <CardHeader>
         <CardTitle>
           {isLoading ? (
@@ -45,14 +47,22 @@ const CardComponent = ({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="font-semibold text-xl bg-gray-300 shimmer w-36 h-2 rounded-md"></p>
+          <p className="font-semibold text-xl bg-gray-300 shimmer w-36 mt-3 h-3 rounded-md"></p>
         ) : (
-          <p className="font-semibold text-xl">{value}</p>
+          <p className={`font-semibold text-xl ${valueClassName}`}>
+            {value ?? "..."}
+          </p>
         )}
         {isLoading ? (
-          <p className="font-semibold text-xl bg-gray-300 shimmer w-24 mt-1 h-2 rounded-md"></p>
+          <p className="font-semibold text-xl bg-gray-300 shimmer w-24 mt-2 h-3 rounded-md"></p>
         ) : (
-          <p className="text-[#000000E5] text-xs font-poppins">{title}</p>
+          <p
+            className={`text-[#000000E5] text-xs font-poppins ${
+              title === "..." ? "text-4xl" : ""
+            }`}
+          >
+            {title ?? "..."}
+          </p>
         )}
       </CardContent>
     </Card>

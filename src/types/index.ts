@@ -221,6 +221,7 @@ export type FieldValue =
   | string
   | number
   | boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   | ReactElement<any, string | JSXElementConstructor<any>>
   | Iterable<ReactNode>
   | null

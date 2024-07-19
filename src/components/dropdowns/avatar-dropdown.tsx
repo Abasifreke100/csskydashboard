@@ -38,21 +38,21 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
 
   return (
     <Popover>
-      <div className="flex items-center gap-3">
+        <PopoverTrigger asChild>
+      <div className="flex items-center gap-3 cursor-pointer">
         <Avatar className="w-8 h-8 ">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>{getInitials(user.role)}</AvatarFallback>
         </Avatar>
         <p>{user.role}</p>
-        <PopoverTrigger asChild>
           <button
             className="border-none outline-none text-[#808080]"
-            aria-label="Customise options"
+            aria-label="Customize options"
           >
             <FaCaretDown />
           </button>
-        </PopoverTrigger>
       </div>
+        </PopoverTrigger>
 
       <PopoverContent sideOffset={5} align="end">
         <div className="flex items-start justify-between">

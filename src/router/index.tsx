@@ -11,18 +11,20 @@ import Tasks from "../pages/tasks/page";
 import ApiBindings from "../pages/api-bindings/page";
 import More from "../pages/more/page";
 import TaskID from "../pages/[taskId]/page";
+import { Cssky_Dashboard_Routes } from "../components/store/data";
+import TicketPage from "../pages/ticket/page";
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
+    path: Cssky_Dashboard_Routes.signIn,
     element: <LoginPage />,
   },
   {
-    path: "/sign-up",
+    path: Cssky_Dashboard_Routes.signUp,
     element: <SignUp />,
   },
   {
-    path: "/",
+    path: Cssky_Dashboard_Routes.dashboard,
     element: <DashboardLayout />,
     children: [
       {
@@ -30,32 +32,36 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/customers/:type",
+        path: Cssky_Dashboard_Routes.customersPage,
         element: <CustomersPage />,
       },
       {
-        path: "/customers/:type/:customerId",
+        path: Cssky_Dashboard_Routes.customersIdPage,
         element: <CustomersIdPage />,
       },
       {
-        path: "/insights",
+        path: Cssky_Dashboard_Routes.insights,
         element: <Insights />,
       },
       {
-        path: "/tasks",
+        path: Cssky_Dashboard_Routes.tasks,
         element: <Tasks />,
       },
       {
-        path: "/tasks/:taskID",
+        path: Cssky_Dashboard_Routes.taskId,
         element: <TaskID />,
       },
       {
-        path: "/api-bindings",
+        path: Cssky_Dashboard_Routes.apiBindings,
         element: <ApiBindings />,
       },
       {
-        path: "/more",
+        path: Cssky_Dashboard_Routes.more,
         element: <More />,
+      },
+      {
+        path: Cssky_Dashboard_Routes.tickets,
+        element: <TicketPage/>,
       },
     ],
     errorElement: <ErrorPage />,

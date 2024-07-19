@@ -56,12 +56,12 @@ const More = () => {
             </div>
           </CardContent>
         </Card>
-        {moreCard.map((card, index) => {
+        {moreCard.map((card) => {
           const Icon = card.icon;
           return (
             <Card
-              key={index}
-              className={`${card.title == "Documentation" && "cursor-pointer"}col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md`}
+              key={card.title}
+              className={`${card.title == "Documentation" && "cursor-pointer"} col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md`}
               onClick={() => handleCardClick(card.title)}
             >
               <CardContent className="flex flex-col items-center justify-center mt-2">

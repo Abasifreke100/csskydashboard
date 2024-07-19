@@ -2,13 +2,12 @@ import {
   Building2,
   Globe,
   LayoutDashboard,
-  MoreHorizontal,
   UserCheck,
   Sparkles,
   TrendingUp,
   Unplug,
+  Hash,
 } from "lucide-react";
-import { SidebarButton } from "./sidebar-button";
 import { useMediaQuery } from "usehooks-ts";
 import { SidebarMobile } from "./sidebar-mobile";
 import { SidebarItems } from "../types";
@@ -16,6 +15,7 @@ import { SidebarDesktop } from "./sidebar-desktop";
 import { useAppDispatch } from "../app/hooks";
 import { useToast } from "./ui/use-toast";
 import { loggedOut } from "../features/auth/authActions";
+import { Cssky_Dashboard_Routes } from "./store/data";
 
 const sidebarItems: SidebarItems = {
   theme: [
@@ -58,21 +58,18 @@ const sidebarItems: SidebarItems = {
         },
       ],
     },
+    {
+      title: "Support",
+      links: [
+        {
+          href: Cssky_Dashboard_Routes.tickets,
+          icon: Hash,
+          label: "Tickets",
+        },
+      ],
+    },
     // Add more themes as needed
   ],
-  extras: (
-    <div className="flex flex-col gap-2">
-      <SidebarButton icon={MoreHorizontal} className="w-full">
-        More
-      </SidebarButton>
-      <SidebarButton
-        className="w-full justify-center text-white"
-        variant="default"
-      >
-        Tweet
-      </SidebarButton>
-    </div>
-  ),
 };
 export function Sidebar() {
   const isDesktop = useMediaQuery("(min-width: 640px)", {

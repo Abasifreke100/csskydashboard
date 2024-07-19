@@ -20,7 +20,7 @@ export const Chip = ({
 }) => {
   let badgeColor;
   let number;
-  let Icon = icon;
+  const Icon = icon;
 
   const verifiedCount =
   (data?.data as Data)?.verifiedIndividual ??

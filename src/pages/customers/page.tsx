@@ -104,7 +104,7 @@ const CustomersPage = () => {
   }, [type, currentPage, selected]);
 
   const itemsPerPage = 10;
-  const totalItems = data?.data?.pagination?.total || 0;
+  const totalItems = data?.data?.pagination?.total ?? 0;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
