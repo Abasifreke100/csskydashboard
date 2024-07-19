@@ -14,5 +14,7 @@ export class Cssky_Dashboard_Routes {
     static readonly apiBindings = '/api-bindings'
     static readonly more = '/more'
     static readonly tickets = '/ticket'
+    static readonly inbox = "/inbox"
+    static readonly inboxDetail = '/inbox/:inboxId'
   
   }
