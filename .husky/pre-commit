@@ -1,1 +1,33 @@
-npm run build
+#!/bin/sh
+
+echo '🏗️👷 Styling, testing and building your project before committing'
+
+# Check ESLint standards
+echo '🔍 Running ESLint...'
+npm run lint:fix --silent ||
+    (
+        echo '😤🏀👋😤 ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+        exit 1
+    )
+
+# Check TypeScript type checking
+echo '🔍 Running TypeScript type checking...'
+npm run check-types --silent ||
+    (
+        echo '🤡😂❌🤡 Failed Type check. Make the changes required above.'
+        exit 1
+    )
+
+# Build the project
+echo '🔧 Building project...'
+npm run build --silent ||
+    (
+        echo '❌👷🔨❌ Build failed. View the errors above to see why.'
+        exit 1
+    )
+
+# Clean up any temporary files or directories
+echo '🧹 Cleaning up...'
+# Example: rm -rf dist
+
+echo '✅✅✅✅ Ready to commit! ✅✅✅✅'

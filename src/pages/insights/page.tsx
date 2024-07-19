@@ -22,14 +22,12 @@ import {
 import { getInitials } from "../../utils/getInitials";
 import { formatRelativeTime } from "../../utils/readableDateFormat";
 import InsightLineChart from "../../components/charts/insight-line-chart";
-// import InsightPieChart from "../../components/charts/insight-chart";
-// import InsightLineChart from "../../components/charts/insight-line-chart";
-// import SubsidiaryInsightBarChart from "../../components/charts/subsidiary-insight-chart";
 
 const Insights = () => {
   const [selectedItem, setSelectedItem] = useState("This Year");
   const [isLoading, setIsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [loading, setLoading] = useState(false);
   const [insightOverview, setInsightOverview] = useState<
     TransformedOverviewData | undefined
   >(undefined);
@@ -79,7 +77,7 @@ const Insights = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
 
         const [corporateResponse, individualResponse] = await Promise.all([
           axiosInstance.get("/corporate"),
@@ -96,7 +94,7 @@ const Insights = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -114,7 +112,7 @@ const Insights = () => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="pb-7 md:h-screen customersContainer">
       <InsightDropdown
         selectedItem={selectedItem}
         handleMenuItemClick={handleMenuItemClick}
@@ -141,36 +139,37 @@ const Insights = () => {
                 order={idx === keysToDisplay.length - 1 ? 6 : idx}
               />
             ))}
-        <Card className="col-span-12 h-[287px] overflow-y-auto row-span-2 order-6 lg:order-5 md:col-span-6 lg:col-span-8 shadow-md">
-          <CardHeader className="">
+        <Card
+          className={`col-span-12 h-full row-span-2 order-6 lg:order-5  lg:col-span-8 shadow-md`}
+        >
+          <CardHeader>
             <CardTitle className="text-sm">
               <div className="flex items-center justify-between">
                 <p className="flex items-center text-sm font-semibold">
                   Recent Registrations{" "}
                   <CircleAlert className="h-3 text-[#808080]" />
                 </p>
-                <p
+                <button
                   className="flex items-center cursor-pointer"
                   onClick={() => navigate("/customers/individual")}
                 >
                   See All <ChevronRight className="h-4" />
-                </p>
+                </button>
               </div>
             </CardTitle>
-            {/* <CardDescription>Card Description</CardDescription> */}
           </CardHeader>
-          <CardContent className="px-2">
-            {loading && isLoading ? (
+          <CardContent className="px-2  h-[270px] overflow-y-auto ">
+            {isLoading ? (
               renderSkeletonLoader()
             ) : combinedRegistrationData?.length === 0 ? (
               <div className="text-center py-4">
                 <p className="text-sm text-gray-500">No recent registrations</p>
               </div>
             ) : (
-              combinedRegistrationData.map((item, index) => (
-                <div
-                  className="flex items-center justify-between mb-4  hover:scale-95 group cursor-pointer transition-transform duration-300 px-2 rounded-md py-1 hover:bg-white data-[state=selected]:bg-muted"
-                  key={index}
+              combinedRegistrationData.map((item) => (
+                <button
+                  className="flex items-center justify-between mb-4  w-full  group cursor-pointer  px-2 rounded-md py-1 hover:bg-white data-[state=selected]:bg-muted"
+                  key={item._id}
                   onClick={() => handleItemClick(item)}
                 >
                   <div className="flex items-start">
@@ -181,7 +180,7 @@ const Insights = () => {
                             ? (item as Response)?.biometrics?.selfie
                             : (item as Corporate)?.bioMetrics?.selfie
                         }
-                        alt="@shadcn"
+                        alt="selfie"
                       />
                       <AvatarFallback>
                         {(item as Response)?.firstName &&
@@ -194,7 +193,7 @@ const Insights = () => {
                           : getInitials(`${(item as Corporate)?.companyName} `)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="ml-2">
+                    <div className="ml-2 text-start">
                       {!(item as Corporate).registrationNumber ? (
                         <div className="">
                           <p className="text-xs text-black font-medium group-hover:text-grey">{`${
@@ -236,7 +235,7 @@ const Insights = () => {
                     {formatRelativeTime((item as Response)?.createdAt) ||
                       (item as Corporate)?.createdAt}
                   </p>
-                </div>
+                </button>
               ))
             )}
           </CardContent>

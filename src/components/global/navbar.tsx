@@ -13,7 +13,7 @@ const Navbar = () => {
   const user = useSelector((state: RootState) => state.auth);  
   
   return (
-    <div className="containerLg h-14 z-40 bg-white rounded-xl shadow-md col-span-12 ">
+    <div className="containerLg h-14 z-40 border-b bg-white rounded-xl shadow-md col-span-12 ">
       <div className="flex items-center  h-full justify-between">
         <img src={logo} alt="logo" className="w-16 h-full" />
         <div className="flex items-center gap-3">

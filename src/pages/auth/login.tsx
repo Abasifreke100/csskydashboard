@@ -26,12 +26,12 @@ import { clearError } from "../../features/auth/authSlice";
 import AlertError from "../../error/error-alert";
 import { useEffect, useState } from "react";
 import { useToast } from "../../components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
 function LoginPage() {
-  useTitleUpdater({ "/login": "Connect-Surf-Smile | Login" });
+  useTitleUpdater({ "/auth/sign-in": "Connect-Surf-Smile | Login" });
   useMetaTagUpdater({
     "/login": [
       { name: "description", content: "This is the login page description." },
@@ -63,7 +63,7 @@ function LoginPage() {
 
   useEffect(() => {
     const storedCredentials = JSON.parse(
-      localStorage.getItem("rememberedCredentials") || "{}"
+      localStorage.getItem("rememberedCredentials") ?? "{}"
     );
 
     if (rememberMe && storedCredentials.email && storedCredentials.password) {
@@ -97,7 +97,7 @@ function LoginPage() {
     }
 
     try {
-     await dispatch(login(formData));
+      await dispatch(login(formData));
       toast({
         title: "Success",
         description: "User successfully logged in ",
@@ -126,13 +126,13 @@ function LoginPage() {
           <main className="flex items-center order-2 lg:order-1 justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
             <div className="max-w-xl lg:max-w-3xl">
               <div className="relative -mt-16 block lg:hidden">
-                <a
+                <Link
                   className="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
-                  href="#"
+                  to="#"
                 >
                   <span className="sr-only">Home</span>
                   <img src={logo} alt="logo" />
-                </a>
+                </Link>
               </div>
               <div>
                 <img

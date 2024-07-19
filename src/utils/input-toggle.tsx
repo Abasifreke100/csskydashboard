@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React, { CSSProperties, forwardRef, useState } from "react";
 import cn from "../lib/utils";
 import { Eye, EyeOff } from "lucide-react";

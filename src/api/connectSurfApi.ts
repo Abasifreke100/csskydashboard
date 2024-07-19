@@ -1,4 +1,5 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { Cssky_Dashboard_Routes } from "../components/store/data";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -32,7 +33,7 @@ axiosInstance.interceptors.response.use(
   },
   (error: { response: { status: number } }) => {
     if (error.response && error.response.status === 401) {
-      window.location.href = "/login";
+      window.location.href = Cssky_Dashboard_Routes.signIn;
     }
     return Promise.reject(error);
   }
