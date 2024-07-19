@@ -97,7 +97,7 @@ const TicketDetailsModal = ({
           <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
             <div className="flex justify-between items-center text-sm">
               <p className="font-medium text-gray-400 ">Comments:</p>
-              <p className="font-medium  text-blue-500 cursor-pointer">
+              <p className="font-medium  text-black cursor-pointer">
                 See all &gt;
               </p>
             </div>
@@ -113,7 +113,7 @@ const TicketDetailsModal = ({
                   <div className="font-medium text-gray-400 text-sm whitespace-nowrap">
                    <div className="flex items-center gap-0.5">
                    <p className="text-xs text-black">{truncateText(ticket.assignee.name, 13)}</p>{" "}
-                    <Badge className="h-4 px-1  text-xs  bg-secondary hover:bg-secondary border border-green-400">
+                    <Badge className="h-4 px-1  text-xs  bg-secondary hover:bg-secondary">
                     Tier 3
                   </Badge>
                    </div>

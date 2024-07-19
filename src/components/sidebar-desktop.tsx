@@ -126,7 +126,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
               </div>
             ))}
           </div>
-          <div className="w-full">
+          <div className="w-full mt-12">
             <Popover>
               <PopoverTrigger className="h-10 w-full" asChild>
                 <div className="flex justify-between cursor-pointer mb-2 items-center w-full px-2">

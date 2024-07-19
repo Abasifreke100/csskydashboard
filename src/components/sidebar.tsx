@@ -6,7 +6,8 @@ import {
   Sparkles,
   TrendingUp,
   Unplug,
-  Hash,
+  Mail,
+  Ticket,
 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 import { SidebarMobile } from "./sidebar-mobile";
@@ -63,9 +64,14 @@ const sidebarItems: SidebarItems = {
       links: [
         {
           href: Cssky_Dashboard_Routes.tickets,
-          icon: Hash,
+          icon: Ticket,
           label: "Tickets",
         },
+        {
+          href: Cssky_Dashboard_Routes.inbox,
+          icon: Mail,
+          label: "Inbox",
+        }
       ],
     },
     // Add more themes as needed

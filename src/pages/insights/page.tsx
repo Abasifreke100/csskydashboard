@@ -26,7 +26,7 @@ import InsightLineChart from "../../components/charts/insight-line-chart";
 const Insights = () => {
   const [selectedItem, setSelectedItem] = useState("This Year");
   const [isLoading, setIsLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   // const [loading, setLoading] = useState(false);
   const [insightOverview, setInsightOverview] = useState<
     TransformedOverviewData | undefined

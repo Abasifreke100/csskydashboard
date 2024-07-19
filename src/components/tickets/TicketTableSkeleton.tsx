@@ -58,7 +58,6 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
   ));
 
   return (
-    // <div className="w-full flex flex-col overflow-x-auto py-8 rounded-[10px] gap-5 col-span-3">
     <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border rounded-lg w-full col-span-3">
       {children}
       <Table>

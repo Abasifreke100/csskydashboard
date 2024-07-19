@@ -15,16 +15,16 @@ export function SidebarButton({
   onClick, // Destructure onClick from props
 }: Readonly<SidebarButtonProps>) {
   return (
-    <button
+    <div
       className={cn(
-        "inline-flex h-10 lg:px-4 py-2  items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium ring-offset-background  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-10 lg:px-4 py-2  items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium ",
         className
       )}
       onClick={onClick} // Assign onClick handler to div
     >
       {Icon && <Icon size={20} />}
       <div className="hidden lg:block">{children}</div>
-    </button>
+    </div>
   );
 
 }
