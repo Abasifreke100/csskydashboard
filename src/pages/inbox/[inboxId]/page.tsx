@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "../../../components/ui/popover";
 import { useState } from "react";
+import { truncateText } from "../../../utils/text";
 
 const InboxDetailsPage = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -58,7 +59,7 @@ const InboxDetailsPage = () => {
         </p>
       </button>
       <div className="py-8 w-full">
-        <Card className="w-[70%]">
+        <Card className="w-full md:w-[80%] lg:w-[70%]">
           <CardHeader className="" />
           <CardContent className="p-4 space-y-6">
             {sampleData.map((message, index) => (
@@ -93,7 +94,11 @@ const InboxDetailsPage = () => {
             ))}
 
             <div className="flex items-center gap-2 mt-6">
-              <div className={`flex-1 flex-col bg-gray-100 border relative flex rounded-xl p-2 ${selectedFile && "gap-2"}`}>
+              <div
+                className={`flex-1 flex-col bg-gray-100 border relative flex rounded-xl p-2 ${
+                  selectedFile && "gap-2"
+                }`}
+              >
                 <div>
                   {selectedFile && (
                     <div className="mt-2 flex items-center gap-2 relative">
@@ -102,7 +107,9 @@ const InboxDetailsPage = () => {
                         alt={selectedFile.name}
                         className="h-12 w-12 object-cover rounded"
                       />
-                      <p className="text-xs">{selectedFile.name}</p>
+                      <p className="text-xs">
+                        {truncateText(selectedFile.name, 30)}
+                      </p>
                       <X
                         className="absolute right-2 top-1 cursor-pointer"
                         size={16}
@@ -128,7 +135,9 @@ const InboxDetailsPage = () => {
                       sideOffset={-200}
                     >
                       <label htmlFor="file-upload" className="cursor-pointer">
-                        <p className="text-gray-500 font-medium hover:text-gray-400">Upload</p>
+                        <p className="text-gray-500 font-medium hover:text-gray-400">
+                          Upload
+                        </p>
                         <input
                           id="file-upload"
                           type="file"
