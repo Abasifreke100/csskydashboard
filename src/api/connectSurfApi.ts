@@ -34,6 +34,8 @@ axiosInstance.interceptors.response.use(
   (error: { response: { status: number } }) => {
     if (error.response && error.response.status === 401) {
       window.location.href = Cssky_Dashboard_Routes.signIn;
+      localStorage.removeItem("accessToken"); // Clear accessToken from localStorage
+      localStorage.removeItem("user"); // Clear user from localStorage
     }
     return Promise.reject(error);
   }
