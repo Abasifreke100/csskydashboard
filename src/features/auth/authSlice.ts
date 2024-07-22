@@ -1,4 +1,3 @@
-// src/features/auth/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 import { register, login, getCurrentUser, loggedOut } from "./authActions";
@@ -37,12 +36,15 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.isAuthenticated = true;
       localStorage.setItem("accessToken", action.payload.token);
+      localStorage.setItem("user", JSON.stringify(action.payload.user)); // Store user object
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;
+      localStorage.removeItem("accessToken"); // Clear accessToken from localStorage
+      localStorage.removeItem("user"); // Clear user from localStorage
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload; // Set error message
@@ -64,7 +66,7 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
-          action.error.message ??  "An error occurred during registration."; //  error message on registration failure
+          action.error.message ?? "An error occurred during registration."; // Error message on registration failure
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -81,7 +83,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error =
           (action.payload as string) ||
-          "An error occurred during registration."; //  error message on login failure
+          "An error occurred during login."; // Error message on login failure
       })
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true;
@@ -94,7 +96,7 @@ const authSlice = createSlice({
       .addCase(getCurrentUser.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
-        state.error = "Failed to fetch current user data."; // error message on fetch current user failure
+        state.error = "Failed to fetch current user data."; // Error message on fetch current user failure
       })
       .addCase(loggedOut.fulfilled, (state) => {
         state.isLoading = false;
@@ -103,25 +105,19 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.error = null;
         localStorage.removeItem("accessToken"); // Clear accessToken from localStorage
-        localStorage.removeItem("user");
+        localStorage.removeItem("user"); // Clear user from localStorage
       });
   },
 });
 
 // Export the actions
-export const { setCredentials, logout, setError, clearError } =
-  authSlice.actions;
+export const { setCredentials, logout, setError, clearError } = authSlice.actions;
 
 // Export the reducer
 export default authSlice.reducer;
 
-// Export a selector to access the auth state
 export const selectAuth = (state: RootState): AuthState => state.auth;
 export const isAuthenticated = (state: RootState): boolean => {
   const token = state.auth.token;
-  if (token) {
-    return true
-  } else {
-    return false;
-  }
+  return !!token; // Return true if token exists, false otherwise
 };
