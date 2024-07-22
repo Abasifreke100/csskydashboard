@@ -22,7 +22,7 @@ import { RootState } from "../../app/store";
 import { login } from "../../features/auth/authActions";
 import { useAppDispatch } from "../../app/hooks";
 import InputToggle from "../../utils/input-toggle";
-import { clearError } from "../../features/auth/authSlice";
+import { clearError, isAuthenticated } from "../../features/auth/authSlice";
 import AlertError from "../../error/error-alert";
 import { useEffect, useState } from "react";
 import { useToast } from "../../components/ui/use-toast";
@@ -40,6 +40,7 @@ function LoginPage() {
   });
   const [rememberMe, setRememberMe] = useState(false);
   const dispatch = useAppDispatch();
+  const loggedIn = useSelector((state: RootState) => isAuthenticated(state));
   const authState = useSelector((state: RootState) => state.auth);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -107,6 +108,10 @@ function LoginPage() {
       console.log("error", err);
     }
   };
+
+  if(loggedIn){
+    navigate('/')
+  }
 
   return (
     <div>

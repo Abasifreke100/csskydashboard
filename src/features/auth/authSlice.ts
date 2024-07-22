@@ -2,7 +2,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../app/store";
 import { register, login, getCurrentUser, loggedOut } from "./authActions";
-import { isTokenExpired } from "../../api/tokenExpiration";
 import { User } from "../../types";
 
 interface AuthState {
@@ -60,12 +59,12 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload as User;
+        state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
-          action.error.message || "An error occurred during registration."; //  error message on registration failure
+          action.error.message ??  "An error occurred during registration."; //  error message on registration failure
       })
       .addCase(login.pending, (state) => {
         state.isLoading = true;
@@ -103,6 +102,8 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.error = null;
+        localStorage.removeItem("accessToken"); // Clear accessToken from localStorage
+        localStorage.removeItem("user");
       });
   },
 });
@@ -119,7 +120,7 @@ export const selectAuth = (state: RootState): AuthState => state.auth;
 export const isAuthenticated = (state: RootState): boolean => {
   const token = state.auth.token;
   if (token) {
-    return !isTokenExpired(token);
+    return true
   } else {
     return false;
   }
