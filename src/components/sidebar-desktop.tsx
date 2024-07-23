@@ -11,8 +11,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import { useEffect, useState } from "react";
+import {useCallback, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { TicketsAccordion } from "./tickets/TicketAccordion";
 
 interface SidebarDesktopProps {
   sidebarItems: SidebarItems;
@@ -23,62 +24,65 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
   const location = useLocation();
   const [value, setValue] = useState(" ");
   const { setActive, setCurrentPage } = useProviderContext();
-  const isDesktop = useMediaQuery('(min-width: 1024px)')
-
-  useEffect(() => {
-    setValue(" ");
-  }, [location.pathname]);
-
-  function isActivePath(currentPath: string, linkPath: string) {
-    if (currentPath === linkPath) {
-      return true;
-    }
-    return (
-      currentPath.startsWith(linkPath) && currentPath[linkPath.length] === "/"
-    );
-  }
+  const isDesktop = useMediaQuery("(min-width: 1025px)");
   
 
+
+  const isActivePath = useCallback((currentPath: string, linkPath: string) => {
+    return currentPath === linkPath || currentPath.startsWith(linkPath + "/");
+  }, []);
+  
+
+  const handleAccordionChange = useCallback((index: string) => {
+    setCurrentPage(1);
+    setValue(index);
+  }, [setCurrentPage]);
+
+  
   return (
     <div className="py-3 overflow-hidden  ">
-      <aside className="lg:w-[240px] max-w-xs shadow-lg h-full bg-white rounded-tr-2xl rounded-br-md overflow-y-auto">
+      <aside className="lg:w max-w-xs shadow-lg h-full bg-white rounded-tr-2xl rounded-br-md overflow-y-auto">
         <div className="flex flex-col justify-between  h-full">
           <div className="flex flex-col gap-3 w-full">
             {props.sidebarItems.theme.map((theme: Theme) => (
               <div key={theme.title} className=" lg:px-2">
-                <h3 className="text-xs font-semibold pl-1 lg:px-4 py-2">{theme.title}</h3>
+                <h3 className={`text-xs font-semibold ${isDesktop ? " lg:pl-0 px-4" : "pl-1"} py-2`}>
+                {theme.title}
+                </h3>
                 {theme.links.map((link, index) =>
-                  link.children ? (
+                  link.label === "Tickets" ? (
+                    <TicketsAccordion
+                      key={link.label}
+                      index={index}
+                      value={value}
+                      onAccordionChange={handleAccordionChange}
+                    />
+                  ) : link.children ? (
                     <Accordion
                       type="single"
                       className={`no-underline ${index > 0 && "mt-2"}`}
                       collapsible
-                      
                       key={link.label}
-                      value={`item-${value}`}
-                      onValueChange={() => {
-                        if (value == " ") {
-                          setValue(`${index}`);
-                          setCurrentPage(1);
-                        } else {
-                          setValue(" ");
-                          setCurrentPage(1);
-                        }
-                      }}
+                      value={
+                        `item-${index}` === value
+                          ? `item-${index}`
+                          : " "
+                      }
+                      onValueChange={(value) => handleAccordionChange(value)}
                     >
                       <AccordionItem
                         className="no-underline border-none"
                         value={`item-${index}`}
                       >
                         <AccordionTrigger
-                         isExpanded={isDesktop}
+                          isExpanded={isDesktop}
                           className={`no-underline hover:no-underline  w-full hover:text-grey hover:bg-gray-200 text-grey h-12 lg:rounded-xl ${
                             isActivePath(location.pathname, link.href) &&
                             "lg:bg-[#FFFAEF] hover:bg-[#FFFAEF] text-[#FF7F00] hover:text-[#FF7F00]"
                           } `}
                         >
                           <SidebarButton
-                            onClick={() => setValue("")}
+                            onClick={() => setValue(" ")}
                             icon={link.icon}
                             className={`hover:bg-transparent w-full bg-transparent ${
                               isActivePath(location.pathname, link.href) &&
@@ -95,6 +99,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                             <Link key={child.label} to={child.href}>
                               <SidebarButton
                                 icon={child?.icon}
+                                iconSize={20}
                                 onClick={() => setActive(child.label)}
                                 className={`w-full hover:text-grey hover:bg-gray-200 text-grey rounded-2xl ${
                                   isActivePath(location.pathname, child.href) &&
@@ -113,7 +118,9 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                       <SidebarButton
                         onClick={() => setActive(link.label)}
                         icon={link.icon}
-                        className={`w-full ${index > 0 && "mt-2"}  hover:bg-gray-200 text-grey h-12 rounded-xl  ${
+                        className={`w-full ${
+                          index > 0 && "mt-2"
+                        }  hover:bg-gray-200 text-grey h-12 rounded-xl  ${
                           isActivePath(location.pathname, link.href) &&
                           "bg-transparent focus:bg-transparent lg:bg-[#FFFAEF] hover:bg-[#FFFAEF] text-[#FF7F00] hover:text-[#FF7F00]"
                         }`}
@@ -140,7 +147,10 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                   <LogOut size={20} className="cursor-pointer" />
                 </div>
               </PopoverTrigger>
-              <PopoverContent align="center" className="mb-2 w-56 p-3 rounded-[1rem]">
+              <PopoverContent
+                align="center"
+                className="mb-2 w-56 p-3 rounded-[1rem]"
+              >
                 <div>
                   <SidebarButton
                     size="sm"
