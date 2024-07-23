@@ -106,8 +106,6 @@ body{
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-  /* padding-right: 2rem /* 32px */;
-  /* padding-left: 2rem 32px; */ 
 }
 
 @media (min-width: 1400px) {
@@ -130,7 +128,7 @@ body{
   }
 }
 
-@media screen and (min-width: 640px) and (max-width: 1024px) {
+@media screen and (min-width: 640px) and (max-width: 1025px) {
   .grid-cols-sidebar-outlet {
     grid-template-columns: 60px 1fr;
   }
@@ -201,8 +199,8 @@ body{
  .recharts-wrapper{
   padding: 0;
   left: 0;
-  /* max-width: 450px !important; */
  }
+ 
  .recharts-surface{
   padding: 0;
  }
