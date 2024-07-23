@@ -92,14 +92,13 @@ const TicketsTable: React.FC<TicketsTableProps> = ({ setIsModalVisible , setRowI
                     }
                   />
                 </TableCell>
-                <TableCell className="flex items-center py-2">
-                  <div className="ml-1">
+                <TableCell className="py-2">
                     <p className="text-sm whitespace-nowrap">
                       {truncateText(id, 13)}
                     </p>
-                  </div>
+                  
                 </TableCell>
-                <TableCell className="whitespace-nowrap py-2">
+                <TableCell className="whitespace-nowrap py-2 ">
                   {truncateText(subject, 20)}
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-2">{priority}</TableCell>

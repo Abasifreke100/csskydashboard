@@ -22,18 +22,16 @@ export function SidebarButton({
   return (
     <div
       className={cn(
-        `inline-flex h-10 py-2 px-3 items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium `,
+        `inline-flex h-10 py-2 px-4 items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium `,
         className
       )}
       onClick={onClick} // Assign onClick handler to div
     >
       {Icon && <Icon size={iconSize} />}
-      <div className={`${isDesktop ? "block" : "hidden" }`}>{children}</div>
+      <div className={`${isDesktop ? "block" : "hidden"}`}>{children}</div>
     </div>
   );
-
 }
-
 
 export function SidebarMobileButton({
   icon: Icon,
@@ -50,7 +48,7 @@ export function SidebarMobileButton({
       onClick={onClick} // Assign onClick handler to div
     >
       {Icon && <Icon size={20} />}
-      <div className="">{children}</div>
+      <div className=" mt-1 h-fit">{children}</div>
     </button>
   );
 }
