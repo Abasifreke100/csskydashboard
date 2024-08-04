@@ -6,10 +6,17 @@ interface CustomButtonProps {
   icon?: LucideIcon;
   label: string;
   variant: "primary" | "secondary";
-  onClick?: () => void; 
+  onClick?: () => void;
+  type?: "button" | "submit" ;
 }
 
-const CustomButton = ({ icon: Icon, label, variant, onClick }: CustomButtonProps) => {
+const CustomButton = ({
+  icon: Icon,
+  label,
+  variant,
+  onClick,
+  type = "button",
+}: CustomButtonProps) => {
   const primaryStyles =
     "bg-primary text-white hover:bg-primary hover:text-white";
   const secondaryStyles =
@@ -17,12 +24,12 @@ const CustomButton = ({ icon: Icon, label, variant, onClick }: CustomButtonProps
 
   const buttonClass = cn(
     "flex gap-1 py-1 rounded-xl px-2 h-8 text-xs",
-    onClick && "cursor-pointer", 
+    onClick && "cursor-pointer",
     variant === "primary" ? primaryStyles : secondaryStyles
   );
 
   return (
-    <Button className={buttonClass} onClick={onClick}>
+    <Button className={buttonClass} type={type} onClick={onClick}>
       {Icon && <Icon size={16} />}
       {label}
     </Button>

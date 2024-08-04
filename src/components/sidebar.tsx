@@ -23,10 +23,10 @@ const sidebarItems: SidebarItems = {
     {
       title: "KYC",
       links: [
-        { label: "Dashboard", href: "/", icon: LayoutDashboard },
+        { label: "Dashboard", href: Cssky_Dashboard_Routes.dashboard, icon: LayoutDashboard },
         {
           label: "Customers",
-          href: "/customers",
+          href: Cssky_Dashboard_Routes.customersPage,
           icon: Globe,
           children: [
             {
@@ -41,19 +41,19 @@ const sidebarItems: SidebarItems = {
             },
           ],
         },
-        { label: "Insights", href: "/insights", icon: TrendingUp },
+        { label: "Insights", href: Cssky_Dashboard_Routes.insights, icon: TrendingUp },
         {
-          href: "#",
+          href: Cssky_Dashboard_Routes.tasks,
           icon: Sparkles,
           label: "Tasks",
         },
         {
-          href: "/api-bindings",
+          href: Cssky_Dashboard_Routes.apiBindings,
           icon: Unplug,
           label: "API Bindings",
         },
         {
-          href: "/more",
+          href: Cssky_Dashboard_Routes.more,
           icon: LayoutDashboard,
           label: "More",
         },
