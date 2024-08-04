@@ -30,7 +30,7 @@ module.exports = {
         ...violet,
         primary: {
           DEFAULT: "#FF7F00",
-          foreground: "#FF7F00",
+          foreground: "#ffff",
         },
         secondary: {
           DEFAULT: "#FFFAEF",

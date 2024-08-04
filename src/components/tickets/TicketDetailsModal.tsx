@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { truncateText } from "../../utils/text";
 import { getStatusColor } from "../../utils/status";
-import CustomButton from "./CustomButton";
+import CustomButton from "../shared/CustomButton";
 import { CheckCircle, Plus, Save } from "lucide-react";
 import { Badge } from "../ui/badge";
 
