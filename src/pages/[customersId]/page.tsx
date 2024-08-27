@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-
 import {
   Card,
   CardContent,
@@ -24,6 +23,8 @@ import {
 import { formatDate } from "../../utils/formatDate";
 import { getInitials } from "../../utils/getInitials";
 import Header from "../../components/global/header";
+import CustomImageView from "../../components/shared/CustomImageView";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 const CustomersIdPage = () => {
   const { type, customerId } = useParams<{
@@ -203,17 +204,14 @@ const CustomersIdPage = () => {
                                 )}
                               </DialogTrigger>
                               {field.value && (
-                                <DialogContent className=" w-[380px] lg:w-[600px] h-[500px]">
-                                  <DialogHeader>
-                                    <DialogDescription className="h-[400px]">
-                                      <img
-                                        src={field.value as string}
-                                        alt={field.label}
-                                        className="object-cover w-full mt-4 h-full"
-                                      />
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                </DialogContent>
+                               <DialogContent className="w-[90%] max-w-2xl px-4 h-[550px] lg:w-[600px] lg:h-[500px] p-4 overflow-hidden">
+                               <DialogHeader className="hidden">
+                                 <DialogTitle>Image View</DialogTitle>
+                                 <DialogDescription>Full image view</DialogDescription>
+                               </DialogHeader>
+                               <CustomImageView field={field} />
+                             </DialogContent>
+                             
                               )}
                             </Dialog>
                           </div>
@@ -251,11 +249,16 @@ const CustomersIdPage = () => {
                                 <DialogContent className=" w-[380px] lg:w-[600px]">
                                   <DialogHeader>
                                     <DialogDescription>
-                                      <img
-                                        src={field.value as string}
-                                        alt={field.label}
-                                        className="object-cover w-full mt-4 h-full"
-                                      />
+                                      <div className="gallery ">
+                                        <div className="pics relative overflow-hidden group rounded-md">
+                                          <img
+                                            src={field.value as string}
+                                            alt={field.label}
+                                            style={{ width: "100%" }}
+                                            className="group-hover:scale-150 transition-transform duration-300 ease-in-out"
+                                          />
+                                        </div>
+                                      </div>
                                     </DialogDescription>
                                   </DialogHeader>
                                 </DialogContent>

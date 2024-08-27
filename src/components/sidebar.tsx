@@ -23,7 +23,11 @@ const sidebarItems: SidebarItems = {
     {
       title: "KYC",
       links: [
-        { label: "Dashboard", href: Cssky_Dashboard_Routes.dashboard, icon: LayoutDashboard },
+        {
+          label: "Dashboard",
+          href: Cssky_Dashboard_Routes.dashboard,
+          icon: LayoutDashboard,
+        },
         {
           label: "Customers",
           href: Cssky_Dashboard_Routes.customersPage,
@@ -41,7 +45,11 @@ const sidebarItems: SidebarItems = {
             },
           ],
         },
-        { label: "Insights", href: Cssky_Dashboard_Routes.insights, icon: TrendingUp },
+        {
+          label: "Insights",
+          href: Cssky_Dashboard_Routes.insights,
+          icon: TrendingUp,
+        },
         {
           href: Cssky_Dashboard_Routes.tasks,
           icon: Sparkles,
@@ -71,7 +79,27 @@ const sidebarItems: SidebarItems = {
           href: Cssky_Dashboard_Routes.inbox,
           icon: Mail,
           label: "Inbox",
-        }
+        },
+        {
+          href: Cssky_Dashboard_Routes.history,
+          icon: Unplug,
+          label: "History",
+        },
+        {
+          href: Cssky_Dashboard_Routes.admin,
+          icon: Mail,
+          label: "Admin",
+        },
+      ],
+    },
+    {
+      title: "Billing",
+      links: [
+        {
+          href: Cssky_Dashboard_Routes.billingInfo,
+          icon: Ticket,
+          label: "Billing Info",
+        },
       ],
     },
     // Add more themes as needed

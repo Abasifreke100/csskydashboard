@@ -25,27 +25,120 @@ import { Textarea } from "../ui/textarea";
 import CustomButton from "../shared/CustomButton";
 import { Save } from "lucide-react";
 import CustomCompulsoryInputStar from "./CustomCompulsoryInputStar";
+import axiosInstance from "../../api/connectSurfApi";
+import { useQueryClient } from "@tanstack/react-query";
+import cn from "../../lib/utils";
+import { QueryKeys } from "../../models/query";
+import { useEffect, useState } from "react";
+import { ViewOneTaskDataResponse } from "../../types/task";
+import { errorToast, successToast } from "../../utils/toast";
+import { AxiosError } from "axios";
 
-const NewTasksForm = () => {
+interface NewTasksFormProps {
+  className?: string;
+  task?: ViewOneTaskDataResponse;
+  currentPage?: number;
+  itemsPerPage?: number;
+  onClose?: () => void;
+}
+
+const NewTasksForm = ({
+  className = "",
+  task,
+  currentPage = 1,
+  itemsPerPage = 10,
+  onClose = () => {},
+}: NewTasksFormProps) => {
   const { taskID } = useParams();
+  const isEditMode = !!task;
+  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false); // Add this line
+
   const form = useForm<z.infer<typeof newTaskFormSchema>>({
     resolver: zodResolver(newTaskFormSchema),
     defaultValues: {
-      title: "",
-      dueDate: new Date(),
-      description: "",
-      priority: "",
-      file: undefined,
-      assignee: "",
+      title: task?.title ?? "",
+      dueDate: task ? new Date(task.dueDate) : new Date(),
+      description: task?.description ?? "",
+      priority: task?.priority ?? "",
+      file: task?.file ?? undefined,
+      assignee: task?.assignee?._id ?? "",
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof newTaskFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof newTaskFormSchema>) {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title ?? "");
+      formData.append("description", values.description || "");
+      formData.append("priority", values.priority ?? "");
+      formData.append(
+        "dueDate",
+        values.dueDate.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      );
+      formData.append("assignee", values.assignee ?? "");
+      if (values.file?.[0]) {
+        formData.append("file", values.file[0]);
+      }
+
+      const endpoint = isEditMode ? `/task/${taskID}` : "/task";
+      const method = isEditMode ? "patch" : "post";
+      const response = await axiosInstance[method](endpoint, formData);
+
+      console.log(
+        `Task ${isEditMode ? "updated" : "created"} successfully:`,
+        response.data
+      );
+
+      successToast({
+        title: `Task ${isEditMode ? "updated" : "created"} successfully:`,
+        message: "Your tasks have been successfully loaded.",
+      });
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
+      });
+      if (isEditMode) {
+        queryClient.invalidateQueries({
+          queryKey: QueryKeys.Get_Single_Task(taskID as string),
+        });
+      }
+
+      form.reset();
+      onClose();
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError;
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} task:`,
+        axiosError
+      );
+      errorToast({
+        title: `Error ${isEditMode ? "updating" : "creating"} task:`,
+        message: `An error occurred while ${
+          isEditMode ? "updating" : "creating"
+        } tasks: ${axiosError?.message}`,
+      });
+    } finally {
+      setLoading(false);
+    }
   }
+
+  useEffect(() => {
+    if (task) {
+      form.reset({
+        title: task?.title || "",
+        dueDate: task ? new Date(task.dueDate) : new Date(),
+        description: task?.description || "",
+        priority: task?.priority || "",
+        file: task?.file || undefined,
+        assignee: task?.assignee?._id ?? "",
+      });
+    }
+  }, [task, form]);
 
   return (
     <Card className="mt-6 mb-6">
@@ -53,15 +146,19 @@ const NewTasksForm = () => {
         aria-describedby="task-details-description"
         className="font-poppins rounded-xl"
       >
-        <CardTitle className="text-sm mt-5">#{taskID}</CardTitle>
+        <CardTitle className="text-sm mt-5">
+          {isEditMode ? `Edit Task ${task.taskId}` : "Create New Task"}
+        </CardTitle>
         <div className="flex flex-col gap-3 mt-3 text-xs mb-4">
-          <p className="font-medium text-gray-400 ">
+          <p className="font-medium text-gray-400">
             Kindly fill out the fields below correctly
           </p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div
+              className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", className)}
+            >
               <FormField
                 control={form.control}
                 name="title"
@@ -70,7 +167,7 @@ const NewTasksForm = () => {
                     <FormLabel>Task Title</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Verify KYC"
+                        placeholder="Register"
                         type="text"
                         className="bg-gray-200"
                         {...field}
@@ -92,7 +189,7 @@ const NewTasksForm = () => {
                     <CustomDatePicker
                       control={form.control}
                       name="dueDate"
-                      buttonClassName="bg-gray-200 "
+                      buttonClassName="bg-gray-200"
                     />
                     <FormMessage />
                   </FormItem>
@@ -109,7 +206,7 @@ const NewTasksForm = () => {
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="The goal of this task is to verify the Know Your Customer (KYC) documentation to ensure compliance with regulatory standards. This involves reviewing customer-submitted documents for authenticity and accuracy."
+                        placeholder="The primary objective of this task is to update and refine our project."
                         className="h-24 bg-gray-200 resize-y outline-none border-none focus-visible:ring-0 focus-visible:ring-ring focus-visible:ring-offset-0"
                         {...field}
                       />
@@ -133,7 +230,7 @@ const NewTasksForm = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
-                          <SelectValue placeholder="Select a priority to display" />
+                          <SelectValue placeholder="Select a priority" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -151,13 +248,10 @@ const NewTasksForm = () => {
                 name="file"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Attach File
-                      <CustomCompulsoryInputStar />
-                    </FormLabel>
+                    <FormLabel>Attach File</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Screenshot 1234"
+                        placeholder="Attach a file"
                         type="file"
                         className="bg-gray-200"
                         {...field}
@@ -182,15 +276,15 @@ const NewTasksForm = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
-                          <SelectValue placeholder="Select an assignee to display" />
+                          <SelectValue placeholder="Select an assignee" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="john doe">John Doe </SelectItem>
+                        <SelectItem value="john doe">John Doe</SelectItem>
                         <SelectItem value="nathan knorr">
                           Nathan Knorr
                         </SelectItem>
-                        <SelectItem value="ema figma">Ema Figma </SelectItem>
+                        <SelectItem value="ema figma">Ema Figma</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -200,11 +294,12 @@ const NewTasksForm = () => {
             </div>
             <CustomButton
               icon={Save}
-              label="Create Task"
+              label={isEditMode ? "Update Task" : "Create Task"}
               variant="primary"
               type="submit"
+              isLoading={isEditMode && loading}
+              loadingText={isEditMode ? "Editing" : "Creating"}
             />
-            {/* <Button type="submit">Submit</Button> */}
           </form>
         </Form>
       </CardContent>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Wifi } from "lucide-react";
 import Header from "../../components/global/header";
 import {
@@ -6,28 +7,40 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { FetchLoadingAndEmptyState } from "../../components/shared/FetchLoadingAndEmptyState";
 import TasksTable from "../../components/task/TasksTable";
 import { TableSkeleton } from "../../components/tickets/TicketTableSkeleton";
 import { sampleTaskCardsData } from "../../components/store/data/task";
 import TasksTableEmptyState from "../../components/task/TaskTableEmptyState";
+import CustomPaginationContent from "../../utils/pagination";
+import { Button } from "../../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
+import NewTasksForm from "../../components/task/NewTasksForm";
+import { useTasks } from "../../hooks/useTasks";
 
 const Tasks = () => {
-  const isLoading = false; // Replace with actual loading state
-  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data, isLoading, isError, error } = useTasks(
+    currentPage,
+    itemsPerPage
+  );
+  console.log(data);
 
-  const handleRowClick = (
-    event: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    rowId: string
-  ) => {
-    const checkboxClicked = (event.target as HTMLElement).closest(
-      'input[type="checkbox"]'
-    );
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
-    if (!checkboxClicked) {
-      navigate(`/tasks/${rowId}`);
-    }
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
   };
 
   return (
@@ -56,15 +69,53 @@ const Tasks = () => {
         ))}
       </div>
       <div className="mt-4">
-        <Header title="Task List" />
+        <div className="flex justify-between items-center">
+          <p>Task List</p>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setIsDialogOpen(true)}>Create Task</Button>
+            </DialogTrigger>
+            <DialogContent className="h-[530px] w-[450px] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Create New Task</DialogTitle>
+                <DialogDescription>
+                  <NewTasksForm
+                    className="grid md:grid-cols-1"
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onClose={handleDialogClose} // Pass close handler
+                  />
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
         <FetchLoadingAndEmptyState
           isLoading={isLoading}
           numberOfSkeleton={1}
           skeleton={<TableSkeleton length={5} />}
           emptyState={<TasksTableEmptyState />}
-          data={1}
+          data={data?.length}
         >
-          <TasksTable handleRowClick={handleRowClick} />
+          {isError ? (
+            <div className="text-red-500">
+              Failed to load tasks: {error?.message}
+            </div>
+          ) : (
+            <>
+              <TasksTable
+                tasks={data}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+              />
+              <CustomPaginationContent
+                currentPage={currentPage}
+                totalItems={data?.pagination?.total || 0}
+                itemsPerPage={itemsPerPage}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )}
         </FetchLoadingAndEmptyState>
       </div>
     </div>

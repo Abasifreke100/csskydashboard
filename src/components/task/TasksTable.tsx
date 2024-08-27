@@ -12,42 +12,53 @@ import { truncateText } from "../../utils/text";
 import useCheckboxSelection from "../../hooks/useCheckboxSelection";
 import { Checkbox } from "../checkbox";
 import { renderCellContent, taskTableHeaders } from "../store/data/task";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import axiosInstance from "../../api/connectSurfApi";
+import { EllipsisVertical } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKeys } from "../../models/query";
+import { errorToast, successToast } from "../../utils/toast";
 
 interface Tasks {
-  id: string;
-  subject: string;
+  _id: string;
+  title: string;
   priority: string;
   status: string;
-  createdOn: string;
+  dueDate: string;
   assignee: string;
   email: string;
+  taskId: string;
 }
 
 interface TasksTableProps {
-    handleRowClick: (e: React.MouseEvent<HTMLTableRowElement, MouseEvent>, rowId: string) => void;
+  tasks: Tasks[];
+  onDeleteSuccess?: () => void; // Optional callback for success handling
+  currentPage: number;
+  itemsPerPage: number;
 }
 
 const TasksTable: React.FC<TasksTableProps> = ({
-  handleRowClick: handleRow,
+  tasks,
+  onDeleteSuccess, // Optional callback for success handling
+  currentPage,
+  itemsPerPage,
 }) => {
-  const sampleData: Tasks[] = [
-    {
-      id: "TASK123456",
-      subject: "Update Docs",
-      priority: "High",
-      status: "Closed",
-      createdOn: "2024-06-20",
-      assignee: "John Doe",
-      email: "johndoe@gmail.com",
-    },
-  ];
-
   const {
     selectedItems,
     selectAll,
     handleSelectAllChange,
     handleItemSelection,
-  } = useCheckboxSelection(sampleData);
+  } = useCheckboxSelection(tasks as unknown as Tasks[]);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient(); // Access queryClient
 
   const renderTablesHeaders = taskTableHeaders.map((header) => (
     <TableHead className="h-[18px] py-2" key={header}>
@@ -55,43 +66,70 @@ const TasksTable: React.FC<TasksTableProps> = ({
     </TableHead>
   ));
 
-  const handleRowClick = (
-    e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
-    rowId: string
-  ) => {
-    handleRow(e, rowId);
+  const handleRowClick = (_id: string) => {
+    navigate(`/tasks/${_id}`);
+  };
+
+  const handleDelete = async (taskId: string) => {
+    try {
+      await axiosInstance.delete(`/task/${taskId}`);
+
+      // Invalidate queries to refresh task data
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
+      });
+
+      if (onDeleteSuccess) {
+        successToast({
+          title: `Task deleted successfully:`,
+          message: "Your new tasks have been successfully loaded.",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      errorToast({
+        title: `Task deleted error:`,
+        message: "Your new tasks have been successfully loaded.",
+      });
+    }
   };
 
   return (
-    <div className="relative mt-8 lg:mt-2 overflow-x-auto  shadow-md border rounded-lg">
+    <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border rounded-lg">
       <Table>
-        <TableHeader className="">
+        <TableHeader>
           <TableRow className="border-none py-[9px] hover:bg-transparent">
             <TableHead className="h-[18px] py-2">
               <Checkbox
                 id="select-all"
                 isChecked={selectAll}
-                onChange={handleSelectAllChange} // This should be adjusted if handleSelectAllChange does not expect an id and isChecked
+                onChange={handleSelectAllChange}
               />
             </TableHead>
             {renderTablesHeaders}
           </TableRow>
         </TableHeader>
         <TableBody className="bg-white hover:bg-white">
-          {sampleData.map((Tasks) => {
-            const { id, subject, priority, status, createdOn, assignee, email } =
-              Tasks;
-
+          {tasks.map((task) => {
+            const {
+              _id,
+              title,
+              priority,
+              status,
+              dueDate,
+              assignee,
+              email,
+              taskId,
+            } = task;
             return (
               <TableRow
-                key={id}
-                onClick={(e) => handleRowClick(e, id)}
+                key={_id}
                 className="border group py-2 border-b cursor-pointer transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-white border-[#F5F5F7]"
               >
                 <TableCell className="whitespace-nowrap py-2">
                   <Checkbox
-                    id={id}
-                    isChecked={selectedItems.includes(id)}
+                    id={_id}
+                    isChecked={selectedItems.includes(_id)}
                     onChange={(checkboxId, isChecked) =>
                       handleItemSelection(checkboxId, isChecked)
                     }
@@ -99,38 +137,53 @@ const TasksTable: React.FC<TasksTableProps> = ({
                 </TableCell>
                 <TableCell className="py-2">
                   <p className="text-sm whitespace-nowrap">
-                    {truncateText(id, 13)}
+                    {truncateText(taskId ?? " ", 13)}
                   </p>
                 </TableCell>
-                <TableCell className="whitespace-nowrap py-2 ">
-                  {truncateText(subject, 20)}
+                <TableCell className="whitespace-nowrap py-2">
+                  {truncateText(title ?? " ", 20)}
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-2">
                   {priority}
                 </TableCell>
-                <TableCell >
-                {(status &&
-                      renderCellContent(status as "Closed")) ||
-                      "N/A"}
+                <TableCell>
+                  {(status && renderCellContent(status as "Closed")) || "N/A"}
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-2">
-                  {createdOn}
+                  {dueDate}
                 </TableCell>
                 <TableCell className="flex items-center py-2">
-                  <Avatar className=" h-10 w-10 mr-1">
+                  <Avatar className="h-10 w-10 mr-1">
                     <AvatarImage src="https://github.com/max-programming.png" />
                     <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                       JD
                     </AvatarFallback>
                   </Avatar>
-                  <div className=" ml-1">
+                  <div className="ml-1">
                     <p className="text-sm whitespace-nowrap">
-                      {truncateText(assignee, 13)}
+                      {truncateText(assignee ?? "N/A", 13)}
                     </p>
-                    <p className="text-xs  whitespace-nowrap">
-                      {truncateText(email, 13)}
+                    <p className="text-xs whitespace-nowrap">
+                      {truncateText(email ?? "", 13)}
                     </p>
                   </div>
+                </TableCell>
+                <TableCell className="">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <EllipsisVertical />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => handleDelete(_id)}>
+                        Delete Task
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleRowClick(_id)}>
+                        View Details
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             );
