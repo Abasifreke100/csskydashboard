@@ -25,6 +25,7 @@ import CustomPaginationContent from "../../utils/pagination";
 import { Checkbox } from "../../components/checkbox";
 import { CustomerTableSkeleton } from "../../skeleton/customerTable";
 import Header from "../../components/global/header";
+import { useToast } from "../../components/ui/use-toast";
 
 const renderCellContent = (cellData: Response | Corporate): JSX.Element => {
   let badgeBgColor = "";
@@ -65,6 +66,7 @@ const CustomersPage = () => {
   const { currentPage, setCurrentPage } = useProviderContext();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     setCurrentPage(1); // Reset the current page to 1 when type changes
@@ -145,8 +147,19 @@ const CustomersPage = () => {
       await Promise.all(verificationPromises);
       // Optionally, after all verifications are done, you may want to fetch updated data
       // Example: refetchData();
+      toast({
+        title: "Success",
+        description:
+          "Verification successful , if pending then nin is invalid or not provided",
+      });
     } catch (error) {
       console.error("Error verifying individuals:", error);
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description:
+          "Verification failed: NIN initialization error or NIN currently unavailable.",
+      });
       // Handle error, show error message, etc.
     } finally {
       setSelectAll(false);
@@ -166,9 +179,8 @@ const CustomersPage = () => {
   }, [selected]);
 
   useEffect(() => {
-setSelected(tabs[0])
-  },[type])
-
+    setSelected(tabs[0]);
+  }, [type]);
 
   return (
     <div className="h-screen screen-max-width">

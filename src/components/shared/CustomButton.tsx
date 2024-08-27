@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import { LucideIcon } from "lucide-react";
+import { Loader2, LucideIcon } from "lucide-react";
 import cn from "../../lib/utils";
 
 interface CustomButtonProps {
@@ -7,7 +7,9 @@ interface CustomButtonProps {
   label: string;
   variant: "primary" | "secondary";
   onClick?: () => void;
-  type?: "button" | "submit" ;
+  type?: "button" | "submit";
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 const CustomButton = ({
@@ -16,6 +18,8 @@ const CustomButton = ({
   variant,
   onClick,
   type = "button",
+  isLoading = false,
+  loadingText = "Loading...",
 }: CustomButtonProps) => {
   const primaryStyles =
     "bg-primary text-white hover:bg-primary hover:text-white";
@@ -30,8 +34,17 @@ const CustomButton = ({
 
   return (
     <Button className={buttonClass} type={type} onClick={onClick}>
-      {Icon && <Icon size={16} />}
-      {label}
+      {isLoading ? (
+        <>
+          <Loader2 className="animate-spin" size={16} />
+          {loadingText}
+        </>
+      ) : (
+        <>
+          {Icon && <Icon size={16} />}
+          {label}
+        </>
+      )}
     </Button>
   );
 };

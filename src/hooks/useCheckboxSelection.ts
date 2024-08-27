@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 interface Item {
-  id: string;
-  // add any other properties your items have
+  _id: string;
 }
 
 const useCheckboxSelection = (initialItems: Item[] = []) => {
@@ -13,7 +12,7 @@ const useCheckboxSelection = (initialItems: Item[] = []) => {
     if (selectAll) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(initialItems.map((item) => item.id));
+      setSelectedItems(initialItems.map((item) => item._id));
     }
     setSelectAll(!selectAll);
   };

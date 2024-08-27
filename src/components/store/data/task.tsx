@@ -28,22 +28,22 @@ export const sampleTaskCardsData = [
   },
 ];
 
-type Status = "Closed" | "In Progress" | "Open";
+type Status = "Closed" | "In Progress" | "pending" | "Open";
 
 export const renderCellContent = (status: Status): JSX.Element => {
   let badgeBgColor = "";
 
   if (status === "Closed") {
-    badgeBgColor = "bg-lightGreen hover:bg-lightGreen text-deepGreen";
-  } else if (status === "In Progress") {
-    badgeBgColor = "bg-secondary hover:bg-secondary text-primary";
+    badgeBgColor =
+      "bg-lightGreen capitalize hover:bg-lightGreen text-deepGreen";
+  } else if (status === "In Progress" || status === "pending") {
+    badgeBgColor = "bg-secondary capitalize hover:bg-secondary text-primary";
   } else if (status === "Open") {
-    badgeBgColor = "bg-lightRed hover:bg-lightRed text-deepRed";
+    badgeBgColor = "bg-lightRed capitalize hover:bg-lightRed text-deepRed";
   }
 
   return <Badge className={badgeBgColor}>{status}</Badge>;
 };
-
 
 export const sampleData = [
   {
