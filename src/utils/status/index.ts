@@ -1,11 +1,11 @@
 export function getStatusColor(status: string): string {
   switch (status) {
-    case "Pending":
-      case "pending":
+    case "in progress":
       return "text-yellow-500 capitalize";
-    case "Approved":
+    case "completed":
       return "text-green-500 capitalize";
-    case "Rejected":
+    case "Pending":
+    case "pending":
       return "text-red-500 capitalize";
     default:
       return "text-gray-500 capitalize";
