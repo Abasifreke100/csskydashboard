@@ -56,24 +56,24 @@ const AdminTable = ({ users }: AdminTableProps) => {
   const upgradeUser = useMutation({
     mutationFn: (data: { userId: string; tier: string }) =>
       upgradeUserToAdmin(data.userId, data.tier),
-    onSuccess: ({ data }) => {
+    onSuccess: () => {
       successToast({
         title: "User Upgraded",
-        message: `User with ID ${data.userId} has been upgraded to admin.`,
+        message: `Upgrade done successfully.`,
       });
-      setActiveUserId(null); // Close the dialog
-      queryClient.invalidateQueries({ queryKey: QueryKeys.Get_All_Users });
+      setActiveUserId(null);
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Get_All_Users, 1, 10],
+      });
     },
     onError: (error) => {
       errorToast({
         title: "Upgrade Error",
         message: `An error occurred while upgrading the user: ${error.message}`,
       });
-      setActiveUserId(null); // Close the dialog
+      setActiveUserId(null);
     },
   });
-
- 
 
   const renderTableHeaders = adminTableHeaders.map((header) => (
     <TableHead className="h-[18px] py-2" key={header}>
@@ -121,7 +121,9 @@ const AdminTable = ({ users }: AdminTableProps) => {
                       <Button
                         disabled={!isTierRequest}
                         className={`${
-                          isTierRequest ? "bg-blue-500 hover:bg-blue-400" : "bg-gray-200 hover:bg-gray-200 "
+                          isTierRequest
+                            ? "bg-blue-500 hover:bg-blue-400"
+                            : "bg-gray-200 hover:bg-gray-200 "
                         } text-white px-4 py-2 rounded `}
                       >
                         Upgrade Tier
