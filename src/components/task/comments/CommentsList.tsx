@@ -16,7 +16,7 @@ const CommentsTable = ({ comments }: { comments: CommentResponse[] }) => {
       </div>
 
       {/* Comments List */}
-      <div className="max-h-[150px] border-t overflow-y-auto py-2">
+      <div className=" border-t h-fit py-2">
         {comments.map((comment) => (
           <div
             key={comment._id}

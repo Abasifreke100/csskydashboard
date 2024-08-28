@@ -4,6 +4,7 @@ import axiosInstance from "../api/connectSurfApi";
 import { QueryKeys } from "../models/query";
 import { TaskService } from "../service/task";
 import { errorToast, successToast } from "../utils/toast";
+import { useEffect } from "react";
 
 const fetchTasks = async (currentPage: number, itemsPerPage: number) => {
   const response = await axiosInstance.get(
@@ -47,6 +48,7 @@ interface UseFetchTaskProps {
   taskID: string;
 }
 
+
 export const useFetchTask = ({ taskID }: UseFetchTaskProps) => {
   const { data, isLoading, isSuccess, isError } = useQuery({
     queryKey: QueryKeys.Get_Single_Task(taskID),
@@ -54,19 +56,21 @@ export const useFetchTask = ({ taskID }: UseFetchTaskProps) => {
     enabled: !!taskID, // Ensure taskID is provided before making the query
   });
 
-  if (isSuccess) {
-    successToast({
-      title: "Task Data Loaded",
-      message: "Task details have been successfully loaded.",
-    });
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      successToast({
+        title: "Task Data Loaded",
+        message: "Task details have been successfully loaded.",
+      });
+    }
 
-  if (isError) {
-    errorToast({
-      title: "Fetch Error",
-      message: "An error occurred while fetching task data. Please try again.",
-    });
-  }
+    if (isError) {
+      errorToast({
+        title: "Fetch Error",
+        message: "An error occurred while fetching task data. Please try again.",
+      });
+    }
+  }, [isSuccess, isError]); // Only show toast when the fetch status changes
 
   return {
     data,

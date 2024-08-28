@@ -28,6 +28,6 @@ npm run build --silent ||
 
 # Clean up any temporary files or directories
 echo '🧹 Cleaning up...'
-# Example: rm -rf dist
+ rm -rf dist
 
 echo '✅✅✅✅ Ready to commit! ✅✅✅✅'

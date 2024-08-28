@@ -17,6 +17,9 @@ import { useAppDispatch } from "../app/hooks";
 import { useToast } from "./ui/use-toast";
 import { loggedOut } from "../features/auth/authActions";
 import { Cssky_Dashboard_Routes } from "./store/data";
+import { useSelector } from "react-redux";
+import { RootState } from "../app/store";
+import { getInitials } from "../utils/getInitials";
 
 const sidebarItems: SidebarItems = {
   theme: [
@@ -111,6 +114,12 @@ export function Sidebar() {
   });
   const { toast } = useToast();
   const dispatch = useAppDispatch();
+  const data = useSelector((state: RootState) => state.auth);
+
+const fullName = data?.user?.firstName && data?.user?.lastName
+  ? `${data.user.firstName} ${data.user.lastName}`
+  : "";
+  const initials = getInitials(fullName);
 
   const handleLogOut = () => {
     dispatch(loggedOut())
@@ -131,7 +140,7 @@ export function Sidebar() {
 
   if (isDesktop) {
     return (
-      <SidebarDesktop sidebarItems={sidebarItems} handleLogout={handleLogOut} />
+      <SidebarDesktop sidebarItems={sidebarItems} fullName={fullName} initials={initials} user={data.user} handleLogout={handleLogOut} />
     );
   }
 

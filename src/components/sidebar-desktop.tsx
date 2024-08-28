@@ -3,7 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { SidebarItems, Theme } from "../types";
+import { SidebarItems, Theme, User } from "../types";
 import { useProviderContext } from "../constants";
 import {
   Accordion,
@@ -11,13 +11,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import {useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { TicketsAccordion } from "./tickets/TicketAccordion";
 
 interface SidebarDesktopProps {
   sidebarItems: SidebarItems;
   handleLogout: () => void;
+  user: User | null;
+  initials: string;
+  fullName: string;
 }
 
 export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
@@ -25,20 +28,19 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
   const [value, setValue] = useState(" ");
   const { setActive, setCurrentPage } = useProviderContext();
   const isDesktop = useMediaQuery("(min-width: 1025px)");
-  
-
 
   const isActivePath = useCallback((currentPath: string, linkPath: string) => {
     return currentPath === linkPath || currentPath.startsWith(linkPath + "/");
   }, []);
-  
 
-  const handleAccordionChange = useCallback((index: string) => {
-    setCurrentPage(1);
-    setValue(index);
-  }, [setCurrentPage]);
+  const handleAccordionChange = useCallback(
+    (index: string) => {
+      setCurrentPage(1);
+      setValue(index);
+    },
+    [setCurrentPage]
+  );
 
-  
   return (
     <div className="py-3 overflow-hidden  ">
       <aside className="lg:w max-w-xs shadow-lg h-full bg-white rounded-tr-2xl rounded-br-md overflow-y-auto">
@@ -46,8 +48,12 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
           <div className="flex flex-col gap-3 w-full">
             {props.sidebarItems.theme.map((theme: Theme) => (
               <div key={theme.title} className=" lg:px-2">
-                <h3 className={`text-xs font-semibold ${isDesktop ? " lg:pl-0 px-4" : "pl-1"} py-2`}>
-                {theme.title}
+                <h3
+                  className={`text-xs font-semibold ${
+                    isDesktop ? " lg:pl-0 px-4" : "pl-1"
+                  } py-2`}
+                >
+                  {theme.title}
                 </h3>
                 {theme.links.map((link, index) =>
                   link.label === "Tickets" ? (
@@ -63,11 +69,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                       className={`no-underline ${index > 0 && "mt-2"}`}
                       collapsible
                       key={link.label}
-                      value={
-                        `item-${index}` === value
-                          ? `item-${index}`
-                          : " "
-                      }
+                      value={`item-${index}` === value ? `item-${index}` : " "}
                       onValueChange={(value) => handleAccordionChange(value)}
                     >
                       <AccordionItem
@@ -140,9 +142,11 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                   <div className="flex items-center logOutAvatar">
                     <Avatar className="h-10 w-10 mr-1">
                       <AvatarImage src="https://github.com/max-programming.png" />
-                      <AvatarFallback className="text-xs">JD</AvatarFallback>
+                      <AvatarFallback className="text-xs">
+                        {props.initials}
+                      </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs">John Doe</p>
+                    <p className="text-xs">{props.fullName}</p>
                   </div>
                   <LogOut size={20} className="cursor-pointer" />
                 </div>

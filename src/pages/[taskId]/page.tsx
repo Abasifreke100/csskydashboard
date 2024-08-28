@@ -12,10 +12,10 @@ const TaskIDDetailsPage = () => {
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [message, setMessage] = useState("");
   const [shouldRefetchComments, setShouldRefetchComments] = useState(false);
-
+  
   // Use the custom hook to fetch the task
   const { data: task, isLoading } = useFetchTask({ taskID: taskID ?? " " });
-
+  
   const handleAddCommentClick = () => {
     setIsAddingComment(true);
   };
@@ -48,9 +48,9 @@ const TaskIDDetailsPage = () => {
       console.error(err);
     }
   };
-
+  
   return (
-    <div className="w-full overflow-y-auto">
+    <div className=" pb-12 ">
       <FetchLoadingAndEmptyState
         isLoading={isLoading}
         numberOfSkeleton={1}
@@ -58,7 +58,6 @@ const TaskIDDetailsPage = () => {
         emptyState={<div>empty state</div>}
         data={task ? 1 : 0}
       >
-        {task && (
           <TaskClientPage
             task={task}
             isAddingComment={isAddingComment}
@@ -70,7 +69,6 @@ const TaskIDDetailsPage = () => {
             shouldRefetchComments={shouldRefetchComments}
             setShouldRefetchComments={setShouldRefetchComments}
           />
-        )}
       </FetchLoadingAndEmptyState>
     </div>
   );

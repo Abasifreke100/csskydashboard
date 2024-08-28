@@ -87,7 +87,10 @@ export interface User {
   _id: string;
   role: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
   message?: string;
+  tier: string | null
 }
 
 export interface UsersResponse {
