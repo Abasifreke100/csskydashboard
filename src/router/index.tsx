@@ -1,4 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ErrorPage from "../error/error";
 import LoginPage from "../pages/auth/login";
 import SignUp from "../pages/auth/sign-up";
@@ -17,6 +18,30 @@ import InboxDetailsPage from "../pages/inbox/[inboxId]/page";
 import HistoryPage from "../pages/history/page";
 import AdminPage from "../pages/admin/page";
 import TaskIDDetailsPage from "../pages/[taskId]/page";
+import BillingInfoPage from "../pages/billing-info/page";
+import { RootState } from "../app/store";
+
+// A higher-order component to protect routes based on user tier
+const ProtectedRoute = ({
+  element,
+  restrictedTiers,
+}: {
+  element: JSX.Element;
+  restrictedTiers?: string[];
+}) => {
+  const user = useSelector((state: RootState) => state.auth);
+  const userTier = user?.user?.tier;
+
+  if (
+    !userTier ||
+    !Array.isArray(restrictedTiers) ||
+    restrictedTiers.includes(userTier)
+  ) {
+    return <Navigate to={Cssky_Dashboard_Routes.dashboard} />;
+  }
+
+  return element;
+};
 
 export const router = createBrowserRouter([
   {
@@ -45,43 +70,63 @@ export const router = createBrowserRouter([
       },
       {
         path: Cssky_Dashboard_Routes.insights,
-        element: <Insights />,
+        element: <ProtectedRoute element={<Insights />} />,
       },
       {
         path: Cssky_Dashboard_Routes.tasks,
-        element: <Tasks />,
+        element: <ProtectedRoute element={<Tasks />} />,
       },
       {
         path: Cssky_Dashboard_Routes.taskId,
-        element: <TaskIDDetailsPage />,
+        element: <ProtectedRoute element={<TaskIDDetailsPage />} />,
       },
       {
         path: Cssky_Dashboard_Routes.apiBindings,
-        element: <ApiBindings />,
+        element: (
+          <ProtectedRoute
+            element={<ApiBindings />}
+            restrictedTiers={["tier 1"]}
+          />
+        ),
       },
       {
         path: Cssky_Dashboard_Routes.more,
-        element: <More />,
+        element: <ProtectedRoute element={<More />} />,
       },
       {
         path: Cssky_Dashboard_Routes.tickets,
-        element: <TicketPage />,
+        element: <ProtectedRoute element={<TicketPage />} />,
       },
       {
         path: Cssky_Dashboard_Routes.inbox,
-        element: <InboxPage />,
+        element: <ProtectedRoute element={<InboxPage />} />,
       },
       {
         path: Cssky_Dashboard_Routes.inboxDetail,
-        element: <InboxDetailsPage />,
-      },{
-        path:Cssky_Dashboard_Routes.history,
-        element : <HistoryPage/>
+        element: <ProtectedRoute element={<InboxDetailsPage />} />,
+      },
+      {
+        path: Cssky_Dashboard_Routes.history,
+        element: <ProtectedRoute element={<HistoryPage />} />,
       },
       {
         path: Cssky_Dashboard_Routes.admin,
-        element: <AdminPage/>
-      }
+        element: (
+          <ProtectedRoute
+            element={<AdminPage />}
+            restrictedTiers={["tier 1"]}
+          />
+        ),
+      },
+      {
+        path: Cssky_Dashboard_Routes.billingInfo,
+        element: (
+          <ProtectedRoute
+            element={<BillingInfoPage />}
+            restrictedTiers={["tier 1"]}
+          />
+        ),
+      },
     ],
     errorElement: <ErrorPage />,
   },

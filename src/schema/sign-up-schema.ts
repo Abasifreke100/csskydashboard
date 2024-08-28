@@ -6,6 +6,7 @@ export const signUpSchema = z.object({
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters long"),
+    
 });
 
 // Type for the sign-up form values

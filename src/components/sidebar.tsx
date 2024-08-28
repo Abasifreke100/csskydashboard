@@ -108,6 +108,48 @@ const sidebarItems: SidebarItems = {
     // Add more themes as needed
   ],
 };
+
+type TierKey = "tier-1" | "tier-2" | "tier-3" | "null";
+
+const tierAccess: Record<TierKey, string[]> = {
+  "tier-1": ["API Bindings", "Admin", "Billing Info"],
+  "tier-2": [], // Tier 2 users have no restrictions
+  "tier-3": [], // Tier 3 users have no restrictions
+  null: [
+    "API Bindings",
+    "Admin",
+    "Billing Info",
+    "History",
+    "Inbox",
+    "Tickets",
+    "More",
+    "Tasks",
+    "Insights",
+  ],
+};
+
+// Function to filter sidebar items based on tier
+const filterSidebarItems = (
+  items: SidebarItems,
+  userTier: string | null
+): SidebarItems => {
+  // Ensure userTier is handled correctly
+  const validTier: TierKey =
+    userTier && userTier in tierAccess ? (userTier as TierKey) : "null";
+  const restrictedItems = tierAccess[validTier] || [];
+
+  return {
+    theme: items.theme
+      .map((theme) => ({
+        ...theme,
+        links: theme.links.filter(
+          (link) => !restrictedItems.includes(link.label)
+        ),
+      }))
+      .filter((theme) => theme.links.length > 0), // Remove theme if all links are restricted
+  };
+};
+
 export function Sidebar() {
   const isDesktop = useMediaQuery("(min-width: 640px)", {
     initializeWithValue: false,
@@ -116,10 +158,14 @@ export function Sidebar() {
   const dispatch = useAppDispatch();
   const data = useSelector((state: RootState) => state.auth);
 
-const fullName = data?.user?.firstName && data?.user?.lastName
-  ? `${data.user.firstName} ${data.user.lastName}`
-  : "";
+  const fullName =
+    data?.user?.firstName && data?.user?.lastName
+      ? `${data.user.firstName} ${data.user.lastName}`
+      : "";
   const initials = getInitials(fullName);
+  const userTier = data.user?.tier ?? null;
+  const filteredSidebarItems = filterSidebarItems(sidebarItems, userTier);
+  console.log(filteredSidebarItems);
 
   const handleLogOut = () => {
     dispatch(loggedOut())
@@ -140,11 +186,20 @@ const fullName = data?.user?.firstName && data?.user?.lastName
 
   if (isDesktop) {
     return (
-      <SidebarDesktop sidebarItems={sidebarItems} fullName={fullName} initials={initials} user={data.user} handleLogout={handleLogOut} />
+      <SidebarDesktop
+        sidebarItems={filteredSidebarItems}
+        fullName={fullName}
+        initials={initials}
+        user={data.user}
+        handleLogout={handleLogOut}
+      />
     );
   }
 
   return (
-    <SidebarMobile sidebarItems={sidebarItems} handleLogout={handleLogOut} />
+    <SidebarMobile
+      sidebarItems={filteredSidebarItems}
+      handleLogout={handleLogOut}
+    />
   );
 }

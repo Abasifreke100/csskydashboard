@@ -48,7 +48,7 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <p className="font-poppins text-sm">{truncateText(fullName, 12)}</p>
+          <p className="font-poppins text-sm">{truncateText(fullName, 3)}</p>
           <button
             className="border-none outline-none text-[#808080]"
             aria-label="Customize options"

@@ -33,6 +33,8 @@ import { useEffect, useState } from "react";
 import { ViewOneTaskDataResponse } from "../../types/task";
 import { errorToast, successToast } from "../../utils/toast";
 import { AxiosError } from "axios";
+import { useFetchUsers } from "../../hooks/useFetchAdmin";
+import { User } from "../../types";
 
 interface NewTasksFormProps {
   className?: string;
@@ -53,6 +55,7 @@ const NewTasksForm = ({
   const isEditMode = !!task;
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // Add this line
+  const { data: users } = useFetchUsers();
 
   const form = useForm<z.infer<typeof newTaskFormSchema>>({
     resolver: zodResolver(newTaskFormSchema),
@@ -67,10 +70,9 @@ const NewTasksForm = ({
   });
 
   async function onSubmit(values: z.infer<typeof newTaskFormSchema>) {
-    setLoading(true);
-
     try {
       const formData = createFormData(values);
+      setLoading(true);
       const { endpoint, method } = getRequestConfig(isEditMode, taskID);
 
       const response = await sendRequest(method, endpoint, formData);
@@ -190,7 +192,10 @@ const NewTasksForm = ({
             className="space-y-8 h-fit w-full"
           >
             <div
-              className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", className)}
+              className={cn(
+                "grid grid-cols-1 gap-6 md:grid-cols-2 text-start",
+                className
+              )}
             >
               <FormField
                 control={form.control}
@@ -313,11 +318,11 @@ const NewTasksForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="john doe">John Doe</SelectItem>
-                        <SelectItem value="nathan knorr">
-                          Nathan Knorr
-                        </SelectItem>
-                        <SelectItem value="ema figma">Ema Figma</SelectItem>
+                        {users?.data?.response?.map((user: User) => (
+                          <SelectItem key={user?._id} value={user?._id}>
+                            {user?.firstName}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -330,7 +335,7 @@ const NewTasksForm = ({
               label={isEditMode ? "Update Task" : "Create Task"}
               variant="primary"
               type="submit"
-              isLoading={isEditMode && loading}
+              isLoading={loading}
               loadingText={isEditMode ? "Editing Task" : "Creating Task"}
             />
           </form>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import useMetaTagUpdater from "../../utils/useMetaTagUpdater";
 import useTitleUpdater from "../../utils/useTitleUpdater";
 import AuthLayout from "./layout";
@@ -19,6 +20,9 @@ import { SignUpFormValues, signUpSchema } from "../../schema/sign-up-schema";
 import { SignUpData, UserService } from "../../service/user";
 import { useMutation } from "@tanstack/react-query";
 import { Cssky_Dashboard_Routes } from "../../components/store/data";
+import InputToggle from "../../utils/input-toggle";
+import { Checkbox } from "../../components/ui/checkbox";
+import { errorToast } from "../../utils/toast";
 
 const SignUp = () => {
   useTitleUpdater({ "/sign-up": "Connect-Surf-Smile | Sign Up" });
@@ -31,6 +35,8 @@ const SignUp = () => {
 
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const [isChecked, setIsChecked] = useState(false);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -61,11 +67,19 @@ const SignUp = () => {
 
   // Submit handler for the sign-up form
   const onSubmit = (data: SignUpFormValues) => {
-    signUpMutation.mutate(data);
+    if (isChecked) {
+      signUpMutation.mutate(data);
+    } else {
+      errorToast({
+        title: "Error",
+        message:
+          "You must agree to the Privacy Policy and Terms and Conditions",
+      });
+    }
   };
 
   return (
-    <AuthLayout header="Sign up">
+    <AuthLayout header="Apply For Access">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -82,7 +96,7 @@ const SignUp = () => {
                     <Input
                       type="text"
                       placeholder="First Name"
-                      className="bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey"
+                      className="bg-[#F5F5F7] border border-grey rounded-xl text-grey placeholder:text-grey"
                       {...field}
                     />
                   </FormControl>
@@ -102,7 +116,7 @@ const SignUp = () => {
                     <Input
                       type="text"
                       placeholder="Last Name"
-                      className="bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey"
+                      className="bg-[#F5F5F7] border border-grey rounded-xl text-grey placeholder:text-grey"
                       {...field}
                     />
                   </FormControl>
@@ -122,7 +136,7 @@ const SignUp = () => {
                     <Input
                       type="email"
                       placeholder="Email"
-                      className="bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey"
+                      className="bg-[#F5F5F7] border border-grey rounded-xl text-grey placeholder:text-grey"
                       {...field}
                     />
                   </FormControl>
@@ -139,10 +153,9 @@ const SignUp = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
+                    <InputToggle
                       type="password"
                       placeholder="Password"
-                      className="bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey"
                       {...field}
                     />
                   </FormControl>
@@ -154,7 +167,7 @@ const SignUp = () => {
           <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
             <Button
               type="submit"
-              className="w-full bg-[#000000E5] text-white hover:bg-[#000000E5]"
+              className="w-full bg-primary rounded-full text-white hover:bg-primary/75"
               disabled={signUpMutation.isPending}
             >
               {signUpMutation.isPending ? (
@@ -179,16 +192,36 @@ const SignUp = () => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Signing Up...
+                  Requesting access...
                 </div>
               ) : (
-                "Sign Up"
+                "Request Access"
               )}
             </Button>
           </div>
-          <p className="text-xs col-span-6 text-center text-grey">
-            Already have an account ?{" "}
-            <Link to={Cssky_Dashboard_Routes.signIn}>Sign in</Link>
+          <div className="col-span-6 flex justify-between sm:items-center sm:gap-4">
+            <div className="items-center flex space-x-2">
+              <Checkbox
+                id="terms2"
+                checked={isChecked}
+                onCheckedChange={() => setIsChecked(!isChecked)}
+                className="text-grey bg-transparent data-[state=checked]:bg-white border-grey data-[state=checked]:text-grey-foreground"
+              />
+
+              <label
+                htmlFor="terms2"
+                className="text-sm w-80 text-grey font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I have read and agree to the Privacy Policy and Terms and
+                Conditions
+              </label>
+            </div>
+          </div>
+          <p className="text-xs col-span-6 text-center text-grey font-medium font-poppins">
+            Already have an account?{" "}
+            <Link to={Cssky_Dashboard_Routes.signIn} className="text-primary">
+              Sign in instead
+            </Link>
           </p>
         </form>
       </Form>

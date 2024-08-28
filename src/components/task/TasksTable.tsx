@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   Table,
@@ -26,6 +26,15 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "../../models/query";
 import { errorToast, successToast } from "../../utils/toast";
+import { getInitials } from "../../utils/getInitials";
+import Modal from "../shared/CustomModal";
+
+interface Assignee {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 interface Tasks {
   _id: string;
@@ -33,7 +42,7 @@ interface Tasks {
   priority: string;
   status: string;
   dueDate: string;
-  assignee: string;
+  assignee: Assignee;
   email: string;
   taskId: string;
 }
@@ -59,6 +68,8 @@ const TasksTable: React.FC<TasksTableProps> = ({
   } = useCheckboxSelection(tasks as unknown as Tasks[]);
   const navigate = useNavigate();
   const queryClient = useQueryClient(); // Access queryClient
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   const renderTablesHeaders = taskTableHeaders.map((header) => (
     <TableHead className="h-[18px] py-2" key={header}>
@@ -78,6 +89,7 @@ const TasksTable: React.FC<TasksTableProps> = ({
       queryClient.invalidateQueries({
         queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
       });
+      setIsModalOpen(false);
 
       if (onDeleteSuccess) {
         successToast({
@@ -91,7 +103,19 @@ const TasksTable: React.FC<TasksTableProps> = ({
         title: `Task deleted error:`,
         message: "Your new tasks have been successfully loaded.",
       });
+    } finally {
+      setIsModalOpen(false);
     }
+  };
+
+  const openModal = (taskId: string) => {
+    setTaskToDelete(taskId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setTaskToDelete(null);
   };
 
   return (
@@ -121,6 +145,13 @@ const TasksTable: React.FC<TasksTableProps> = ({
               email,
               taskId,
             } = task;
+
+            const fullName =
+              assignee?.firstName && assignee?.lastName
+                ? `${assignee?.firstName} ${assignee?.lastName}`
+                : "";
+
+            const initials = getInitials(fullName);
             return (
               <TableRow
                 key={_id}
@@ -156,12 +187,12 @@ const TasksTable: React.FC<TasksTableProps> = ({
                   <Avatar className="h-10 w-10 mr-1">
                     <AvatarImage src="https://github.com/max-programming.png" />
                     <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
-                      JD
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="ml-1">
                     <p className="text-sm whitespace-nowrap">
-                      {truncateText(assignee ?? "N/A", 13)}
+                      {truncateText(fullName ?? "N/A", 13)}
                     </p>
                     <p className="text-xs whitespace-nowrap">
                       {truncateText(email ?? "", 13)}
@@ -176,7 +207,7 @@ const TasksTable: React.FC<TasksTableProps> = ({
                     <DropdownMenuContent className="w-56" align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleDelete(_id)}>
+                      <DropdownMenuItem onClick={() => openModal(_id)}>
                         Delete Task
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleRowClick(_id)}>
@@ -190,6 +221,14 @@ const TasksTable: React.FC<TasksTableProps> = ({
           })}
         </TableBody>
       </Table>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={handleDelete}
+        taskToDelete={taskToDelete}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+      />
     </div>
   );
 };

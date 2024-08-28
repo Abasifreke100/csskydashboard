@@ -148,7 +148,7 @@ function LoginPage() {
                     <Input
                       type="email"
                       placeholder="Email"
-                      className="bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey"
+                      className="bg-[#F5F5F7] border rounded-xl border-grey text-grey placeholder:text-grey"
                       {...field}
                     />
                   </FormControl>
@@ -179,7 +179,7 @@ function LoginPage() {
           <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
             <Button
               type="submit"
-              className="w-full bg-[#000000E5] text-white hover:bg-[#000000E5]"
+              className="w-full bg-primary rounded-full text-white hover:bg-primary/75"
               disabled={authState.isLoading}
             >
               {authState.isLoading ? (
@@ -229,9 +229,9 @@ function LoginPage() {
               </label>
             </div>
           </div>
-          <p className="text-xs col-span-6 text-center text-grey">
+          <p className="text-xs col-span-6 text-center text-grey font-medium">
             Don&apos;t have an account ?{" "}
-            <Link to={Cssky_Dashboard_Routes.signUp}>Sign up</Link>
+            <Link className="text-primary" to={Cssky_Dashboard_Routes.signUp}>Request Access</Link>
           </p>
         </form>
       </Form>
