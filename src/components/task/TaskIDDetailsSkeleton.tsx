@@ -2,15 +2,13 @@ import { Card, CardContent, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 const TaskIDDetailsSkeleton = ({ length }: { length: number }) => (
-  <div className="w-full col-span-3 ">
+  <div className="w-full col-span-3 h-fit">
     {Array.from({ length }).map((_, idx) => (
-      <div key={idx} className=" w-full">
-        <Card className="min-h-screen pb-5 px-3 w-full">
-          <div className="mt-3 w-full">
-            <Skeleton className="h-12 w-1/4" />
-          </div>
+      <div key={idx} className=" w-full ">
+        <Card className="min-h- pb-5 px-3 w-full">
+          <div className="mt-3 w-full"></div>
 
-          <div className="mt-3 p-4 border rounded-xl w-full">
+          <div className="mt-3 p-4  rounded-xl w-full">
             <Skeleton className="h-8 w-1/3" />
             <div className="flex flex-col gap-3 mt-3 text-xs">
               <Skeleton className="h-6 w-full" />
@@ -23,16 +21,13 @@ const TaskIDDetailsSkeleton = ({ length }: { length: number }) => (
             <div className="mt-3 max-h-[150px] w-full border-t overflow-y-auto py-2">
               <Skeleton className="h-8 w-1/3" />
               <div className="mt-2 flex flex-col gap-2">
-                <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
                 <div className="flex gap-1.5 mt-4">
                   <Skeleton className="h-10 w-1/4" />
                   <Skeleton className="h-10 w-1/4" />
                 </div>
               </div>
             </div>
-          </div>
-          <div className="mt-5">
-            <Skeleton className="h-12 w-1/4" />
           </div>
         </Card>
         <Card className="mt-6 mb-6">
@@ -85,7 +80,7 @@ const TaskIDDetailsSkeleton = ({ length }: { length: number }) => (
                   {/* Placeholder for Select */}
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-start">
                 <Skeleton className="w-32 h-10 bg-gray-200 rounded" />{" "}
                 {/* Placeholder for Button */}
               </div>

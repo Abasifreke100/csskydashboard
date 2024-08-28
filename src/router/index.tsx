@@ -10,13 +10,13 @@ import Insights from "../pages/insights/page";
 import Tasks from "../pages/tasks/page";
 import ApiBindings from "../pages/api-bindings/page";
 import More from "../pages/more/page";
-import TaskID from "../pages/[taskId]/page";
 import { Cssky_Dashboard_Routes } from "../components/store/data";
 import TicketPage from "../pages/ticket/page";
 import InboxPage from "../pages/inbox/page";
 import InboxDetailsPage from "../pages/inbox/[inboxId]/page";
 import HistoryPage from "../pages/history/page";
 import AdminPage from "../pages/admin/page";
+import TaskIDDetailsPage from "../pages/[taskId]/page";
 
 export const router = createBrowserRouter([
   {
@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
       },
       {
         path: Cssky_Dashboard_Routes.taskId,
-        element: <TaskID />,
+        element: <TaskIDDetailsPage />,
       },
       {
         path: Cssky_Dashboard_Routes.apiBindings,

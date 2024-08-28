@@ -102,156 +102,159 @@ const TaskClientPage = ({
   };
 
   return (
-    <div className="customersContainer w-full">
-      <div className="min-h-screen pb-5 w-full">
-        <Header title="Task Details" icon={true} />
+    <div className=" h-full w-full ">
+      <Header title="Task Details" icon={true} />
+      <Card className="mt-3 h-fit">
+        <CardContent
+          aria-describedby="task-details-description"
+          className="font-poppins rounded-xl"
+        >
+          <CardTitle className="text-sm mt-5">{task.taskId}</CardTitle>
 
-        <Card className="mt-3">
-          <CardContent
-            aria-describedby="task-details-description"
-            className="font-poppins rounded-xl"
-          >
-            <CardTitle className="text-sm mt-5">{task.taskId}</CardTitle>
+          <div className="flex flex-col gap-3 mt-3 text-xs">
+            <p className="font-medium text-gray-400">
+              Task Title: <span className="text-black">{task.title}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Description: <br />
+              <span className="text-black text-xs">{task.description}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Priority: <span className="text-black">{task.priority}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Status: <span className={statusTextColor}>{task.status}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Assignee:{" "}
+              <span className="text-black">{task.assignee?.email}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Due date: <span className="text-black">{task.dueDate}</span>
+            </p>
+            <p className="font-medium text-gray-400">
+              Last Updated:{" "}
+              <span className="text-black">
+                {new Date(task.updatedAt).toLocaleDateString()}
+              </span>
+            </p>
+          </div>
+          <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
+            {/* Comments Section */}
+            <CommentsSection
+              taskID={task._id}
+              refetchComments={shouldRefetchComments}
+              onRefetchComplete={() => setShouldRefetchComments(false)}
+            />
 
-            <div className="flex flex-col gap-3 mt-3 text-xs">
-              <p className="font-medium text-gray-400">
-                Task Title: <span className="text-black">{task.title}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Description: <br />
-                <span className="text-black text-xs">{task.description}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Priority: <span className="text-black">{task.priority}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Status: <span className={statusTextColor}>{task.status}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Assignee:{" "}
-                <span className="text-black">{task.assignee?.email}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Due date: <span className="text-black">{task.dueDate}</span>
-              </p>
-              <p className="font-medium text-gray-400">
-                Last Updated:{" "}
-                <span className="text-black">
-                  {new Date(task.updatedAt).toLocaleDateString()}
-                </span>
-              </p>
-            </div>
-            <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
-              {/* Comments Section */}
-              <CommentsSection
-                taskID={task._id}
-                refetchComments={shouldRefetchComments}
-                onRefetchComplete={() => setShouldRefetchComments(false)}
+            {isAddingComment && (
+              <div className="mt-2 flex flex-col gap-2">
+                <textarea
+                  value={message}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    setMessage(e.target.value);
+                  }}
+                  placeholder="Add your comment"
+                  className="w-full mt-4 text-sm outline-none p-2 border rounded-md"
+                />
+                <div className="flex gap-1.5">
+                  <CustomButton
+                    label="Save Comment"
+                    icon={Save}
+                    type="button"
+                    onClick={handleSaveComment}
+                    variant="primary"
+                  />
+                  <CustomButton
+                    label="Cancel"
+                    variant="secondary"
+                    type="button"
+                    onClick={() => setIsAddingComment(false)}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="mt-7 flex gap-1.5 flex-wrap">
+              <CustomButton
+                icon={Plus}
+                label="Add Comment"
+                variant="secondary"
+                type="button"
+                onClick={handleAddCommentClick}
               />
 
-              {isAddingComment && (
-                <div className="mt-2 flex flex-col gap-2">
-                  <textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Add your comment"
-                    className="w-full mt-4 text-sm outline-none p-2 border rounded-md"
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger>
+                  <CustomButton
+                    icon={CheckCircle}
+                    label="Update Status"
+                    variant="secondary"
                   />
-                  <div className="flex gap-1.5">
-                    <CustomButton
-                      label="Save Comment"
-                      icon={Save}
-                      onClick={handleSaveComment}
-                      variant="primary"
-                    />
-                    <CustomButton
-                      label="Cancel"
-                      variant="secondary"
-                      onClick={() => setIsAddingComment(false)}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="mt-7 flex gap-1.5 flex-wrap">
-                <CustomButton
-                  icon={Plus}
-                  label="Add Comment"
-                  variant="secondary"
-                  onClick={handleAddCommentClick}
-                />
-
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger>
-                    <CustomButton
-                      icon={CheckCircle}
-                      label="Update Status"
-                      variant="secondary"
-                    />
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogDescription>
-                        <Form {...form}>
-                          <form
-                            onSubmit={form.handleSubmit(onSubmit)}
-                            className="space-y-8"
-                          >
-                            <FormField
-                              control={form.control}
-                              name="status"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>
-                                    Status
-                                    <CustomCompulsoryInputStar />
-                                  </FormLabel>
-                                  <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                  >
-                                    <FormControl>
-                                      <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
-                                        <SelectValue placeholder="Select a status" />
-                                      </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                      <SelectItem value="pending">
-                                        Pending
-                                      </SelectItem>
-                                      <SelectItem value="in-progress">
-                                        In Progress
-                                      </SelectItem>
-                                      <SelectItem value="completed">
-                                        Completed
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogDescription>
+                      <Form {...form}>
+                        <form
+                          onSubmit={form.handleSubmit(onSubmit)}
+                          className="space-y-8"
+                        >
+                          <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  Status
+                                  <CustomCompulsoryInputStar />
+                                </FormLabel>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
+                                      <SelectValue placeholder="Select a status" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="pending">
+                                      Pending
+                                    </SelectItem>
+                                    <SelectItem value="in-progress">
+                                      In Progress
+                                    </SelectItem>
+                                    <SelectItem value="completed">
+                                      Completed
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="flex justify-end gap-2">
+                            <CustomButton
+                              label="Update"
+                              variant="primary"
+                              type="submit"
+                              loadingText="Updating Status"
+                              isLoading={mutation.isPending}
                             />
-                            <div className="flex justify-end gap-2">
-                              <CustomButton
-                                label="Update"
-                                variant="primary"
-                                type="submit"
-                                loadingText="Updating Status"
-                                isLoading={mutation.isPending}
-                              />
-                            </div>
-                          </form>
-                        </Form>
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>  
+              </Dialog>
             </div>
-          </CardContent>
-        </Card>
-        <NewTasksForm task={task} />
-      </div>
+          </div>
+        </CardContent>
+      </Card>
+      <NewTasksForm task={task} />
     </div>
   );
 };

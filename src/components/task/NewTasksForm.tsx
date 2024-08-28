@@ -68,63 +68,93 @@ const NewTasksForm = ({
 
   async function onSubmit(values: z.infer<typeof newTaskFormSchema>) {
     setLoading(true);
+
     try {
-      const formData = new FormData();
-      formData.append("title", values.title ?? "");
-      formData.append("description", values.description || "");
-      formData.append("priority", values.priority ?? "");
-      formData.append(
-        "dueDate",
-        values.dueDate.toLocaleDateString("en-US", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })
-      );
-      formData.append("assignee", values.assignee ?? "");
-      if (values.file?.[0]) {
-        formData.append("file", values.file[0]);
-      }
+      const formData = createFormData(values);
+      const { endpoint, method } = getRequestConfig(isEditMode, taskID);
 
-      const endpoint = isEditMode ? `/task/${taskID}` : "/task";
-      const method = isEditMode ? "patch" : "post";
-      const response = await axiosInstance[method](endpoint, formData);
+      const response = await sendRequest(method, endpoint, formData);
 
-      console.log(
-        `Task ${isEditMode ? "updated" : "created"} successfully:`,
-        response.data
-      );
-
-      successToast({
-        title: `Task ${isEditMode ? "updated" : "created"} successfully:`,
-        message: "Your tasks have been successfully loaded.",
-      });
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
-      });
-      if (isEditMode) {
-        queryClient.invalidateQueries({
-          queryKey: QueryKeys.Get_Single_Task(taskID as string),
-        });
-      }
+      handleSuccess(response.data);
+      invalidateQueries();
 
       form.reset();
       onClose();
     } catch (error: unknown) {
-      const axiosError = error as AxiosError;
-      console.error(
-        `Error ${isEditMode ? "updating" : "creating"} task:`,
-        axiosError
-      );
-      errorToast({
-        title: `Error ${isEditMode ? "updating" : "creating"} task:`,
-        message: `An error occurred while ${
-          isEditMode ? "updating" : "creating"
-        } tasks: ${axiosError?.message}`,
-      });
+      handleError(error as AxiosError);
     } finally {
       setLoading(false);
     }
+  }
+
+  function createFormData(values: z.infer<typeof newTaskFormSchema>): FormData {
+    const formData = new FormData();
+    formData.append("title", values.title ?? "");
+    formData.append("description", values.description || "");
+    formData.append("priority", values.priority ?? "");
+    formData.append(
+      "dueDate",
+      values.dueDate.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    );
+    formData.append("assignee", values.assignee ?? "");
+
+    if (values.file?.[0]) {
+      formData.append("file", values.file[0]);
+    }
+
+    return formData;
+  }
+
+  function getRequestConfig(isEditMode: boolean, taskID?: string) {
+    const endpoint = isEditMode ? `/task/${taskID}` : "/task";
+    const method: "post" | "patch" = isEditMode ? "patch" : "post"; // Explicitly type the method
+    return { endpoint, method };
+  }
+
+  async function sendRequest(
+    method: "post" | "patch",
+    endpoint: string,
+    formData: FormData
+  ) {
+    return await axiosInstance[method](endpoint, formData);
+  }
+
+  function handleSuccess(data: ViewOneTaskDataResponse) {
+    console.log(
+      `Task ${isEditMode ? "updated" : "created"} successfully:`,
+      data
+    );
+    successToast({
+      title: `Task ${isEditMode ? "updated" : "created"} successfully:`,
+      message: "Your tasks have been successfully loaded.",
+    });
+  }
+
+  function invalidateQueries() {
+    queryClient.invalidateQueries({
+      queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
+    });
+
+    if (isEditMode && taskID) {
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.Get_Single_Task(taskID),
+      });
+    }
+  }
+
+  function handleError(error: AxiosError) {
+    console.error(`Error ${isEditMode ? "updating" : "creating"} task:`, error);
+
+    errorToast({
+      title: `Error ${isEditMode ? "updating" : "creating"} task:`,
+      message: `An error occurred while ${
+        isEditMode ? "updating" : "creating"
+      } tasks: ${error?.message}`,
+    });
   }
 
   useEffect(() => {
@@ -141,7 +171,7 @@ const NewTasksForm = ({
   }, [task, form]);
 
   return (
-    <Card className="mt-6 mb-6">
+    <Card className="mt-6 relative mb-12">
       <CardContent
         aria-describedby="task-details-description"
         className="font-poppins rounded-xl"
@@ -155,7 +185,10 @@ const NewTasksForm = ({
           </p>
         </div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 h-fit w-full"
+          >
             <div
               className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", className)}
             >
@@ -298,7 +331,7 @@ const NewTasksForm = ({
               variant="primary"
               type="submit"
               isLoading={isEditMode && loading}
-              loadingText={isEditMode ? "Editing" : "Creating"}
+              loadingText={isEditMode ? "Editing Task" : "Creating Task"}
             />
           </form>
         </Form>

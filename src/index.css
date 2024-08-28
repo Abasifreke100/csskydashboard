@@ -2,9 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-  overflow: hidden;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+/* body{
+  overflow: hidden;
+} */
 
 @layer base {
   :root {
@@ -161,7 +167,6 @@ body{
   }
 }
 
-
 @keyframes shimmer {
   0% {
     background-position: 200% 0;
@@ -173,34 +178,39 @@ body{
 
 .shimmer {
   animation: shimmer 1.5s infinite linear;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.2) 20%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.1) 100%);
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.2) 20%,
+    rgba(0, 0, 0, 0.3) 50%,
+    rgba(0, 0, 0, 0.2) 80%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
   background-size: 200% 100%;
 }
-
 
 .containerLg {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-  padding-right: 2rem/* 32px */;
-  padding-left: 2rem/* 32px */;
+  padding-right: 2rem /* 32px */;
+  padding-left: 2rem /* 32px */;
 }
-@media (min-width: 1400px)  {
+@media (min-width: 1400px) {
   .containerLg {
-      max-width: 100%;
+    max-width: 100%;
   }
 }
 
-
- .recharts-cartesian-axis-tick-value{
+.recharts-cartesian-axis-tick-value {
   font-size: 12px;
- }
+}
 
- .recharts-wrapper{
+.recharts-wrapper {
   padding: 0;
   left: 0;
- }
- 
- .recharts-surface{
+}
+
+.recharts-surface {
   padding: 0;
- }
+}

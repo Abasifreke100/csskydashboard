@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Wifi } from "lucide-react";
 import Header from "../../components/global/header";
 import {
@@ -10,7 +10,6 @@ import {
 import { FetchLoadingAndEmptyState } from "../../components/shared/FetchLoadingAndEmptyState";
 import TasksTable from "../../components/task/TasksTable";
 import { TableSkeleton } from "../../components/tickets/TicketTableSkeleton";
-import { sampleTaskCardsData } from "../../components/store/data/task";
 import TasksTableEmptyState from "../../components/task/TaskTableEmptyState";
 import CustomPaginationContent from "../../utils/pagination";
 import { Button } from "../../components/ui/button";
@@ -24,6 +23,11 @@ import {
 } from "../../components/ui/dialog";
 import NewTasksForm from "../../components/task/NewTasksForm";
 import { useTasks } from "../../hooks/useTasks";
+
+interface CardData {
+  title: string;
+  value: number;
+}
 
 const Tasks = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,11 +47,46 @@ const Tasks = () => {
     setIsDialogOpen(false);
   };
 
+  // Dynamically generate the card data
+  const cardData: CardData[] = useMemo(() => {
+    const totalTasks = data?.length || 0;
+    const openTasks =
+      data?.filter((task: { status: string }) => task.status === "open" || task.status == "pending")
+        .length || 0;
+    const inProgressTasks =
+      data?.filter(
+        (task: { status: string }) =>
+          task.status === "in progress" || task.status === "progress"
+      ).length || 0;
+    const closedTasks =
+      data?.filter((task: { status: string }) => task.status === "closed" || task.status === "completed")
+        .length || 0;
+
+    return [
+      {
+        title: "Total Tasks",
+        value: totalTasks,
+      },
+      {
+        title: "Open Tasks",
+        value: openTasks,
+      },
+      {
+        title: "In Progress",
+        value: inProgressTasks,
+      },
+      {
+        title: "Closed Tasks",
+        value: closedTasks,
+      },
+    ];
+  }, [data]);
+
   return (
     <div className="min-h-screen pb-5">
       <Header title="Task Overview" />
       <div className="grid grid-cols-12 gap-5 mt-4">
-        {sampleTaskCardsData.map((card) => (
+        {cardData.map((card) => (
           <Card
             key={card.title}
             className="col-span-12 md:col-span-6 lg:col-span-4 row-span-2 shadow-md"
