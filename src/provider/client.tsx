@@ -1,4 +1,3 @@
- 
 import {
   QueryCache,
   QueryClient,
@@ -30,12 +29,13 @@ export default function ProvidersClient({ children }: Readonly<LayoutProps>) {
       <Toaster
         theme="dark"
         position="top-right"
-        
+        richColors={true}
         toastOptions={{
           classNames: {
             error:
               "bg-[#CA503F] text-[#E0E0E0] border border-none outline-none",
-            success: "text-green-100 bg-success",
+            success:
+              "text-green-100 bg-[#0a332d] border border-none outline-none",
             warning: "text-yellow-400",
             info: "bg-blue-400",
             closeButton:

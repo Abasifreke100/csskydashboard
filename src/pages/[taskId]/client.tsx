@@ -82,6 +82,9 @@ const TaskClientPage = ({
       queryClient.invalidateQueries({
         queryKey: QueryKeys.Get_Single_Task(task._id),
       });
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.Get_Tasks(1, 10),
+      });
       successToast({
         title: "Task status updated successfully",
         message: "Your task status has been updated.",
@@ -135,9 +138,7 @@ const TaskClientPage = ({
             </p>
             <p className="font-medium text-gray-400">
               Last Updated:{" "}
-              <span className="text-black">
-              {formatDate(task.updatedAt)}
-              </span>
+              <span className="text-black">{formatDate(task.updatedAt)}</span>
             </p>
           </div>
           <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
@@ -224,7 +225,7 @@ const TaskClientPage = ({
                                     <SelectItem value="pending">
                                       Pending
                                     </SelectItem>
-                                    <SelectItem value="in-progress">
+                                    <SelectItem value="in progress">
                                       In Progress
                                     </SelectItem>
                                     <SelectItem value="completed">
@@ -249,7 +250,7 @@ const TaskClientPage = ({
                       </Form>
                     </DialogDescription>
                   </DialogHeader>
-                </DialogContent>  
+                </DialogContent>
               </Dialog>
             </div>
           </div>
