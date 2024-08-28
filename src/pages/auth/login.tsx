@@ -21,7 +21,6 @@ import { login } from "../../features/auth/authActions";
 import { useAppDispatch } from "../../app/hooks";
 import InputToggle from "../../utils/input-toggle";
 import { clearError, isAuthenticated } from "../../features/auth/authSlice";
-import AlertError from "../../error/error-alert";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./layout";
@@ -97,16 +96,21 @@ function LoginPage() {
     }
 
     try {
-      await dispatch(login(formData));
-      successToast({
-        title: "Login Success",
-        message: "You have successfully logged in.",
-      });
-      navigate("/");
+      const resultAction = await dispatch(login(formData));
+
+      if (login.fulfilled.match(resultAction)) {
+        successToast({
+          title: "Login Success",
+          message: "You have successfully logged in.",
+        });
+        navigate("/");
+      } else {
+        throw new Error("Login failed");
+      }
     } catch (error) {
       errorToast({
         title: "Error",
-        message:"Failed to log in. Please check your email and password.",
+        message: "Failed to log in. Please check your email and password.",
       });
     }
   };
@@ -117,23 +121,6 @@ function LoginPage() {
 
   return (
     <AuthLayout header="Welcome back">
-      {authState?.user?.message && (
-        <AlertError
-          variant="default"
-          title="Success"
-          description={authState.user.message}
-        />
-      )}
-
-      {authState.error && (
-        <AlertError
-          variant="destructive"
-          // title="Error"
-          description={authState.error}
-          onClick={form.handleSubmit(onSubmit)}
-        />
-      )}
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

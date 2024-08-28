@@ -91,7 +91,7 @@ export interface User {
   lastName?: string;
   message?: string;
   tier: string | null;
-  tierRequest: boolean;
+  isTierRequest: boolean;
 }
 
 export interface UsersResponse {
