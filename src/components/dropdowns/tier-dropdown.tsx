@@ -64,7 +64,7 @@ const TierDropdown: React.FC<TierDropdownProps> = ({ user }) => {
               </p>
             </div>
           </div>
-          <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
+          <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] whitespace-nowrap hover:text-primary hidden md:block text-[#FF7F00]">
           {formatTier(user?.tier ?? "N/A")}
           </Badge>
         </div>
