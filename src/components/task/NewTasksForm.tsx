@@ -318,11 +318,16 @@ const NewTasksForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {users?.data?.response?.map((user: User) => (
-                          <SelectItem key={user?._id} value={user?._id}>
-                            {user?.firstName}
-                          </SelectItem>
-                        ))}
+                        {users?.data?.response
+                          ?.filter(
+                            (user: User) =>
+                              user.email !== "superadmin@gmail.com"
+                          ) // Filter out the superadmin user
+                          .map((user: User) => (
+                            <SelectItem key={user?._id} value={user?._id}>
+                              {user?.firstName}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

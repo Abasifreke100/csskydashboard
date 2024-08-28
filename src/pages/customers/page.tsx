@@ -25,7 +25,7 @@ import CustomPaginationContent from "../../utils/pagination";
 import { Checkbox } from "../../components/checkbox";
 import { CustomerTableSkeleton } from "../../skeleton/customerTable";
 import Header from "../../components/global/header";
-import { useToast } from "../../components/ui/use-toast";
+import { errorToast, successToast } from "../../utils/toast";
 
 const renderCellContent = (cellData: Response | Corporate): JSX.Element => {
   let badgeBgColor = "";
@@ -66,7 +66,6 @@ const CustomersPage = () => {
   const { currentPage, setCurrentPage } = useProviderContext();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   useEffect(() => {
     setCurrentPage(1); // Reset the current page to 1 when type changes
@@ -145,19 +144,16 @@ const CustomersPage = () => {
       );
       setLoading(true);
       await Promise.all(verificationPromises);
-      // Optionally, after all verifications are done, you may want to fetch updated data
-      // Example: refetchData();
-      toast({
+      successToast({
         title: "Success",
-        description:
+        message:
           "Verification successful , if pending then nin is invalid or not provided",
       });
     } catch (error) {
       console.error("Error verifying individuals:", error);
-      toast({
+      errorToast({
         title: "Error",
-        variant: "destructive",
-        description:
+        message:
           "Verification failed: NIN initialization error or NIN currently unavailable.",
       });
       // Handle error, show error message, etc.

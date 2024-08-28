@@ -3,6 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import axiosInstance from "../../api/connectSurfApi";
 import { User, UsersResponse } from "../../types";
+import { errorToast, successToast } from "../../utils/toast";
 
 // interface User {
 //   username: string;
@@ -83,8 +84,16 @@ export const getCurrentUser = createAsyncThunk<
 export const loggedOut = createAsyncThunk<void>("auth/logout", async () => {
   try {
     await axiosInstance.post("/user/logout");
+    successToast({
+      title: "Logged Out",
+      message: "You've been successfully logged out.",
+    })
   } catch (error) {
     console.error("Error logging out:", error);
     throw error;
+    errorToast({
+      title: "Error",
+      message: "Failed to log out",
+    })
   }
 });

@@ -8,12 +8,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
-import { useToast } from "../ui/use-toast";
 import { useAppDispatch } from "../../app/hooks";
 import { loggedOut } from "../../features/auth/authActions";
 import { formatTier, truncateText } from "../../utils/text";
 import { Cssky_Dashboard_Routes } from "../store/data";
 import { useNavigate } from "react-router-dom";
+import { errorToast, successToast } from "../../utils/toast";
 
 interface AvatarDropdownProps {
   user: User;
@@ -21,23 +21,22 @@ interface AvatarDropdownProps {
 
 const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogOut = () => {
     dispatch(loggedOut())
       .then(() => {
-        toast({
+        successToast({
           title: "Success",
-          description: "Logged out successfully",
+          message: "Logged out successfully",
         });
       })
       .catch((error) => {
         console.error("Error logging out:", error);
-        toast({
+        errorToast({
           title: "Error",
-          description: "Failed to log out",
+          message: "Failed to log out",
         });
       });
   };
