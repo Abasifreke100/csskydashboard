@@ -5,12 +5,6 @@ import axiosInstance from "../../api/connectSurfApi";
 import { User, UsersResponse } from "../../types";
 import { errorToast, successToast } from "../../utils/toast";
 
-// interface User {
-//   username: string;
-//   email: string;
-//   // Add more properties if needed
-// }
-
 interface ErrorResponse {
   errors: string[];
   message?: string; // Add this line
@@ -90,10 +84,10 @@ export const loggedOut = createAsyncThunk<void>("auth/logout", async () => {
     })
   } catch (error) {
     console.error("Error logging out:", error);
-    throw error;
     errorToast({
       title: "Error",
       message: "Failed to log out",
     })
+    throw error;
   }
 });

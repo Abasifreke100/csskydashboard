@@ -44,6 +44,7 @@ const ProtectedRoute = ({
   return element;
 };
 
+
 export const router = createBrowserRouter([
   {
     path: Cssky_Dashboard_Routes.signIn,
@@ -86,7 +87,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<ApiBindings />}
-            restrictedTiers={["tier 1"]}
+            restrictedTiers={["tier-1"]}
           />
         ),
       },
@@ -115,7 +116,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<AdminPage />}
-            restrictedTiers={["tier 1"]}
+            restrictedTiers={["tier-1"]}
           />
         ),
       },
@@ -124,7 +125,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<BillingInfoPage />}
-            restrictedTiers={["tier 1"]}
+            restrictedTiers={["tier-1"]}
           />
         ),
       },

@@ -12,7 +12,7 @@ const Navbar = () => {
   const { setIsSidebarOpen } = useProviderContext();
   const user = useSelector((state: RootState) => state.auth);
 
-  const userTier = user.user?.tier;
+  const userTier = user?.user?.tier;
 
   return (
     <div className="containerLg h-14 z-40 border-b bg-white rounded-xl shadow-md col-span-12 ">

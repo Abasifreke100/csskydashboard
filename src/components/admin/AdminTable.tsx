@@ -56,10 +56,10 @@ const AdminTable = ({ users }: AdminTableProps) => {
   const upgradeUser = useMutation({
     mutationFn: (data: { userId: string; tier: string }) =>
       upgradeUserToAdmin(data.userId, data.tier),
-    onSuccess: ({ userId }) => {
+    onSuccess: ({ data }) => {
       successToast({
         title: "User Upgraded",
-        message: `User with ID ${userId} has been upgraded to admin.`,
+        message: `User with ID ${data.userId} has been upgraded to admin.`,
       });
       setActiveUserId(null); // Close the dialog
       queryClient.invalidateQueries({ queryKey: QueryKeys.Get_All_Users });
@@ -91,7 +91,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
         </TableHeader>
         <TableBody className="bg-white hover:bg-white">
           {users?.map((user) => {
-            const { _id, firstName, email, tierRequest } = user;
+            const { _id, firstName, email, isTierRequest } = user;
             const isDialogOpen = activeUserId === _id;
 
             return (
@@ -119,9 +119,9 @@ const AdminTable = ({ users }: AdminTableProps) => {
                   >
                     <DialogTrigger asChild>
                       <Button
-                        disabled={!tierRequest}
+                        disabled={!isTierRequest}
                         className={`${
-                          tierRequest ? "bg-blue-500 hover:bg-blue-400" : "bg-gray-200 hover:bg-gray-200 "
+                          isTierRequest ? "bg-blue-500 hover:bg-blue-400" : "bg-gray-200 hover:bg-gray-200 "
                         } text-white px-4 py-2 rounded `}
                       >
                         Upgrade Tier
