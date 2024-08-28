@@ -90,7 +90,8 @@ export interface User {
   firstName?: string;
   lastName?: string;
   message?: string;
-  tier: string | null
+  tier: string | null;
+  tierRequest: boolean;
 }
 
 export interface UsersResponse {

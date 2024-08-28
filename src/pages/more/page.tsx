@@ -10,6 +10,10 @@ import EditIcon from "../../lib/icons/edit-icon";
 import LegalIcon from "../../lib/icons/legal-icon";
 import HeadsetIcon from "../../lib/icons/headset-icon";
 import { DocumentationIcon } from "../../lib/icons/document-icon";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { getInitials } from "../../utils/getInitials";
+import { formatTier } from "../../utils/text";
 
 const moreCard = [
   {
@@ -28,11 +32,21 @@ const moreCard = [
 
 const handleCardClick = (title: string) => {
   if (title === "Documentation") {
-    window.open("https://documenter.getpostman.com/view/7257932/2sA2r82Pmm", "_blank");
+    window.open(
+      "https://documenter.getpostman.com/view/7257932/2sA2r82Pmm",
+      "_blank"
+    );
   }
 };
 
 const More = () => {
+  const data = useSelector((state: RootState) => state.auth);
+
+  const fullName = `${data?.user?.firstName ?? ""} ${
+    data?.user?.lastName ?? ""
+  }`;
+  const initials = getInitials(fullName);
+
   return (
     <div className="md:h-screen mb-16 lg:mb-0">
       <Header title="More Options" />
@@ -41,7 +55,7 @@ const More = () => {
           <CardContent className="flex flex-col  items-center justify-center">
             <Avatar className="w-14 h-14">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>A</AvatarFallback>
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col mt-3 items-center">
               <p className="text-md font-medium  flex  items-center gap-3">
@@ -51,7 +65,7 @@ const More = () => {
                 </span>
               </p>
               <Badge className="bg-[#FFFAEF] mt-2 hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00] ">
-                Tier 3
+                {formatTier(data?.user?.tier ?? "N/A")}
               </Badge>
             </div>
           </CardContent>
@@ -61,7 +75,9 @@ const More = () => {
           return (
             <Card
               key={card.title}
-              className={`${card.title == "Documentation" && "cursor-pointer"} col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md`}
+              className={`${
+                card.title == "Documentation" && "cursor-pointer"
+              } col-span-12 py-6  h-44 md:col-span-6   lg:col-span-4  shadow-md`}
               onClick={() => handleCardClick(card.title)}
             >
               <CardContent className="flex flex-col items-center justify-center mt-2">

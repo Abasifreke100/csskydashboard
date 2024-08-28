@@ -48,3 +48,18 @@ export const truncateText = (str: string, n: number) =>
   }
   
   
+
+  export function formatTier(tier: string): string {
+    if (!tier) return '';
+  
+    // Split the string by the hyphen
+    const parts = tier.split('-');
+  
+    // Capitalize the first part and return it with the second part
+    return parts
+      .map((part, index) => (index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
+      .join(' ');
+  }
+  
+ 
+  
