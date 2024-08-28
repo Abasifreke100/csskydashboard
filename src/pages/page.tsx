@@ -24,6 +24,7 @@ import { Corporate, Response, TransformedOverviewData } from "../types";
 import { getInitials } from "../utils/getInitials";
 import { formatRelativeTime } from "../utils/readableDateFormat";
 import { renderSkeletonLoader } from "../skeleton/recent-registrations";
+import { errorToast, successToast } from "../utils/toast";
 
 const tabs = ["Corporate", "Individual"];
 const tabIcons = [Building2, BsPersonArmsUp];
@@ -98,8 +99,16 @@ const Home = () => {
           .slice(0, 2);
 
         setCombinedRegistrationData([...corporateData, ...individualData]);
+        successToast({
+          title: "Data fetched successfully",
+          message: "Your recent registrations have been successfully loaded.",
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
+        errorToast({
+          title: "Fetch Error",
+          message: "An error occurred while fetching data. Please try again.",
+        });
       } finally {
         setIsLoading(false);
       }

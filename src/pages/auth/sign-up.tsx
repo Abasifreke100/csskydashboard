@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../../components/ui/form";
-import { useToast } from "../../components/ui/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpFormValues, signUpSchema } from "../../schema/sign-up-schema";
@@ -22,7 +21,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Cssky_Dashboard_Routes } from "../../components/store/data";
 import InputToggle from "../../utils/input-toggle";
 import { Checkbox } from "../../components/ui/checkbox";
-import { errorToast } from "../../utils/toast";
+import { errorToast, successToast } from "../../utils/toast";
 
 const SignUp = () => {
   useTitleUpdater({ "/sign-up": "Connect-Surf-Smile | Sign Up" });
@@ -33,7 +32,6 @@ const SignUp = () => {
     ],
   });
 
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const [isChecked, setIsChecked] = useState(false);
@@ -54,13 +52,13 @@ const SignUp = () => {
       await UserService.signUpUser(signUpData);
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "User successfully signed up" });
+      successToast({ title: "Success", message: "User successfully signed up" });
       navigate("/auth/sign-in");
     },
     onError: (error: Error) => {
-      toast({
+      errorToast({
         title: "Error",
-        description: error.message || "An unexpected error occurred",
+        message: error.message || "An unexpected error occurred",
       });
     },
   });

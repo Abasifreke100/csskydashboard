@@ -23,10 +23,10 @@ import InputToggle from "../../utils/input-toggle";
 import { clearError, isAuthenticated } from "../../features/auth/authSlice";
 import AlertError from "../../error/error-alert";
 import { useEffect, useState } from "react";
-import { useToast } from "../../components/ui/use-toast";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./layout";
 import { Cssky_Dashboard_Routes } from "../../components/store/data";
+import { errorToast, successToast } from "../../utils/toast";
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
@@ -42,7 +42,6 @@ function LoginPage() {
   const dispatch = useAppDispatch();
   const loggedIn = useSelector((state: RootState) => isAuthenticated(state));
   const authState = useSelector((state: RootState) => state.auth);
-  const { toast } = useToast();
   const navigate = useNavigate();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -99,13 +98,16 @@ function LoginPage() {
 
     try {
       await dispatch(login(formData));
-      toast({
-        title: "Success",
-        description: "User successfully logged in ",
+      successToast({
+        title: "Login Success",
+        message: "You have successfully logged in.",
       });
       navigate("/");
-    } catch (err) {
-      console.log("error", err);
+    } catch (error) {
+      errorToast({
+        title: "Error",
+        message:"Failed to log in. Please check your email and password.",
+      });
     }
   };
 
@@ -204,7 +206,7 @@ function LoginPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Loading...
+                  Signing in...
                 </div>
               ) : (
                 "Sign In"
@@ -231,7 +233,9 @@ function LoginPage() {
           </div>
           <p className="text-xs col-span-6 text-center text-grey font-medium">
             Don&apos;t have an account ?{" "}
-            <Link className="text-primary" to={Cssky_Dashboard_Routes.signUp}>Request Access</Link>
+            <Link className="text-primary" to={Cssky_Dashboard_Routes.signUp}>
+              Request Access
+            </Link>
           </p>
         </form>
       </Form>

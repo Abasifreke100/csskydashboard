@@ -14,7 +14,6 @@ import { SidebarMobile } from "./sidebar-mobile";
 import { SidebarItems } from "../types";
 import { SidebarDesktop } from "./sidebar-desktop";
 import { useAppDispatch } from "../app/hooks";
-import { useToast } from "./ui/use-toast";
 import { loggedOut } from "../features/auth/authActions";
 import { Cssky_Dashboard_Routes } from "./store/data";
 import { useSelector } from "react-redux";
@@ -109,7 +108,7 @@ const sidebarItems: SidebarItems = {
   ],
 };
 
-type TierKey = "tier-1" | "tier-2" | "tier-3" | "tier-4" |"null" ;
+type TierKey = "tier-1" | "tier-2" | "tier-3" | "tier-4" | "null";
 
 const tierAccess: Record<TierKey, string[]> = {
   "tier-1": ["API Bindings", "Admin", "Billing Info"],
@@ -155,7 +154,6 @@ export function Sidebar() {
   const isDesktop = useMediaQuery("(min-width: 640px)", {
     initializeWithValue: false,
   });
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
   const data = useSelector((state: RootState) => state.auth);
 
@@ -169,20 +167,7 @@ export function Sidebar() {
   console.log(filteredSidebarItems);
 
   const handleLogOut = () => {
-    dispatch(loggedOut())
-      .then(() => {
-        toast({
-          title: "Success",
-          description: "Logged out successfully",
-        });
-      })
-      .catch((error) => {
-        console.error("Error logging out:", error);
-        toast({
-          title: "Error",
-          description: "Failed to log out",
-        });
-      });
+    dispatch(loggedOut());
   };
 
   if (isDesktop) {

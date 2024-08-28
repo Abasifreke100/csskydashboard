@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { Cssky_Dashboard_Routes } from "../components/store/data";
+import { errorToast } from "../utils/toast";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL as string;
 
@@ -36,6 +37,10 @@ axiosInstance.interceptors.response.use(
       window.location.href = Cssky_Dashboard_Routes.signIn;
       localStorage.removeItem("accessToken"); // Clear accessToken from localStorage
       localStorage.removeItem("user"); // Clear user from localStorage
+      errorToast({
+        title: "Unauthorized",
+        message: "You are not authorized to access this page.",
+      });
     }
     return Promise.reject(error);
   }
