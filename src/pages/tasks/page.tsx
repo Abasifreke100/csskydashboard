@@ -23,6 +23,8 @@ import {
 } from "../../components/ui/dialog";
 import NewTasksForm from "../../components/task/NewTasksForm";
 import { useTasks } from "../../hooks/useTasks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 interface CardData {
   title: string;
@@ -33,6 +35,7 @@ const Tasks = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const userTier = useSelector((state: RootState) => state.auth.user?.tier);
   const { data, isLoading, isError, error } = useTasks(
     currentPage,
     itemsPerPage
@@ -51,16 +54,20 @@ const Tasks = () => {
   const cardData: CardData[] = useMemo(() => {
     const totalTasks = data?.length || 0;
     const openTasks =
-      data?.filter((task: { status: string }) => task.status === "open" || task.status == "pending")
-        .length || 0;
+      data?.filter(
+        (task: { status: string }) =>
+          task.status === "open" || task.status == "pending"
+      ).length || 0;
     const inProgressTasks =
       data?.filter(
         (task: { status: string }) =>
           task.status === "in progress" || task.status === "progress"
       ).length || 0;
     const closedTasks =
-      data?.filter((task: { status: string }) => task.status === "closed" || task.status === "completed")
-        .length || 0;
+      data?.filter(
+        (task: { status: string }) =>
+          task.status === "closed" || task.status === "completed"
+      ).length || 0;
 
     return [
       {
@@ -81,6 +88,8 @@ const Tasks = () => {
       },
     ];
   }, [data]);
+
+  const canCreateTask = userTier === "tier-3" || userTier === "tier-4";
 
   return (
     <div className="min-h-screen pb-5">
@@ -110,24 +119,28 @@ const Tasks = () => {
       <div className="mt-4">
         <div className="flex justify-between items-center">
           <p>Task List</p>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)}>Create Task</Button>
-            </DialogTrigger>
-            <DialogContent className="h-[530px] w-[450px] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create New Task</DialogTitle>
-                <DialogDescription>
-                  <NewTasksForm
-                    className="grid md:grid-cols-1"
-                    currentPage={currentPage}
-                    itemsPerPage={itemsPerPage}
-                    onClose={handleDialogClose} // Pass close handler
-                  />
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          {canCreateTask && (
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setIsDialogOpen(true)}>
+                  Create Task
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="h-[530px] w-[450px] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create New Task</DialogTitle>
+                  <DialogDescription>
+                    <NewTasksForm
+                      className="grid md:grid-cols-1 border border-none"
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                      onClose={handleDialogClose} // Pass close handler
+                    />
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
         <FetchLoadingAndEmptyState
           isLoading={isLoading}

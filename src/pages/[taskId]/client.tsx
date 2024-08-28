@@ -35,6 +35,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { errorToast, successToast } from "../../utils/toast";
 import { QueryKeys } from "../../models/query";
 import { useState } from "react";
+import { formatDate } from "../../utils/date";
 
 interface TaskClientPageProps {
   task: ViewOneTaskDataResponse;
@@ -135,7 +136,7 @@ const TaskClientPage = ({
             <p className="font-medium text-gray-400">
               Last Updated:{" "}
               <span className="text-black">
-                {new Date(task.updatedAt).toLocaleDateString()}
+              {formatDate(task.updatedAt)}
               </span>
             </p>
           </div>

@@ -46,7 +46,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
       <aside className="lg:w max-w-xs shadow-lg h-full bg-white rounded-tr-2xl rounded-br-md overflow-y-auto">
         <div className="flex flex-col justify-between  h-full">
           <div className="flex flex-col gap-3 w-full">
-            {props.sidebarItems.theme.map((theme: Theme) => (
+            {props?.sidebarItems?.theme?.map((theme: Theme) => (
               <div key={theme.title} className=" lg:px-2">
                 <h3
                   className={`text-xs font-semibold ${

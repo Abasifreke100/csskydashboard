@@ -48,14 +48,14 @@ const TierDropdown: React.FC<TierDropdownProps> = ({ user }) => {
       <PopoverTrigger asChild>
         <div className="cursor-pointer">
           {!user?.tier && (
-            <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
+            <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary text-[#FF7F00]">
               {user?.tier ?? "N/A"}
             </Badge>
           )}
         </div>
       </PopoverTrigger>
 
-      <PopoverContent sideOffset={5} align="end">
+      <PopoverContent sideOffset={0} >
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start gap-2">
             <p className="text-xs font-medium">Current Tier</p>

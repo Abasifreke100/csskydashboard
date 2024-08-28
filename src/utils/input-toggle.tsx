@@ -44,7 +44,7 @@ const InputToggle = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          "flex h-10 w-full relative  bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey pr-10 rounded-md  outline-none   px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full relative  bg-[#F5F5F7] border border-grey text-grey placeholder:text-grey pr-10 rounded-xl outline-none   px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  disabled:cursor-not-allowed disabled:opacity-50",
           props.className
         )}
       >

@@ -60,7 +60,7 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
         </SheetHeader>
         <div className="h-full pb-6  overflow-y-auto">
           <div className="mt-5 flex flex-col  h-[46] w-full gap-1">
-            {props.sidebarItems.theme.map((theme: Theme) => (
+            {props?.sidebarItems?.theme?.map((theme: Theme) => (
               <div key={theme.title} className=" px-2">
                 <h3 className="text-xs text-start font-semibold my-1 px-4 py-2">
                   {theme.title}

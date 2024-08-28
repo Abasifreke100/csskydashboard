@@ -1,4 +1,5 @@
 import { CommentResponse } from "../../../types/task";
+import { formatTimeAgo } from "../../../utils/date";
 import { getInitials } from "../../../utils/getInitials";
 import { truncateText } from "../../../utils/text";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -48,7 +49,7 @@ const CommentsTable = ({ comments }: { comments: CommentResponse[] }) => {
               </div>
             </div>
             <p className="text-xs font-medium">
-              {new Date(comment.createdAt).toLocaleTimeString()}
+              {formatTimeAgo(comment.createdAt)}
             </p>
           </div>
         ))}
