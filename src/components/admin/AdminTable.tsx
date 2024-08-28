@@ -73,6 +73,8 @@ const AdminTable = ({ users }: AdminTableProps) => {
     },
   });
 
+ 
+
   const renderTableHeaders = adminTableHeaders.map((header) => (
     <TableHead className="h-[18px] py-2" key={header}>
       {header}
@@ -89,7 +91,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
         </TableHeader>
         <TableBody className="bg-white hover:bg-white">
           {users?.map((user) => {
-            const { _id, firstName, email } = user;
+            const { _id, firstName, email, tierRequest } = user;
             const isDialogOpen = activeUserId === _id;
 
             return (
@@ -116,8 +118,13 @@ const AdminTable = ({ users }: AdminTableProps) => {
                     }
                   >
                     <DialogTrigger asChild>
-                      <Button className="bg-blue-500 text-white px-4 py-2 rounded">
-                        Upgrade to Admin
+                      <Button
+                        disabled={!tierRequest}
+                        className={`${
+                          tierRequest ? "bg-blue-500 hover:bg-blue-400" : "bg-gray-200 hover:bg-gray-200 "
+                        } text-white px-4 py-2 rounded `}
+                      >
+                        Upgrade Tier
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="w-[400px]">

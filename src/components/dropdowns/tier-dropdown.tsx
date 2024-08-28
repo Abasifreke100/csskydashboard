@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../../api/connectSurfApi";
 import { errorToast, successToast } from "../../utils/toast";
+import { formatTier } from "../../utils/text";
 
 interface TierDropdownProps {
   user: User;
@@ -49,13 +50,13 @@ const TierDropdown: React.FC<TierDropdownProps> = ({ user }) => {
         <div className="cursor-pointer">
           {!user?.tier && (
             <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary text-[#FF7F00]">
-              {user?.tier ?? "N/A"}
+              {formatTier(user?.tier ?? "N/A")}
             </Badge>
           )}
         </div>
       </PopoverTrigger>
 
-      <PopoverContent sideOffset={0} >
+      <PopoverContent sideOffset={0}>
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start gap-2">
             <p className="text-xs font-medium">Current Tier</p>
@@ -66,7 +67,7 @@ const TierDropdown: React.FC<TierDropdownProps> = ({ user }) => {
             </div>
           </div>
           <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
-            Tier 3
+          {formatTier(user?.tier ?? "N/A")}
           </Badge>
         </div>
         <div className="flex w-full justify-center mt-3 gap-3">

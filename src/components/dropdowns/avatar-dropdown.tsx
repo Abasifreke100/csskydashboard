@@ -1,3 +1,4 @@
+import  { useState } from "react";
 import { BiSolidEdit } from "react-icons/bi";
 import { FaCaretDown } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -10,15 +11,19 @@ import { LogOut } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useAppDispatch } from "../../app/hooks";
 import { loggedOut } from "../../features/auth/authActions";
-import { truncateText } from "../../utils/text";
+import { formatTier, truncateText } from "../../utils/text";
+import { Cssky_Dashboard_Routes } from "../store/data";
+import { useNavigate } from "react-router-dom";
 
 interface AvatarDropdownProps {
   user: User;
 }
 
 const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleLogOut = () => {
     dispatch(loggedOut())
@@ -37,13 +42,21 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
       });
   };
 
+  const handleNavigate = (route: string) => {
+    setIsOpen(false); // Close the popover
+    navigate(route);
+  };
+
   const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`;
   const initials = getInitials(fullName);
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <div className="flex items-center gap-3 cursor-pointer">
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        >
           <Avatar className="w-8 h-8 ">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>{initials}</AvatarFallback>
@@ -74,12 +87,15 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
           </div>
           {user.tier && (
             <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00] ">
-              {user.tier}
+              {formatTier(user?.tier ?? "N/A")}
             </Badge>
           )}
         </div>
         <div className="flex w-full mt-3 gap-3">
-          <Button className="flex-1 h-8 gap-1 bg-white border  outline-none text-grey hover:bg-white hover:text-grey">
+          <Button
+            onClick={() => handleNavigate(Cssky_Dashboard_Routes.more)}
+            className="flex-1 h-8 gap-1 bg-white border  outline-none text-grey hover:bg-white hover:text-grey"
+          >
             <BiSolidEdit className="text-sm" />
             My Account
           </Button>

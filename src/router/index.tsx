@@ -32,11 +32,12 @@ const ProtectedRoute = ({
   const user = useSelector((state: RootState) => state.auth);
   const userTier = user?.user?.tier;
 
-  if (
-    !userTier ||
-    !Array.isArray(restrictedTiers) ||
-    restrictedTiers.includes(userTier)
-  ) {
+  // If userTier is 'tier-4' or restrictedTiers is not an array, allow access
+  if (userTier === "tier-4" || !Array.isArray(restrictedTiers)) {
+    return element;
+  }
+
+  if (typeof userTier === "string" && restrictedTiers.includes(userTier)) {
     return <Navigate to={Cssky_Dashboard_Routes.dashboard} />;
   }
 
@@ -74,7 +75,7 @@ export const router = createBrowserRouter([
       },
       {
         path: Cssky_Dashboard_Routes.tasks,
-        element: <ProtectedRoute element={<Tasks />} />,
+        element: <ProtectedRoute element={<Tasks />} restrictedTiers={[""]} />,
       },
       {
         path: Cssky_Dashboard_Routes.taskId,
