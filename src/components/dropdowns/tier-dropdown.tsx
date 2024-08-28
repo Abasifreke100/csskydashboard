@@ -48,11 +48,9 @@ const TierDropdown: React.FC<TierDropdownProps> = ({ user }) => {
     <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
       <PopoverTrigger asChild>
         <div className="cursor-pointer">
-          {user?.tier && (
             <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary text-[#FF7F00]">
               {formatTier(user?.tier ?? "N/A")}
             </Badge>
-          )}
         </div>
       </PopoverTrigger>
 
