@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { BiSolidEdit } from "react-icons/bi";
 import { FaCaretDown } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -47,7 +47,7 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
   };
 
   const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`;
-  const initials = getInitials(fullName);
+  const initials = getInitials(fullName !== " " ? fullName : user?.role);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -60,7 +60,9 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
-          <p className="font-poppins text-sm">{truncateText(fullName, 3)}</p>
+          <p className="font-poppins text-sm">
+            {truncateText(fullName !== " " ? fullName : user?.role, 3)}
+          </p>
           <button
             className="border-none outline-none text-[#808080]"
             aria-label="Customize options"
@@ -78,7 +80,7 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
               <AvatarFallback className="text-sm">{initials}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-xs font-medium">{user.firstName}</p>
+              <p className="text-xs font-medium">{user.firstName ?? user.role}</p>
               <p className="text-xs text-grey ">
                 {truncateText(user?.email, 20)}
               </p>

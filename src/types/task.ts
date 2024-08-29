@@ -44,6 +44,9 @@ export interface User {
   _id: string;
   email: string;
   role: string;
+  firstName: string;
+  lastName: string;
+  tier: string;
   createdAt: Date;
   updatedAt: Date;
   __v: number;
