@@ -52,7 +52,7 @@ const CommentsTable = ({ comments }: { comments: CommentResponse[] }) => {
                           {formatTier(comment.user?.tier ?? "Unknown")}
                         </Badge>
                       </div>
-                      <p className="text-xs font-medium">
+                      <p className="text-[10px] font-medium">
                         {formatTimeAgo(comment.createdAt)}
                       </p>
                     </div>

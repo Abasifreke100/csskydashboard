@@ -108,7 +108,7 @@ const TaskClientPage = ({
   return (
     <div className=" h-full w-full ">
       <Header title="Task Details" icon={true} />
-      <Card className="mt-3 h-fit">
+      <Card className="mt-3 h-fit ">
         <CardContent
           aria-describedby="task-details-description"
           className="font-poppins rounded-xl"
@@ -195,21 +195,21 @@ const TaskClientPage = ({
                     variant="secondary"
                   />
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className=" w-[340px] rounded-md  md:w-[400px] ">
                   <DialogHeader>
                     <DialogDescription>
                       <Form {...form}>
                         <form
                           onSubmit={form.handleSubmit(onSubmit)}
-                          className="space-y-8"
+                          className="space-y-8 text-start"
                         >
                           <FormField
                             control={form.control}
                             name="status"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Status
+                                <FormLabel className="gap-0.5 flex">
+                                  Update Task Status
                                   <CustomCompulsoryInputStar />
                                 </FormLabel>
                                 <Select
@@ -241,6 +241,7 @@ const TaskClientPage = ({
                             <CustomButton
                               label="Update"
                               variant="primary"
+                              icon={Save}
                               type="submit"
                               loadingText="Updating Status"
                               isLoading={mutation.isPending}

@@ -129,7 +129,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
                         Upgrade Tier
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="w-[400px]">
+                    <DialogContent className=" w-[340px] rounded-md  md:w-[400px]">
                       <DialogHeader>
                         <DialogTitle>Upgrade Tier</DialogTitle>
                         <DialogDescription>

@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
 import NewTasksForm from "../../components/task/NewTasksForm";
@@ -40,7 +39,6 @@ const Tasks = () => {
     currentPage,
     itemsPerPage
   );
-  console.log(data);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -52,19 +50,19 @@ const Tasks = () => {
 
   // Dynamically generate the card data
   const cardData: CardData[] = useMemo(() => {
-    const totalTasks = data?.length || 0;
+    const totalTasks = data?.data?.response.length || 0;
     const openTasks =
-      data?.filter(
+      data?.data?.response?.filter(
         (task: { status: string }) =>
           task.status === "open" || task.status == "pending"
       ).length || 0;
     const inProgressTasks =
-      data?.filter(
+      data?.data?.response?.filter(
         (task: { status: string }) =>
           task.status === "in progress" || task.status === "progress"
       ).length || 0;
     const closedTasks =
-      data?.filter(
+      data?.data?.response?.filter(
         (task: { status: string }) =>
           task.status === "closed" || task.status === "completed"
       ).length || 0;
@@ -126,15 +124,16 @@ const Tasks = () => {
                   Create Task
                 </Button>
               </DialogTrigger>
-              <DialogContent className="h-[530px] w-[450px] overflow-y-auto">
+              <DialogContent className="h-[530px] w-[340px] rounded-md px-0 md:px-2 md:w-[400px] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Create New Task</DialogTitle>
+                  {/* <DialogTitle></DialogTitle> */}
                   <DialogDescription>
                     <NewTasksForm
-                      className="grid md:grid-cols-1 border border-none"
+                      className="grid md:grid-cols-1"
                       currentPage={currentPage}
                       itemsPerPage={itemsPerPage}
                       onClose={handleDialogClose} // Pass close handler
+                      cardClassName="border border-none shadow-none mb-0"
                     />
                   </DialogDescription>
                 </DialogHeader>
@@ -147,7 +146,7 @@ const Tasks = () => {
           numberOfSkeleton={1}
           skeleton={<TableSkeleton length={5} />}
           emptyState={<TasksTableEmptyState />}
-          data={data?.length}
+          data={data?.data?.response.length}
         >
           {isError ? (
             <div className="text-red-500">
@@ -156,13 +155,13 @@ const Tasks = () => {
           ) : (
             <>
               <TasksTable
-                tasks={data}
+                tasks={data?.data?.response}
                 currentPage={currentPage}
                 itemsPerPage={itemsPerPage}
               />
               <CustomPaginationContent
                 currentPage={currentPage}
-                totalItems={data?.pagination?.total || 0}
+                totalItems={data?.data?.pagination?.total || 0}
                 itemsPerPage={itemsPerPage}
                 onPageChange={handlePageChange}
               />

@@ -72,7 +72,7 @@ const TasksTable: React.FC<TasksTableProps> = ({
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   const renderTablesHeaders = taskTableHeaders.map((header) => (
-    <TableHead className="h-[18px] py-2" key={header}>
+    <TableHead className="h-[18px] py-2 whitespace-nowrap" key={header}>
       {header}
     </TableHead>
   ));
