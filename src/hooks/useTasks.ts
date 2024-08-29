@@ -10,7 +10,7 @@ const fetchTasks = async (currentPage: number, itemsPerPage: number) => {
   const response = await axiosInstance.get(
     `/task?currentPage=${currentPage}&size=${itemsPerPage}`
   );
-  return response.data.data.response;
+  return response.data;
 };
 
 export const useTasks = (currentPage: number, itemsPerPage: number) => {

@@ -38,6 +38,7 @@ import { User } from "../../types";
 
 interface NewTasksFormProps {
   className?: string;
+  cardClassName?: string
   task?: ViewOneTaskDataResponse;
   currentPage?: number;
   itemsPerPage?: number;
@@ -46,6 +47,7 @@ interface NewTasksFormProps {
 
 const NewTasksForm = ({
   className = "",
+  cardClassName= "",
   task,
   currentPage = 1,
   itemsPerPage = 10,
@@ -173,7 +175,7 @@ const NewTasksForm = ({
   }, [task, form]);
 
   return (
-    <Card className="mt-6 relative mb-12">
+    <Card className={cn("mt-6 relative mb-12",cardClassName)}>
       <CardContent
         aria-describedby="task-details-description"
         className="font-poppins rounded-xl"
