@@ -161,7 +161,9 @@ export function Sidebar() {
     data?.user?.firstName && data?.user?.lastName
       ? `${data.user.firstName} ${data.user.lastName}`
       : "";
-  const initials = getInitials(fullName);
+  const initials = getInitials(
+    fullName !== "" ? fullName : (data?.user?.role as string)
+  );
   const userTier = data.user?.tier ?? null;
   const filteredSidebarItems = filterSidebarItems(sidebarItems, userTier);
   console.log(filteredSidebarItems);

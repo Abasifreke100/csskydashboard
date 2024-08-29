@@ -146,7 +146,11 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                         {props.initials}
                       </AvatarFallback>
                     </Avatar>
-                    <p className="text-xs">{props.fullName}</p>
+                    <p className="text-xs">
+                      {props.fullName !== ""
+                        ? props.fullName
+                        : props.user?.role}
+                    </p>
                   </div>
                   <LogOut size={20} className="cursor-pointer" />
                 </div>

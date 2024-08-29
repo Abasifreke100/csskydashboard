@@ -45,7 +45,9 @@ const More = () => {
   const fullName = `${data?.user?.firstName ?? ""} ${
     data?.user?.lastName ?? ""
   }`;
-  const initials = getInitials(fullName);
+  const initials = getInitials(
+    fullName !== " " ? fullName : (data?.user?.role as string)
+  );
 
   return (
     <div className="md:h-screen mb-16 lg:mb-0">
