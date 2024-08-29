@@ -188,6 +188,9 @@ export function Sidebar() {
     <SidebarMobile
       sidebarItems={filteredSidebarItems}
       handleLogout={handleLogOut}
+      fullName={fullName}
+      initials={initials}
+      user={data.user}
     />
   );
 }

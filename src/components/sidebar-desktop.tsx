@@ -14,6 +14,7 @@ import {
 import { useCallback, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { TicketsAccordion } from "./tickets/TicketAccordion";
+import { truncateText } from "../utils/text";
 
 interface SidebarDesktopProps {
   sidebarItems: SidebarItems;
@@ -147,9 +148,12 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                       </AvatarFallback>
                     </Avatar>
                     <p className="text-xs">
-                      {props.fullName !== ""
-                        ? props.fullName
-                        : props.user?.role}
+                      {truncateText(
+                        props.fullName !== ""
+                          ? props.fullName
+                          : (props.user?.role as string),
+                        20
+                      )}
                     </p>
                   </div>
                   <LogOut size={20} className="cursor-pointer" />
