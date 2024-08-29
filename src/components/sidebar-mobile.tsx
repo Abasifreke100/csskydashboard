@@ -5,7 +5,7 @@ import { SidebarMobileButton } from "./sidebar-button";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link, useLocation } from "react-router-dom";
-import { SidebarItems, Theme } from "../types";
+import { SidebarItems, Theme, User } from "../types";
 import { useProviderContext } from "../constants";
 import {
   Accordion,
@@ -15,10 +15,14 @@ import {
 } from "./ui/accordion";
 import { useCallback, useState } from "react";
 import { MobileTicketsAccordion } from "./tickets/TicketAccordion";
+import { truncateText } from "../utils/text";
 
 interface SidebarMobileProps {
   sidebarItems: SidebarItems;
   handleLogout: () => void;
+  user: User | null;
+  initials: string;
+  fullName: string;
 }
 
 export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
@@ -81,16 +85,7 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
                       key={link.label}
                       value={`item-${index}` === value ? `item-${index}` : " "}
                       onValueChange={(value) => handleAccordionChange(value)}
-                      // value={`item-${value}`}
-                      // onValueChange={() => {
-                      //   if (value == " ") {
-                      //     setValue(`${index}`);
-                      //     setCurrentPage(1);
-                      //   } else {
-                      //     setValue(" ");
-                      //     setCurrentPage(1);
-                      //   }
-                      // }}
+                  
                     >
                       <AccordionItem
                         className="no-underline border-none"
@@ -171,15 +166,23 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
                       <div className="flex  items-center gap-4">
                         <Avatar className="h-10 w-10">
                           <AvatarImage src="https://github.com/max-programming.png" />
-                          <AvatarFallback>JD</AvatarFallback>
+                          <AvatarFallback>{props.initials}</AvatarFallback>
                         </Avatar>
-                        <span className="text-xs">John Doe</span>
+                        <span className="text-xs">
+                          {" "}
+                          {truncateText(
+                            props.fullName !== ""
+                              ? props.fullName
+                              : (props.user?.role as string),
+                            20
+                          )}
+                        </span>
                       </div>
                     </div>
                     <MoreHorizontal size={20} />
                   </div>
                 </Button>
-              </DrawerTrigger> 
+              </DrawerTrigger>
               <DrawerContent className="mb-2 p-2">
                 <div className="flex flex-col space-y-2 mt-2">
                   <SidebarMobileButton
