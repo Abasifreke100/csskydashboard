@@ -1,34 +1,30 @@
 import { LucideIcon } from "lucide-react";
-import { ButtonProps } from "./ui/button";
 import cn from "../lib/utils";
+import { ButtonProps } from "./ui/button";
 import { SheetClose } from "./ui/sheet";
-import { useMediaQuery } from "usehooks-ts";
+
 
 interface SidebarButtonProps extends ButtonProps {
   icon?: LucideIcon;
   onClick?: () => void; // Add onClick handler to props
-  iconSize?: number; // Add iconSize prop to customize icon size
 }
 
 export function SidebarButton({
   icon: Icon,
   className,
   children,
-  iconSize = 20,
   onClick, // Destructure onClick from props
 }: Readonly<SidebarButtonProps>) {
-  const isDesktop = useMediaQuery("(min-width: 1026px)");
-
   return (
     <div
       className={cn(
-        `inline-flex h-10 py-2 px-4 items-center gap-2 justify-center lg:justify-start whitespace-nowrap rounded-md text-xs font-medium `,
+        "inline-flex h-10 icon-wrapper no-underline lg:px-4 py-2  w-full items-center  justify-start whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       onClick={onClick} // Assign onClick handler to div
     >
-      {Icon && <Icon size={iconSize} />}
-      <div className={`${isDesktop ? "block" : "hidden"}`}>{children}</div>
+      {Icon && <Icon size={14} className="shake" />}
+      <div className="no-underline">{children}</div>
     </div>
   );
 }
@@ -40,16 +36,16 @@ export function SidebarMobileButton({
   onClick, // Destructure onClick from props
 }: Readonly<SidebarButtonProps>) {
   return (
-    <button
+    <div
       className={cn(
-        "inline-flex h-10 px-4 py-2  items-center gap-2 justify-start whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-10 px-4 py-2 icon-wrapper items-center gap-2 justify-start whitespace-nowrap rounded-md text-xs font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       onClick={onClick} // Assign onClick handler to div
     >
-      {Icon && <Icon size={20} />}
-      <div className=" mt-1 h-fit">{children}</div>
-    </button>
+      {Icon && <Icon size={20} className="shake" />}
+      <div className="">{children}</div>
+    </div>
   );
 }
 

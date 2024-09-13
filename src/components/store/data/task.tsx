@@ -9,7 +9,13 @@ export const taskTableHeaders = [
   "Assignee",
 ];
 
-type Status = "Closed" | "in progress" | "pending" | "Open" | "completed";
+type Status =
+  | "Closed"
+  | "in progress"
+  | "pending"
+  | "Open"
+  | "completed"
+  | "low";
 
 export const renderCellContent = (status: Status): JSX.Element => {
   let badgeBgColor = "";
@@ -17,9 +23,9 @@ export const renderCellContent = (status: Status): JSX.Element => {
   if (status === "Closed" || status === "completed") {
     badgeBgColor =
       "bg-lightGreen capitalize hover:bg-lightGreen text-deepGreen";
-  } else if (status === "in progress" ) {
+  } else if (status === "in progress" || status === "low") {
     badgeBgColor = "bg-secondary capitalize hover:bg-secondary text-primary";
-  } else if (status === "Open" || status === "pending") {
+  } else if (status === "Open" || status === "pending" || status == 'high') {
     badgeBgColor = "bg-lightRed capitalize hover:bg-lightRed text-deepRed";
   }
 

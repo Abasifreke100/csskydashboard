@@ -32,7 +32,7 @@ const sidebarItems: SidebarItems = {
         },
         {
           label: "Customers",
-          href: Cssky_Dashboard_Routes.customersPage,
+          href: "/customers",
           icon: Globe,
           children: [
             {

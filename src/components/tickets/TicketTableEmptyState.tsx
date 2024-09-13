@@ -10,7 +10,7 @@ import { ticketTableHeaders } from "../store/data/ticket";
 
 const TicketTableEmptyState = () => {
   const renderTablesHeaders = ticketTableHeaders.map((header) => (
-    <TableHead key={header}>{header}</TableHead>
+    <TableHead className="whitespace-nowrap" key={header}>{header}</TableHead>
   ));
   return (
     <div className="relative mt-8 lg:mt-2 overflow-x-auto shadow-md border rounded-lg w-full col-span-3">

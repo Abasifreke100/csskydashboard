@@ -1,64 +1,50 @@
-import { useState } from "react";
 import { DefaultDialogProps } from "../../models/shared";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import { truncateText } from "../../utils/text";
 import { getStatusColor } from "../../utils/status";
 import CustomButton from "../shared/CustomButton";
 import { CheckCircle, Plus, Save } from "lucide-react";
-import { Badge } from "../ui/badge";
+import CommentsSection from "../task/comments/CommentsSection";
+import { renderCellContent } from "../store/data/task";
+import { Ticket } from "../../hooks/useFetchTickets";
 
 interface TicketDetailsModalProps extends DefaultDialogProps {
   rowId: string | null;
+  isAddingComment: boolean;
+  message: string;
+  setIsAddingComment: (value: boolean) => void;
+  setMessage: (value: string) => void;
+  handleSaveComment: () => void;
+  handleAddCommentClick: () => void;
+  shouldRefetchComments: boolean;
+  setShouldRefetchComments: (value: boolean) => void;
+  tickets: Ticket[];
 }
 
 const TicketDetailsModal = ({
   isOpen,
   onClose,
   rowId,
+  isAddingComment,
+  message,
+  setIsAddingComment,
+  setMessage,
+  handleSaveComment,
+  handleAddCommentClick,
+  shouldRefetchComments,
+  setShouldRefetchComments,
+  tickets
 }: TicketDetailsModalProps) => {
-  const [isAddingComment, setIsAddingComment] = useState(false); // State to manage comment input visibility
-  const [comment, setComment] = useState(""); // State to manage comment input value
-
   const onCloseModal = () => {
     onClose();
   };
 
-  const handleAddCommentClick = () => {
-    setIsAddingComment(true);
-  };
-
-  const handleSaveComment = () => {
-    console.log("Comment saved:", comment); // This is where you will handle the API call in the future
-    setComment("");
-    setIsAddingComment(false);
-  };
-
-  const sampleData = [
-    {
-      id: "TICK123456",
-      subject: "Issue with login",
-      description:
-        "The primary objective of this task is to update and refine our project documentation to ensure accuracy, clarity, and completeness. This includes revising existing content, adding new sections where necessary, and ensuring that all information is up-to-date and easy to understand.",
-      priority: "High",
-      status: "Pending",
-      createdOn: "2/10/2023",
-      lastUpdated: "12/10/2023",
-      assignee: {
-        name: "John Doe",
-        avatar: "https://example.com/john-doe.jpg",
-        comments: "initial report on login issue",
-      },
-    },
-  ];
-
-  const ticket = sampleData.find((item) => item.id === rowId);
+  const ticket = tickets.find((item) => item?.id === rowId);
 
   if (!ticket) {
     return null;
   }
 
-  const statusTextColor = getStatusColor(ticket.status);
+  const statusTextColor = getStatusColor(ticket?.status);
 
   return (
     <Dialog open={isOpen} onOpenChange={onCloseModal}>
@@ -67,32 +53,47 @@ const TicketDetailsModal = ({
         className="font-poppins rounded-xl max-w-[380px] md:max-w-[450px] lg:max-w-md"
       >
         <DialogHeader>
-          <DialogTitle className="text-sm">Ticket ID #{ticket.id}</DialogTitle>
+          <DialogTitle className="text-sm">
+            Ticket ID #{ticket?.id}
+          </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-3 mt-3 text-xs">
           <p className="font-medium text-gray-400 ">
-            Subject: <span className="text-black ">{ticket.subject}</span>
+            Subject:{" "}
+            <span className="text-black ">{ticket?.group_name}</span>
           </p>
           <p className="font-medium  text-gray-400">
             Description: <br />
-            <span className="text-black text-xs">{ticket.description}</span>
+            <span className="text-black text-xs">{ticket?.subject}</span>
           </p>
           <p className="font-medium text-gray-400">
-            Priority: <span className="text-black">{ticket.priority}</span>
+            Priority:{" "}
+            <span className="text-black">
+              {ticket?.priority &&
+                renderCellContent(ticket?.priority as "low")}
+            </span>
           </p>
           <p className="font-medium text-gray-400">
             Status:{" "}
-            <span className={`${statusTextColor}`}>{ticket.status}</span>
+            <span className={`${statusTextColor}`}>
+              {ticket?.status}
+            </span>
           </p>
           <p className="font-medium text-gray-400">
-            Created On: <span className="text-black">{ticket.createdOn}</span>
+            Created On:{" "}
+            <span className="text-black">
+              {new Date(ticket?.created).toLocaleDateString()}
+            </span>
           </p>
           <p className="font-medium text-gray-400">
-            Last Updated:{" "}
-            <span className="text-black">{ticket.lastUpdated}</span>
+            Due Date:{" "}
+            <span className="text-black">
+              {ticket?.due}
+            </span>
           </p>
           <p className="font-medium text-gray-400">
-            Assignee: <span className="text-black">{ticket.assignee.name}</span>
+            Assignee:{" "}
+            <span className="text-black">{ticket?.assigned_to}</span>
           </p>
           <p className="font-medium text-gray-400">Attachments:</p>
         </div>
@@ -103,38 +104,20 @@ const TicketDetailsModal = ({
               See all &gt;
             </p>
           </div>
-          <div className="flex items-center w-full justify-between mt-2">
-            <div className="flex items-center">
-              <Avatar className="mr-1">
-                <AvatarImage src="https://github.com/max-programming.png" />
-                <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
-                  JD
-                </AvatarFallback>
-              </Avatar>
-              <div className="ml-1 ">
-                <div className="font-medium text-gray-400 text-sm whitespace-nowrap">
-                  <div className="flex items-center gap-0.5">
-                    <p className="text-xs text-black">
-                      {truncateText(ticket.assignee.name, 13)}
-                    </p>{" "}
-                    <Badge className="h-4 px-1  text-xs  bg-secondary hover:bg-secondary">
-                      Tier 3
-                    </Badge>
-                  </div>
-                  <p className="text-[10px]">
-                    {truncateText(ticket.assignee.comments, 30)}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <p className="text-xs font-medium">1H ago</p>
-          </div>
+          <CommentsSection
+            taskID={ticket?.id}
+            refetchComments={shouldRefetchComments}
+            onRefetchComplete={() => setShouldRefetchComments(false)}
+          />
           {/* buttons add comment , update status , save changes */}
           {isAddingComment && (
             <div className="mt-2 flex flex-col gap-2">
               <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
+                value={message}
+                onChange={(e) => {
+                  e.preventDefault();
+                  setMessage(e.target.value);
+                }}
                 placeholder="Add your comment"
                 className="w-full mt-4 text-sm outline-none p-2 border rounded-md"
               />
@@ -142,12 +125,14 @@ const TicketDetailsModal = ({
                 <CustomButton
                   label="Save Comment"
                   icon={Save}
+                  type="button"
                   onClick={handleSaveComment}
                   variant="primary"
                 />
                 <CustomButton
                   label="Cancel"
                   variant="secondary"
+                  type="button"
                   onClick={() => setIsAddingComment(false)}
                 />
               </div>
