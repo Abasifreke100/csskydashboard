@@ -204,14 +204,15 @@ const CustomersIdPage = () => {
                                 )}
                               </DialogTrigger>
                               {field.value && (
-                               <DialogContent className="w-[90%] max-w-2xl px-4 h-[550px] lg:w-[600px] lg:h-[500px] p-4 overflow-hidden">
-                               <DialogHeader className="hidden">
-                                 <DialogTitle>Image View</DialogTitle>
-                                 <DialogDescription>Full image view</DialogDescription>
-                               </DialogHeader>
-                               <CustomImageView field={field} />
-                             </DialogContent>
-                             
+                                <DialogContent className="w-[90%] rounded-lg max-w-2xl px-4 h-[550px] lg:w-[600px] lg:h-[500px] p-4 overflow-hidden">
+                                  <DialogHeader className="hidden">
+                                    <DialogTitle>Image View</DialogTitle>
+                                    <DialogDescription>
+                                      Full image view
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <CustomImageView field={field} />
+                                </DialogContent>
                               )}
                             </Dialog>
                           </div>
@@ -246,10 +247,10 @@ const CustomersIdPage = () => {
                                 )}
                               </DialogTrigger>
                               {field.value && (
-                                <DialogContent className=" w-[380px] lg:w-[600px]">
+                                <DialogContent className=" w-[350px] rounded-lg lg:w-[600px]">
                                   <DialogHeader>
                                     <DialogDescription>
-                                      <div className="gallery ">
+                                      <div className="gallery mt-2">
                                         <div className="pics relative overflow-hidden group rounded-md">
                                           <img
                                             src={field.value as string}

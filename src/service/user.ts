@@ -17,5 +17,12 @@ export class UserService {
       }
       return response.data.data;
     }
+    static async getAllUserIds() {
+      const response = await axiosInstance.get(`/ticket/get/user/ids`);
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to fetch user IDs");
+      }
+      return response.data.data;
+    }
   }
   

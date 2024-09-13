@@ -16,4 +16,8 @@ export class QueryKeys {
     taskID,
   ];
   static readonly Get_All_Users = ["users", "all"];
+
+  static readonly Get_All_User_Ids = ["userIds"]
+
+  static readonly Get_Tickets = (status: string) => ["Get Tickets", status];
 }

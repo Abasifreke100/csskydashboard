@@ -53,13 +53,13 @@ const DashboardLayout = () => {
       {loggedIn && (
         <div className="flex flex-col  bg-[#F5F5F7] font-poppins  h-screen overflow-hidden">
           <Navbar />
-          <div className=" flex flex-col overflow-hidden  flex-1">
-            <div className="grid-cols-sidebar-outlet  h-full flex flex-grow overflow-hidden">
+          <div className="border-red-500 overflow-hidden  flex-1">
+            <div className="w-full h-full flex   overflow-hidden">
               <Sidebar />
 
               <div
                 ref={outletRef}
-                className="h-full  overflow-y-auto pt-3 px-6"
+                className="h-full z-0  w-full overflow-y-auto flex-1 pt-3 px-6"
               >
                 <Outlet />
               </div>

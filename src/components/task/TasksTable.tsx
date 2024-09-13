@@ -37,7 +37,7 @@ interface Assignee {
 }
 
 interface Tasks {
-  _id: string;
+  id: string;
   title: string;
   priority: string;
   status: string;
@@ -77,8 +77,8 @@ const TasksTable: React.FC<TasksTableProps> = ({
     </TableHead>
   ));
 
-  const handleRowClick = (_id: string) => {
-    navigate(`/tasks/${_id}`);
+  const handleRowClick = (id: string) => {
+    navigate(`/tasks/${id}`);
   };
 
   const handleDelete = async (taskId: string) => {
@@ -136,7 +136,7 @@ const TasksTable: React.FC<TasksTableProps> = ({
         <TableBody className="bg-white hover:bg-white">
           {tasks.map((task) => {
             const {
-              _id,
+              id,
               title,
               priority,
               status,
@@ -154,13 +154,13 @@ const TasksTable: React.FC<TasksTableProps> = ({
             const initials = getInitials(fullName);
             return (
               <TableRow
-                key={_id}
+                key={id}
                 className="border group py-2 border-b cursor-pointer transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-white border-[#F5F5F7]"
               >
                 <TableCell className="whitespace-nowrap py-2">
                   <Checkbox
-                    id={_id}
-                    isChecked={selectedItems.includes(_id)}
+                    id={id}
+                    isChecked={selectedItems.includes(id)}
                     onChange={(checkboxId, isChecked) =>
                       handleItemSelection(checkboxId, isChecked)
                     }
@@ -207,10 +207,10 @@ const TasksTable: React.FC<TasksTableProps> = ({
                     <DropdownMenuContent className="w-56" align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => openModal(_id)}>
+                      <DropdownMenuItem onClick={() => openModal(id)}>
                         Delete Task
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleRowClick(_id)}>
+                      <DropdownMenuItem onClick={() => handleRowClick(id)}>
                         View Details
                       </DropdownMenuItem>
                     </DropdownMenuContent>
