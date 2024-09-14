@@ -57,69 +57,78 @@ export const useFetchTickets = ({ userIds }: UseFetchTicketsProps) => {
   const [failedRequests, setFailedRequests] = useState<string[]>([]); // Track failed requests
 
   useEffect(() => {
-  const fetchTickets = async () => {
-    try {
-      setIsLoading(true);
-      const allTickets: AllTickets = [];
-      const totalBatches = Math.ceil(userIds.length / BATCH_SIZE);
+    const fetchTickets = async () => {
+      try {
+        setIsLoading(true);
+        const totalBatches = Math.ceil(userIds.length / BATCH_SIZE);
 
-      for (let i = 0; i < totalBatches; i++) {
-        const batch = userIds.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
-        const ticketPromises = batch.map((userId) =>
-          retryRequest(userId).catch(() => userId)
-        );
+        let isFirstBatch = true; // Flag to check if it's the first batch
 
-        const batchResults = await Promise.allSettled(ticketPromises);
+        for (let i = 0; i < totalBatches; i++) {
+          const batch = userIds.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
+          const ticketPromises = batch.map((userId) =>
+            retryRequest(userId).catch(() => userId)
+          );
 
-        batchResults.forEach((result) => {
-          if (result.status === "fulfilled") {
-            const responseData = result.value;
-            const ticketsFromResult = Array.isArray(responseData?.data?.data)
-              ? responseData.data.data
-              : [];
+          const batchResults = await Promise.allSettled(ticketPromises);
 
-            if (ticketsFromResult.length > 0) {
-              const tickets = ticketsFromResult.map(
-                (item: { Ticket: Ticket }) => item?.Ticket
+          const newTickets: AllTickets = [];
+          batchResults.forEach((result) => {
+            if (result.status === "fulfilled") {
+              const responseData = result.value;
+              const ticketsFromResult = Array.isArray(responseData?.data?.data)
+                ? responseData.data.data
+                : [];
+
+              if (ticketsFromResult.length > 0) {
+                const tickets = ticketsFromResult.map(
+                  (item: { Ticket: Ticket }) => item?.Ticket
+                );
+                newTickets.push(...tickets); // Accumulate tickets for this batch
+              } else {
+                console.warn("No tickets found for this user.");
+              }
+            } else if (result.status === "rejected") {
+              const failedUserId = result.reason;
+              setFailedRequests((prev) => [...prev, failedUserId]);
+              console.error(
+                `Error fetching tickets for user ID ${failedUserId}`
               );
-              allTickets.push(...tickets); // Accumulate tickets
-            } else {
-              console.warn("No tickets found for this user.");
             }
-          } else if (result.status === "rejected") {
-            const failedUserId = result.reason;
-            setFailedRequests((prev) => [...prev, failedUserId]);
-            console.error(`Error fetching tickets for user ID ${failedUserId}`);
+          });
+
+          // Update the state with tickets from this batch
+          if (newTickets.length > 0) {
+            setTickets((prevTickets) => [...prevTickets, ...newTickets]);
           }
+
+          // Set isLoading to false after the first batch
+          if (isFirstBatch) {
+            setIsLoading(false);
+            isFirstBatch = false; // Ensure isLoading is set to false only once
+          }
+        }
+
+        successToast({
+          title: "Tickets Loaded",
+          message: `All successful tickets have been loaded. Failed for: ${failedRequests.join(
+            ", "
+          )}`,
         });
+      } catch (err) {
+        setError(err as Error);
+        errorToast({
+          title: "Fetch Error",
+          message: "An error occurred while fetching tickets.",
+        });
+        console.log("error", err);
+      } finally {
+        // Ensure isLoading is set to false if all batches are processed
+        if (isLoading) {
+          setIsLoading(false);
+        }
       }
-
-      // Only update tickets state after all batches are processed
-      if (allTickets.length > 0) {
-        setTickets(allTickets);
-      } else {
-        console.warn("No tickets fetched after processing all batches.");
-      }
-
-      successToast({
-        title: "Tickets Loaded",
-        message: `All successful tickets have been loaded. Failed for: ${failedRequests.join(
-          ", "
-        )}`,
-      });
-    } catch (err) {
-      setError(err as Error);
-      errorToast({
-        title: "Fetch Error",
-        message: "An error occurred while fetching tickets.",
-      });
-      console.log("error", err);
-    } finally {
-      setIsLoading(false);
-      
-    }
-  };
-
+    };
 
     if (userIds.length > 0) {
       fetchTickets();

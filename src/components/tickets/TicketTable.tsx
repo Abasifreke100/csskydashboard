@@ -26,19 +26,20 @@ import {
   PaginationNext,
 } from "../ui/pagination"; // Assuming these are UI components for pagination
 import { usePagination } from "../../utils/pagination/usePagination";
+import { formatDateManually } from "../../utils/date";
 
 interface TicketsTableProps {
   setIsModalVisible: (visible: boolean) => void;
   setRowId: (rowId: string) => void;
   tickets: Ticket[];
-  filter: string
+  filter: string;
 }
 
 const TicketsTable: React.FC<TicketsTableProps> = ({
   setIsModalVisible,
   setRowId,
   tickets,
-  filter
+  filter,
 }) => {
   // Pagination logic using the custom hook
   const itemsPerPage = 10;
@@ -72,8 +73,8 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
   const isNextDisabled = page >= totalPages - 1;
 
   useEffect(() => {
-    setPage(0)
-  },[filter])
+    setPage(0);
+  }, [filter]);
 
   return (
     <div className="flex flex-col w-full">
@@ -126,7 +127,7 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
                   </TableCell>
                   <TableCell className={statusTextColor}>{status}</TableCell>
                   <TableCell className="whitespace-nowrap py-2">
-                    {created}
+                    {formatDateManually(created)}
                   </TableCell>
                   <TableCell className="flex items-center py-2">
                     <Avatar className="h-10 w-10 mr-1">
@@ -151,7 +152,6 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
       {/* Pagination UI */}
       <Pagination className="h-fit flex mt-3 justify-end">
         <PaginationContent>
-          {/* Previous Button */}
           <PaginationItem>
             <PaginationPrevious
               href="#"
