@@ -21,11 +21,9 @@ const TicketPage = () => {
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [message, setMessage] = useState("");
   const [shouldRefetchComments, setShouldRefetchComments] = useState(false);
-  // const { data: ticket, isLoading } = useFetchTicket();
   const { data: userIds, isLoading:isLoadingIds } = useFetchUserIds();
   const { tickets, isLoading } = useFetchTickets({  userIds: userIds?.data ?? [],});
 
-  console.log("tickets pagessss", tickets);
 
   const handleSaveComment = async () => {
     try {
