@@ -5,21 +5,13 @@ import { truncateText } from "../../utils/text";
 import { Badge } from "../ui/badge";
 import { getInboxStatusStyle } from "../../utils/status";
 import { useNavigate } from "react-router-dom";
+import { Ticket } from "../../hooks/useFetchTickets";
+import { formatTimeAgo } from "../../utils/date";
 
-const LatestTickets = () => {
+const LatestTickets = ({tickets}: {tickets: Ticket[]}) => {
   const navigate = useNavigate();
-  //sample data
-  const sampleData = [
-    {
-      id: "6253ihgvitxhdarr433bjd94717",
-      assignee: {
-        issue: "Network Problem",
-        name: "Janet Doe",
-      },
-      status: "open",
-      time: "10:33",
-    },
-  ];
+
+  console.log("tickets", tickets)
 
   const navigateToInbox = (id: string) => {
     navigate(`/inbox/${id}`);
@@ -39,12 +31,12 @@ const LatestTickets = () => {
           </div>
         </CardHeader>
         <CardContent className="max-h-[400px] overflow-y-auto">
-          {sampleData.map((data) => {
-            const { id, assignee, status, time } = data;
+          {tickets.map((data) => {
+            const { id, assigned_to, subject, status , created} = data;
             const statusStyle = getInboxStatusStyle(status);
             return (
               <div
-                key={status}
+                key={id}
                 onClick={() => navigateToInbox(id)}
                 className="flex  items-center cursor-pointer justify-between border-b py-3"
               >
@@ -57,18 +49,20 @@ const LatestTickets = () => {
                   </Avatar>
                   <div className=" ml-1">
                     <p className="text-sm whitespace-nowrap font-medium text-black">
-                      {truncateText(assignee.issue, 20)}
+                      {truncateText(subject, 20)}
                     </p>
                     <p className="text-xs whitespace-nowrap text-gray-400">
-                      {truncateText(assignee.name, 13)}
+                      {truncateText(assigned_to ?? "", 13)}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Badge className={`${statusStyle} font-sans  h-5 text-[11px] p-2`}>
-                    Open
+                  <Badge
+                    className={`${statusStyle} font-sans  h-5 text-[11px] p-2`}
+                  >
+                    {status}
                   </Badge>
-                  <p className="text-xs">{time}</p>
+                  <p className="text-xs">{formatTimeAgo(created)}</p>
                 </div>
               </div>
             );
