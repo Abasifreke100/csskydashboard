@@ -85,7 +85,6 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
                       key={link.label}
                       value={`item-${index}` === value ? `item-${index}` : " "}
                       onValueChange={(value) => handleAccordionChange(value)}
-                  
                     >
                       <AccordionItem
                         className="no-underline border-none"
@@ -170,12 +169,13 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
                         </Avatar>
                         <span className="text-xs">
                           {" "}
-                          {truncateText(
-                            props.fullName !== ""
-                              ? props.fullName
-                              : (props.user?.role as string),
-                            20
-                          )}
+                          {(props.fullName || props.user?.role) &&
+                            truncateText(
+                              props.fullName !== ""
+                                ? props.fullName
+                                : (props.user?.role as string),
+                              20
+                            )}
                         </span>
                       </div>
                     </div>
