@@ -16,7 +16,7 @@ export class Cssky_Dashboard_Routes {
     static readonly tickets = '/ticket'
     static readonly inbox = "/inbox"
     static readonly inboxDetail = '/inbox/:inboxId'
-    static readonly history = "/history"
+    // static readonly history = "/history"
     static readonly admin = "/admin"
     static readonly billingInfo = "/billing-info"
   
