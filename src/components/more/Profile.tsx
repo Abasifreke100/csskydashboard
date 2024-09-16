@@ -26,6 +26,8 @@ import profileFormSchema, {
   ProfileFormValues,
 } from "../../schema/profile-schema";
 import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../../features/auth/authSlice";
 
 interface ProfileFormProps {
   user?: User;
@@ -61,6 +63,7 @@ const ProfileForm = ({
 }: ProfileFormProps) => {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch(); // Add the useDispatch hook to dispatch actions
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -79,6 +82,13 @@ const ProfileForm = ({
       setLoading(true);
       const response = await axiosInstance.post("/profile", values); // Adjust endpoint as needed
       console.log(response);
+
+      dispatch(
+        setCredentials({
+          token: localStorage.getItem("accessToken") as string,
+          user: response.data.user, // Assuming the API returns the updated user object
+        })
+      );
 
       successToast({
         title: "Profile updated successfully",
@@ -122,7 +132,7 @@ const ProfileForm = ({
         }
       }
     } else if (action === "delete") {
-      setOpenProfileDialog(false)
+      setOpenProfileDialog(false);
       setDeleteModalOpen(true);
     }
   };
