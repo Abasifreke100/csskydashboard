@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
@@ -18,16 +18,20 @@ import supportFormSchema, {
 import axiosInstance from "../../api/connectSurfApi";
 import { successToast, errorToast } from "../../utils/toast";
 import { AxiosError } from "axios";
+import { User } from "../../types";
+interface SupportFormProps {
+  user: User | null
+}
 
-const SupportForm = () => {
+const SupportForm = ({ user }: SupportFormProps) => {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<SupportFormValues>({
     resolver: zodResolver(supportFormSchema),
     defaultValues: {
-      surname: "",
-      firstname: "",
-      email: "",
+      surname: user?.lastName ??  "",
+      firstname: user?.firstName ?? "",
+      email: user?.email ??  "",
       message: "",
     },
   });
@@ -131,13 +135,13 @@ const SupportForm = () => {
             )}
           />
         </div>
-          <Button
-            type="submit"
-            className="bg-[#ff7f00] text-white w-full hover:bg-[#ff7f00]"
-            disabled={loading}
-          >
-            Submit Message
-          </Button>
+        <Button
+          type="submit"
+          className="bg-[#ff7f00] text-white w-full hover:bg-[#ff7f00]"
+          disabled={loading}
+        >
+          Submit Message
+        </Button>
       </form>
     </Form>
   );

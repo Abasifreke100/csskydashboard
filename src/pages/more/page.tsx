@@ -151,12 +151,12 @@ const More = () => {
                     </Avatar>
                     <div>
                       <div className="flex gap-1 mt-2">
-                        <p className="text-md">John Doe</p>
+                        <p className="text-md">{fullName}</p>
                         <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
                           {formatTier(data?.user?.tier ?? "N/A")}
                         </Badge>
                       </div>
-                      <p className="text-xs">johndoe@gmail.com</p>
+                      <p className="text-xs">{data?.user?.email ?? ""}</p>
                     </div>
                   </div>
                   <input
@@ -175,6 +175,7 @@ const More = () => {
               </DialogTitle>
             </DialogHeader>
             <ProfileForm
+              user={data?.user ?? undefined}
               setDeleteModalOpen={setDeleteModalOpen}
               setOpenProfileDialog={setOpenProfileDialog}
             />
@@ -219,7 +220,7 @@ const More = () => {
                 Send us a message now ?
               </p>
             </DialogHeader>
-            <SupportForm /> {/* Render the SupportForm component */}
+            <SupportForm user={data?.user ?? null} /> {/* Render the SupportForm component */}
           </DialogContent>
         </Dialog>
 
