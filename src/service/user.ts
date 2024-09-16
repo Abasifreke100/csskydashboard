@@ -26,7 +26,7 @@ export class UserService {
   }
 
   static async deleteUser(userId: string): Promise<void> {
-    const response = await axiosInstance.delete(`/user/${userId}`);
+    const response = await axiosInstance.delete(`/user/delete/admin/${userId}`);
     if (!response.data.success) {
       throw new Error(response.data.message || "Failed to delete user");
     }

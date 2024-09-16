@@ -34,6 +34,7 @@ import CustomCompulsoryInputStar from "../task/CustomCompulsoryInputStar";
 import CustomButton from "../shared/CustomButton";
 import { adminTableHeaders } from "../store/data/admin";
 import { User } from "../../types";
+import { UserService } from "../../service/user";
 
 interface AdminTableProps {
   users: User[];
@@ -41,6 +42,7 @@ interface AdminTableProps {
 
 const AdminTable = ({ users }: AdminTableProps) => {
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const { handleSubmit, control } = useForm({
@@ -75,6 +77,30 @@ const AdminTable = ({ users }: AdminTableProps) => {
     },
   });
 
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => UserService.deleteUser(userId),
+    onSuccess: () => {
+      successToast({
+        title: "User deleted successfully",
+        message: "Your account has been deleted successfully.",
+      });
+      setDeleteUserId(null); // Close the delete modal
+      queryClient.invalidateQueries({
+        queryKey: [QueryKeys.Get_All_Users, 1, 10],
+      });
+    },
+    onError: () => {
+      errorToast({
+        title: "Error deleting user",
+        message: "Failed to delete the account. Please try again.",
+      });
+    },
+  });
+
+  const handleDeleteUser = (userId: string) => {
+    deleteUserMutation.mutate(userId);
+  };
+
   const renderTableHeaders = adminTableHeaders.map((header) => (
     <TableHead className="h-[18px] py-2" key={header}>
       {header}
@@ -93,6 +119,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
           {users?.map((user) => {
             const { _id, firstName, email, isTierRequest } = user;
             const isDialogOpen = activeUserId === _id;
+            const isDeleteDialogOpen = deleteUserId === _id;
 
             return (
               <TableRow
@@ -182,6 +209,45 @@ const AdminTable = ({ users }: AdminTableProps) => {
                           </form>
                         </DialogDescription>
                       </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+                <TableCell className="whitespace-nowrap py-2">
+                  <Dialog
+                    open={isDeleteDialogOpen}
+                    onOpenChange={(isOpen) =>
+                      setDeleteUserId(isOpen ? _id : null)
+                    }
+                  >
+                    <DialogTrigger asChild>
+                      <Button className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded">
+                        Delete
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-h-[550px] max-w-[450px] overflow-scroll">
+                      <DialogHeader>
+                        <DialogTitle>
+                          Are you sure you want to delete this user?
+                        </DialogTitle>
+                        <DialogDescription>
+                          This action cannot be undone. The user account will be
+                          permanently deleted.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          onClick={() => setDeleteUserId(null)}
+                          className="text-grey bg-gray-200 hover:bg-gray-200"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDeleteUser(_id)}
+                        >
+                          {deleteUserMutation.isPending ? "Deleting" : "Delete Account"} 
+                        </Button>
+                      </div>
                     </DialogContent>
                   </Dialog>
                 </TableCell>
