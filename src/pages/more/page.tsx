@@ -151,7 +151,7 @@ const More = () => {
                     </Avatar>
                     <div>
                       <div className="flex gap-1 mt-2">
-                        <p className="text-md">{fullName}</p>
+                        <p className="text-md">{fullName ?? data?.user?.role}</p>
                         <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
                           {formatTier(data?.user?.tier ?? "N/A")}
                         </Badge>

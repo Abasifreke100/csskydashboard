@@ -247,9 +247,9 @@ const ProfileForm = ({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="basic">Basic</SelectItem>
-                    <SelectItem value="standard">Standard</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
+                    <SelectItem value="tier-1">Tier 1</SelectItem>
+                    <SelectItem value="tier-2">Tier 2</SelectItem>
+                    <SelectItem value="tier-3">Tier 3</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

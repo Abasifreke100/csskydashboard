@@ -70,6 +70,7 @@ export const getCurrentUser = createAsyncThunk<
     });
     return response.data;
   } catch (err: unknown) {
+    console.log("login error", err)
     const error: AxiosError<ErrorResponse> = err as AxiosError<ErrorResponse>;
     return thunkAPI.rejectWithValue(error.response?.data.errors ?? []);
   }
