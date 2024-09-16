@@ -83,11 +83,6 @@ const sidebarItems: SidebarItems = {
           label: "Inbox",
         },
         {
-          href: Cssky_Dashboard_Routes.history,
-          icon: Unplug,
-          label: "History",
-        },
-        {
           href: Cssky_Dashboard_Routes.admin,
           icon: Mail,
           label: "Admin",
