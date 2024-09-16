@@ -32,22 +32,21 @@ import { setCredentials } from "../../features/auth/authSlice";
 interface ProfileFormProps {
   user?: User;
   onClose?: () => void;
-  setDeleteModalOpen: (value: boolean) => void;
   setOpenProfileDialog: (value: boolean) => void;
 }
 
 const ctaButtons = [
-  {
-    label: "Delete",
-    className: "bg-[#fff0ef] text-red-600 hover:bg-[#fff0ef]",
-    action: "delete",
-  },
-  {
-    label: "Request Upgrade",
-    className:
-      "bg-[#f5f5f7] text-[#9c9c9c] border border-grey-400 hover:bg-[#f5f5f7]",
-    action: "requestUpgrade",
-  },
+  // {
+  //   label: "Delete",
+  //   className: "bg-[#fff0ef] text-red-600 hover:bg-[#fff0ef]",
+  //   action: "delete",
+  // },
+  // {
+  //   label: "Request Upgrade",
+  //   className:
+  //     "bg-[#f5f5f7] text-[#9c9c9c] border border-grey-400 hover:bg-[#f5f5f7]",
+  //   action: "requestUpgrade",
+  // },
   {
     label: "Save Changes",
     className: "bg-[#ff7f00] text-white hover:bg-[#ff7f00]",
@@ -58,7 +57,6 @@ const ctaButtons = [
 const ProfileForm = ({
   user,
   onClose = () => {},
-  setDeleteModalOpen,
   setOpenProfileDialog,
 }: ProfileFormProps) => {
   const queryClient = useQueryClient();
@@ -68,11 +66,10 @@ const ProfileForm = ({
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      surname: user?.lastName ?? "",
-      firstname: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      firstName: user?.firstName ?? "",
       email: user?.email ?? "",
       password: "",
-      employeeNumber: "",
       accessTier: user?.tier ?? "",
     },
   });
@@ -80,15 +77,21 @@ const ProfileForm = ({
   async function onSubmit(values: ProfileFormValues) {
     try {
       setLoading(true);
-      const response = await axiosInstance.post("/profile", values); // Adjust endpoint as needed
-      console.log(response);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { accessTier, ...filteredValues } = values;
+
+      const response = await axiosInstance.post(
+        `/user/update/admin/${user?._id}`,
+        filteredValues
+      ); // Adjust endpoint as needed
 
       dispatch(
         setCredentials({
           token: localStorage.getItem("accessToken") as string,
-          user: response.data.user, // Assuming the API returns the updated user object
+          user: response.data.data, // Assuming the API returns the updated user object
         })
       );
+      setOpenProfileDialog(false);
 
       successToast({
         title: "Profile updated successfully",
@@ -114,26 +117,6 @@ const ProfileForm = ({
     if (action === "saveChanges") {
       setLoading(true);
       form.handleSubmit(onSubmit)();
-    } else if (action === "requestUpgrade") {
-      if (user?._id) {
-        try {
-          await axiosInstance.post("/user/admin/request/upgrade", {
-            userId: user._id,
-          });
-          successToast({
-            title: "Upgrade Requested",
-            message: "Your upgrade request has been submitted.",
-          });
-        } catch (error: unknown) {
-          errorToast({
-            title: "Error Requesting Upgrade",
-            message: `An error occurred: ${(error as AxiosError)?.message}`,
-          });
-        }
-      }
-    } else if (action === "delete") {
-      setOpenProfileDialog(false);
-      setDeleteModalOpen(true);
     }
   };
 
@@ -146,7 +129,7 @@ const ProfileForm = ({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 text-start">
           <FormField
             control={form.control}
-            name="surname"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Surname</FormLabel>
@@ -163,7 +146,7 @@ const ProfileForm = ({
           />
           <FormField
             control={form.control}
-            name="firstname"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Firstname</FormLabel>
@@ -200,30 +183,13 @@ const ProfileForm = ({
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="col-span-2">
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Password"
                     type="password"
-                    className="bg-gray-200"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="employeeNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Employee Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Employee Number"
-                    className="bg-gray-200"
+                    className="bg-gray-200 "
                     {...field}
                   />
                 </FormControl>
@@ -240,6 +206,7 @@ const ProfileForm = ({
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={!!user?.tier} // Disable if user has a tier
                 >
                   <FormControl>
                     <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
@@ -247,9 +214,10 @@ const ProfileForm = ({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="basic">Basic</SelectItem>
-                    <SelectItem value="standard">Standard</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
+                    <SelectItem value="tier-1">Tier 1</SelectItem>
+                    <SelectItem value="tier-2">Tier 2</SelectItem>
+                    <SelectItem value="tier-3">Tier 3</SelectItem>
+                    <SelectItem value="tier-4">Tier 4</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -265,7 +233,7 @@ const ProfileForm = ({
               disabled={loading && button.action === "saveChanges"}
               className={`${button.className} flex-1 rounded-lg`}
             >
-              {button.label}
+              {loading ? "Saving ..." : button.label}
             </Button>
           ))}
         </div>

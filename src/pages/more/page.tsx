@@ -14,21 +14,16 @@ import { DocumentationIcon } from "../../lib/icons/document-icon";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { getInitials } from "../../utils/getInitials";
-import { formatTier } from "../../utils/text";
+import { formatTier, truncateText } from "../../utils/text";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from "../../components/ui/dialog";
 import ProfileForm from "../../components/more/Profile";
-import SupportForm from "../../components/more/Support";
-import { Button } from "../../components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { UserService } from "../../service/user";
-import { errorToast, successToast } from "../../utils/toast";
+import SupportForm from "../../components/more/Support"
 
 const moreCard = [
   {
@@ -50,7 +45,7 @@ const More = () => {
   const data = useSelector((state: RootState) => state.auth);
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
   const [openSupportDialog, setOpenSupportDialog] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
 
   const handleCardClick = (title: string) => {
     if (title === "Documentation") {
@@ -63,7 +58,7 @@ const More = () => {
     }
   };
   const fullName = `${data?.user?.firstName ?? ""} ${
-    data?.user?.lastName ?? ""
+    data?.user?.lastName ?? data?.user?.role
   }`;
   const initials = getInitials(
     fullName !== " " ? fullName : (data?.user?.role as string)
@@ -80,27 +75,7 @@ const More = () => {
     }
   };
 
-  const deleteUserMutation = useMutation({
-    mutationFn: (userId: string) => UserService.deleteUser(userId),
-    onSuccess: () => {
-      successToast({
-        title: "User deleted successfully",
-        message: "Your account has been deleted successfully.",
-      });
-      setDeleteModalOpen(false); // Close the delete modal
-    },
-    onError: (error) => {
-      console.error(error.message);
-      errorToast({
-        title: "Error deleting user",
-        message: "Failed to delete your account. Please try again.",
-      });
-    },
-  });
 
-  const handleDeleteUser = (userId: string) => {
-    deleteUserMutation.mutate(userId);
-  };
 
   return (
     <div className="md:h-screen mb-16 lg:mb-0">
@@ -151,12 +126,14 @@ const More = () => {
                     </Avatar>
                     <div>
                       <div className="flex gap-1 mt-2">
-                        <p className="text-md">{fullName}</p>
+                        <p className="text-md">{truncateText(fullName, 10)}</p>
                         <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] hover:text-primary hidden md:block text-[#FF7F00]">
                           {formatTier(data?.user?.tier ?? "N/A")}
                         </Badge>
                       </div>
-                      <p className="text-xs">{data?.user?.email ?? ""}</p>
+                      <p className="text-xs">
+                        {truncateText(data?.user?.email ?? "",20) ?? ""}
+                      </p>
                     </div>
                   </div>
                   <input
@@ -164,7 +141,7 @@ const More = () => {
                     id="change_photo"
                     className="hidden"
                     onChange={handleFileChange}
-                  />
+                  /> 
                   <label
                     htmlFor="change_photo"
                     className="text-xs font-medium text-grey bg-gray-200 h-fit px-2 py-1 rounded-xl cursor-pointer"
@@ -176,7 +153,6 @@ const More = () => {
             </DialogHeader>
             <ProfileForm
               user={data?.user ?? undefined}
-              setDeleteModalOpen={setDeleteModalOpen}
               setOpenProfileDialog={setOpenProfileDialog}
             />
           </DialogContent>
@@ -220,33 +196,8 @@ const More = () => {
                 Send us a message now ?
               </p>
             </DialogHeader>
-            <SupportForm user={data?.user ?? null} /> {/* Render the SupportForm component */}
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete Dialog */}
-        <Dialog
-          open={deleteModalOpen}
-          onOpenChange={(open) => setDeleteModalOpen(open)}
-        >
-          <DialogContent className="max-h-[550px] max-w-[450px] overflow-scroll">
-            <DialogHeader>
-              <DialogTitle>
-                <p>Are you sure you want to delete your account?</p>
-              </DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex justify-end">
-              <Button
-                variant="destructive"
-                onClick={() => handleDeleteUser(data?.user?._id ?? "")}
-              >
-                Delete Account
-              </Button>
-            </div>
+            <SupportForm user={data?.user ?? null} />{" "}
+            {/* Render the SupportForm component */}
           </DialogContent>
         </Dialog>
       </div>
