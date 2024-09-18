@@ -73,6 +73,11 @@ const sidebarItems: SidebarItems = {
       title: "Support",
       links: [
         {
+          href: Cssky_Dashboard_Routes.overview,
+          icon: LayoutDashboard,
+          label: "Overview",
+        },
+        {
           href: Cssky_Dashboard_Routes.tickets,
           icon: Ticket,
           label: "Tickets",
@@ -106,9 +111,9 @@ const sidebarItems: SidebarItems = {
 type TierKey = "tier-1" | "tier-2" | "tier-3" | "tier-4" | "null";
 
 const tierAccess: Record<TierKey, string[]> = {
-  "tier-1": ["API Bindings", "Admin", "Billing Info"],
-  "tier-2": [], // Tier 2 users have no restrictions
-  "tier-3": [], // Tier 3 users have no restrictions
+  "tier-1": ["API Bindings", "Admin", "Billing Info","Overview"],
+  "tier-2": ["Admin"], // Tier 2 users have no restrictions
+  "tier-3": ["Admin"], // Tier 3 users have no restrictions
   "tier-4": [], // Tier 3 users have no restrictions
   null: [
     "API Bindings",
@@ -120,6 +125,7 @@ const tierAccess: Record<TierKey, string[]> = {
     "More",
     "Tasks",
     "Insights",
+    "Overview"
   ],
 };
 
