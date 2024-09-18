@@ -19,6 +19,7 @@ import AdminPage from "../pages/admin/page";
 import TaskIDDetailsPage from "../pages/[taskId]/page";
 import BillingInfoPage from "../pages/billing-info/page";
 import { RootState } from "../app/store";
+import SupportOverviewPage from "../pages/overview/page";
 
 // A higher-order component to protect routes based on user tier
 const ProtectedRoute = ({
@@ -42,7 +43,6 @@ const ProtectedRoute = ({
 
   return element;
 };
-
 
 export const router = createBrowserRouter([
   {
@@ -95,6 +95,10 @@ export const router = createBrowserRouter([
         element: <ProtectedRoute element={<More />} />,
       },
       {
+        path: Cssky_Dashboard_Routes.overview,
+        element: <ProtectedRoute element={<SupportOverviewPage />} />,
+      },
+      {
         path: Cssky_Dashboard_Routes.tickets,
         element: <ProtectedRoute element={<TicketPage />} />,
       },
@@ -115,7 +119,7 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute
             element={<AdminPage />}
-            restrictedTiers={["tier-1"]}
+            restrictedTiers={["tier-1","tier-2","tier-3"]}
           />
         ),
       },

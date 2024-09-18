@@ -132,7 +132,7 @@ const More = () => {
                         </Badge>
                       </div>
                       <p className="text-xs">
-                        {truncateText(data?.user?.email ?? "",20) ?? ""}
+                        {truncateText(data?.user?.email ?? "", 20) ?? ""}
                       </p>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ const More = () => {
                     id="change_photo"
                     className="hidden"
                     onChange={handleFileChange}
-                  /> 
+                  />
                   <label
                     htmlFor="change_photo"
                     className="text-xs font-medium text-grey bg-gray-200 h-fit px-2 py-1 rounded-xl cursor-pointer"
@@ -196,7 +196,10 @@ const More = () => {
                 Send us a message now ?
               </p>
             </DialogHeader>
-            <SupportForm user={data?.user ?? null} />{" "}
+            <SupportForm
+              user={data?.user ?? null}
+              setOpenSupportDialog={setOpenSupportDialog}
+            />{" "}
             {/* Render the SupportForm component */}
           </DialogContent>
         </Dialog>

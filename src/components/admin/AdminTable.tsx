@@ -120,7 +120,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
             const { _id, firstName, email, isTierRequest } = user;
             const isDialogOpen = activeUserId === _id;
             const isDeleteDialogOpen = deleteUserId === _id;
-
+console.log("user",user)
             return (
               <TableRow
                 key={_id}
@@ -146,12 +146,15 @@ const AdminTable = ({ users }: AdminTableProps) => {
                   >
                     <DialogTrigger asChild>
                       <Button
-                        disabled={!isTierRequest}
+                        disabled={!isTierRequest || user.tier === "tier-4"}
                         className={`${
                           isTierRequest
                             ? "bg-blue-500 hover:bg-blue-400"
                             : "bg-gray-200 hover:bg-gray-200 "
-                        } text-white px-4 py-2 rounded `}
+                        } text-white px-4 py-2 rounded  ${
+                          user?.tier === "tier-4" &&
+                          "bg-gray-200 hover:bg-gray-200"
+                        }`}
                       >
                         Upgrade Tier
                       </Button>
@@ -212,45 +215,49 @@ const AdminTable = ({ users }: AdminTableProps) => {
                     </DialogContent>
                   </Dialog>
                 </TableCell>
-                <TableCell className="whitespace-nowrap py-2">
-                  <Dialog
-                    open={isDeleteDialogOpen}
-                    onOpenChange={(isOpen) =>
-                      setDeleteUserId(isOpen ? _id : null)
-                    }
-                  >
-                    <DialogTrigger asChild>
-                      <Button className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded">
-                        Delete
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-h-[550px] max-w-[450px] overflow-scroll">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Are you sure you want to delete this user?
-                        </DialogTitle>
-                        <DialogDescription>
-                          This action cannot be undone. The user account will be
-                          permanently deleted.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          onClick={() => setDeleteUserId(null)}
-                          className="text-grey bg-gray-200 hover:bg-gray-200"
-                        >
-                          Cancel
+                {user?.tier !== "tier-4" && (
+                  <TableCell className="whitespace-nowrap py-2">
+                    <Dialog
+                      open={isDeleteDialogOpen}
+                      onOpenChange={(isOpen) =>
+                        setDeleteUserId(isOpen ? _id : null)
+                      }
+                    >
+                      <DialogTrigger asChild>
+                        <Button className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded">
+                          Delete
                         </Button>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleDeleteUser(_id)}
-                        >
-                          {deleteUserMutation.isPending ? "Deleting" : "Delete Account"} 
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </TableCell>
+                      </DialogTrigger>
+                      <DialogContent className="max-h-[550px] max-w-[450px] overflow-scroll">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Are you sure you want to delete this user?
+                          </DialogTitle>
+                          <DialogDescription>
+                            This action cannot be undone. The user account will
+                            be permanently deleted.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            onClick={() => setDeleteUserId(null)}
+                            className="text-grey bg-gray-200 hover:bg-gray-200"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() => handleDeleteUser(_id)}
+                          >
+                            {deleteUserMutation.isPending
+                              ? "Deleting"
+                              : "Delete Account"}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}
