@@ -139,24 +139,56 @@ const CustomersPage = () => {
     try {
       const endpoint = `/${type}/verify/nin`;
       console.log("selectedRows", selectedRows);
+
       const verificationPromises = selectedRows.map((id) =>
-        axiosInstance.post(`${endpoint}/${id}`)
+        axiosInstance
+          .post(`${endpoint}/${id}`)
+          .then(() => ({ id, status: "fulfilled" }))
+          .catch(() => ({ id, status: "rejected" }))
       );
+
       setLoading(true);
-      await Promise.all(verificationPromises);
-      successToast({
-        title: "Success",
-        message:
-          "Verification successful , if pending then nin is invalid or not provided",
-      });
+      const results = await Promise.allSettled(verificationPromises);
+
+      // Filter fulfilled results
+      const fulfilled = results
+        .filter(
+          (
+            result
+          ): result is PromiseFulfilledResult<{ id: string; status: string }> =>
+            result.status === "fulfilled"
+        )
+        .map((result) => result.value.id); // Fulfilled promises have a `value` property
+
+      // Filter rejected results
+      const rejected = results
+        .filter(
+          (result): result is PromiseRejectedResult =>
+            result.status === "rejected"
+        )
+        .map((result) => result.reason?.id || "Unknown"); // Rejected promises have a `reason` property
+
+      if (fulfilled.length > 0) {
+        successToast({
+          title: "Success",
+          message: `Verification successful for all users. If pending, the NIN is invalid or not provided.`,
+        });
+      }
+
+      if (rejected.length > 0) {
+        errorToast({
+          title: "Partial Error",
+          message: `Verification failed for users: ${rejected.join(
+            ", "
+          )} due to NIN initialization error or NIN currently unavailable.`,
+        });
+      }
     } catch (error) {
-      console.error("Error verifying individuals:", error);
+      console.error("Unexpected error during verification:", error);
       errorToast({
         title: "Error",
-        message:
-          "Verification failed: NIN initialization error or NIN currently unavailable.",
+        message: "An unexpected error occurred. Please try again later.",
       });
-      // Handle error, show error message, etc.
     } finally {
       setSelectAll(false);
       setSelectedRows([]);
