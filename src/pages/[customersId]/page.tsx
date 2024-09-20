@@ -33,7 +33,6 @@ const CustomersIdPage = () => {
   }>();
   const [data, setData] = useState<Response | Corporate>();
   const [isLoading, setIsLoading] = useState(false);
-  // const isPdfFile = (url: string) => url.endsWith(".pdf");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -228,7 +227,7 @@ const CustomersIdPage = () => {
                                   <img
                                     src={field.value as string}
                                     alt={field.label}
-                                    className="object-cover  cursor-pointer w-full h-full"
+                                    className="object-cover hover:scale-150 transition-transform duration-300 ease-in-out cursor-pointer w-full h-full"
                                   />
                                 ) : (
                                   <div className="object-cover bg-gray-300 text-black flex items-center justify-center text-2xl  cursor-pointer w-full h-full">
@@ -247,7 +246,7 @@ const CustomersIdPage = () => {
                                 )}
                               </DialogTrigger>
                               {field.value && (
-                                <DialogContent className=" w-[350px] rounded-lg lg:w-[600px]">
+                                <DialogContent className=" w-[350px] rounded-lg lg:w-[600px] max-h-[550px] overflow-y-auto">
                                   <DialogHeader>
                                     <DialogDescription>
                                       <div className="gallery mt-2">
@@ -256,7 +255,7 @@ const CustomersIdPage = () => {
                                             src={field.value as string}
                                             alt={field.label}
                                             style={{ width: "100%" }}
-                                            className="group-hover:scale-150 transition-transform duration-300 ease-in-out"
+                                            className="transition-transform duration-300 ease-in-out"
                                           />
                                         </div>
                                       </div>
