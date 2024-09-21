@@ -85,7 +85,7 @@ export function TicketsAccordion({
 
   function handleAccordionClick() {
     setSelected("all");
-    // updateUrlParam("all");
+    updateUrlParam("all");
     if (setIsExpanded) {
       setIsExpanded(true);
     }

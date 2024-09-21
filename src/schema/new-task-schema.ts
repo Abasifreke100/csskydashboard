@@ -16,6 +16,6 @@ export const newTaskFormSchema = z.object({
       message: "Description must not be longer than 30 characters.",
     }),
   priority: z.string().optional(),
-  file: z.any().optional(),
+  // file: z.any().optional(),
   assignee: z.string().optional(),
 });

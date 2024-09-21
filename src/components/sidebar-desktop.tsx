@@ -111,7 +111,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                   link.label === "Tickets" ? (
                     <TicketsAccordion
                       key={link.label}
-                      index={index}
+                      index={index + 2}
                       value={value}
                       onAccordionChange={handleAccordionChange}
                       isExpanded={isExpanded}
@@ -123,7 +123,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                       className={`no-underline `}
                       collapsible
                       key={link.label}
-                      value={value === `item-${index}` ? `item-${index}` : ""}
+                      value={`item-${index}` === value ? `item-${index}` : ""}
                       onValueChange={(value) => handleAccordionChange(value)}
                     >
                       <AccordionItem
