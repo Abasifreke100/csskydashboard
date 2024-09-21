@@ -108,6 +108,7 @@ const ProfileForm = ({
         title: "Error updating profile",
         message: `An error occurred: ${(error as AxiosError)?.message}`,
       });
+      
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,6 @@ const ProfileForm = ({
 
   const handleButtonClick = async (action: string) => {
     if (action === "saveChanges") {
-      setLoading(true);
       form.handleSubmit(onSubmit)();
     }
   };

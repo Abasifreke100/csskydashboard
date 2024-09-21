@@ -66,7 +66,6 @@ const NewTasksForm = ({
       dueDate: task ? new Date(task.dueDate) : new Date(),
       description: task?.description ?? "",
       priority: task?.priority ?? "",
-      file: task?.file ?? undefined,
       assignee: task?.assignee?._id ?? "",
     },
   });
@@ -105,11 +104,6 @@ const NewTasksForm = ({
       })
     );
     formData.append("assignee", values.assignee ?? "");
-
-    if (values.file?.[0]) {
-      formData.append("file", values.file[0]);
-    }
-
     return formData;
   }
 
@@ -168,7 +162,6 @@ const NewTasksForm = ({
         dueDate: task ? new Date(task.dueDate) : new Date(),
         description: task?.description || "",
         priority: task?.priority || "",
-        file: task?.file || undefined,
         assignee: task?.assignee?._id ?? "",
       });
     }
@@ -279,24 +272,6 @@ const NewTasksForm = ({
                         <SelectItem value="high">High</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="file"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Attach File</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Attach a file"
-                        type="file"
-                        className="bg-gray-200"
-                        {...field}
-                      />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

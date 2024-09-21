@@ -120,7 +120,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
             const { _id, firstName, email, isTierRequest } = user;
             const isDialogOpen = activeUserId === _id;
             const isDeleteDialogOpen = deleteUserId === _id;
-console.log("user",user)
+            console.log("user", user);
             return (
               <TableRow
                 key={_id}
@@ -215,7 +215,7 @@ console.log("user",user)
                     </DialogContent>
                   </Dialog>
                 </TableCell>
-                {user?.tier !== "tier-4" && (
+                {user?.tier !== "tier-4" ? (
                   <TableCell className="whitespace-nowrap py-2">
                     <Dialog
                       open={isDeleteDialogOpen}
@@ -228,7 +228,7 @@ console.log("user",user)
                           Delete
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[550px] max-w-[450px] overflow-scroll">
+                      <DialogContent className="max-h-[550px] max-w-[350px] rounded-md overflow-scroll">
                         <DialogHeader>
                           <DialogTitle>
                             Are you sure you want to delete this user?
@@ -257,6 +257,8 @@ console.log("user",user)
                       </DialogContent>
                     </Dialog>
                   </TableCell>
+                ) : (
+                  <TableCell className="whitespace-nowrap py-2" />
                 )}
               </TableRow>
             );
