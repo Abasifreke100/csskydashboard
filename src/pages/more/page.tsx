@@ -23,7 +23,7 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 import ProfileForm from "../../components/more/Profile";
-import SupportForm from "../../components/more/Support"
+import SupportForm from "../../components/more/Support";
 
 const moreCard = [
   {
@@ -45,7 +45,6 @@ const More = () => {
   const data = useSelector((state: RootState) => state.auth);
   const [openProfileDialog, setOpenProfileDialog] = useState(false);
   const [openSupportDialog, setOpenSupportDialog] = useState(false);
-
 
   const handleCardClick = (title: string) => {
     if (title === "Documentation") {
@@ -74,8 +73,6 @@ const More = () => {
       reader.readAsDataURL(file);
     }
   };
-
-
 
   return (
     <div className="md:h-screen mb-16 lg:mb-0">
@@ -141,6 +138,7 @@ const More = () => {
                     id="change_photo"
                     className="hidden"
                     onChange={handleFileChange}
+                    disabled
                   />
                   <label
                     htmlFor="change_photo"
