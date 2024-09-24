@@ -2,7 +2,7 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { Cssky_Dashboard_Routes } from "../components/store/data";
 import { errorToast } from "../utils/toast";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL as string;
+const baseURL = "https://api.csskyc.dev/api/v1";
 
 const axiosInstance = axios.create({
   baseURL,
