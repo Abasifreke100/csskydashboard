@@ -19,10 +19,10 @@ const DashboardLayout = () => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Tab is inactive
-        document.title = "Am lonely. Please click me!";
+        document.title = "Cssky Dashboard | Inactive";
       } else {
         // Tab is active
-        document.title = active;
+        document.title = `Cssky Dashboard | ${active}`;
       }
     };
     handleVisibilityChange();

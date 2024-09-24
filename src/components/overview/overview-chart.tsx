@@ -9,28 +9,32 @@ import {
 } from "recharts";
 import { Payload } from "recharts/types/component/DefaultLegendContent";
 
-const data02 = [
-  {
-    name: "Closed",
-    value: 50,
-  },
-  {
-    name: "Open",
-    value: 15,
-  },
-  {
-    name: "Pending",
-    value: 35,
-  },
-];
-
-const colors = ["#34c759", "#fe3b30", "#ff7f01"];
-
 interface Props {
   payload?: Payload[]; // Make payload optional
 }
 
-export default function PieChartComponent() {
+interface PieChartProps {
+  open: number;
+  closed: number;
+  pending: number;
+  total: number;
+}
+
+export default function PieChartComponent({
+  open,
+  closed,
+  pending,
+  total,
+}: Readonly<PieChartProps>) {
+  // Prepare data for the pie chart
+  const data02 = [
+    { name: "Closed", value: closed },
+    { name: "Open", value: open },
+    { name: "Pending", value: pending },
+  ];
+
+  const colors = ["#34c759", "#fe3b30", "#ff7f01"];
+
   const renderLegend = (props: Props) => {
     const { payload } = props;
     if (!payload) return null; // Return null if payload is undefined
@@ -42,9 +46,7 @@ export default function PieChartComponent() {
             <div key={entry.id} className="flex items-center text-sm gap-1">
               <div
                 className="w-4 h-4 rounded-sm"
-                style={{
-                  backgroundColor: entry.color,
-                }}
+                style={{ backgroundColor: entry.color }}
               ></div>
               <li className="font-medium">
                 <span className="font-normal">{entry.value}</span>{" "}
@@ -56,6 +58,12 @@ export default function PieChartComponent() {
       </div>
     );
   };
+
+  const allPropsAvailable =
+    open !== undefined &&
+    closed !== undefined &&
+    pending !== undefined &&
+    total !== undefined;
 
   return (
     <div style={{ width: "100%", height: "300px" }}>
@@ -71,28 +79,27 @@ export default function PieChartComponent() {
             outerRadius={80}
             fill="#82ca9d"
             paddingAngle={5}
-            // label
           >
-            {data02.map((entry, index) => (
+            {data02.map((_entry, index) => (
               <Cell
-                key={`${entry.name}`}
+                key={`cell-${index}`}
                 fill={colors[index % colors.length]}
               />
             ))}
             <Label
-              value="213,423 "
+              value={total?.toString()} // Display total tickets here
               position="centerBottom"
               style={{ fontSize: "12px", fontWeight: "bold", fill: "#000" }}
             />
             <Label
               value="Today's tickets"
-              position="centerTop" // Adjust y for positioning below the first label
-              dy={10} // Adjust this value to set the gap between the labels
+              position="centerTop"
+              dy={10}
               style={{ fontSize: "10px", fill: "#000" }}
             />
           </Pie>
           <Tooltip />
-          <Legend content={renderLegend} />
+          {allPropsAvailable && <Legend content={renderLegend} />}
         </PieChart>
       </ResponsiveContainer>
     </div>

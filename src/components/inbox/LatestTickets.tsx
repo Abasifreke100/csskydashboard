@@ -7,11 +7,12 @@ import { getInboxStatusStyle } from "../../utils/status";
 import { useNavigate } from "react-router-dom";
 import { Ticket } from "../../hooks/useFetchTickets";
 import { formatTimeAgo } from "../../utils/date";
+import { getInitials } from "../../utils/getInitials";
 
-const LatestTickets = ({tickets}: {tickets: Ticket[]}) => {
+const LatestTickets = ({ tickets }: { tickets: Ticket[] }) => {
   const navigate = useNavigate();
 
-  console.log("tickets", tickets)
+  console.log("tickets", tickets);
 
   const navigateToInbox = (id: string) => {
     navigate(`/inbox/${id}`);
@@ -32,7 +33,8 @@ const LatestTickets = ({tickets}: {tickets: Ticket[]}) => {
         </CardHeader>
         <CardContent className="max-h-[400px] overflow-y-auto">
           {tickets.map((data) => {
-            const { id, assigned_to, subject, status , created} = data;
+            const { id, assigned_to, subject, status, created } = data;
+            const initials = getInitials(data?.assigned_to ?? "");
             const statusStyle = getInboxStatusStyle(status);
             return (
               <div
@@ -44,7 +46,7 @@ const LatestTickets = ({tickets}: {tickets: Ticket[]}) => {
                   <Avatar className=" h-10 w-10 mr-1">
                     <AvatarImage src="https://github.com/max-programming.png" />
                     <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
-                      JD
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className=" ml-1">
