@@ -1,62 +1,22 @@
-import { useEffect, useState } from "react";
+import React, { ReactNode } from "react";
 import CommentsTable from "./CommentsList";
 import { FetchLoadingAndEmptyState } from "../../shared/FetchLoadingAndEmptyState";
 import CommentsTableSkeleton from "./CommentListSkeleton";
 import CommentsTableEmptyState from "./CommentEmptyState";
-import axiosInstance from "../../../api/connectSurfApi";
-import { CommentResponse } from "../../../types/task";
-import { errorToast, successToast } from "../../../utils/toast";
+import { useFetchComments } from "../../../hooks/useFetchComments"; // Assuming your custom hook is here
 
 interface CommentsSectionProps {
   taskID: string;
-  refetchComments: boolean;
-  onRefetchComplete?: () => void;
+  children?: ReactNode
 }
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({
-  taskID,
-  refetchComments,
-  onRefetchComplete,
-}) => {
-  const [comments, setComments] = useState<CommentResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchComments = async (taskID: string) => {
-    try {
-      const response = await axiosInstance.get(`/comment/${taskID}`);
-      return response.data.data.response;
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-      throw error;
-    }
-  };
-
-  const loadComments = async () => {
-    setIsLoading(true);
-    try {
-      const fetchedComments = await fetchComments(taskID);
-      setComments(fetchedComments);
-      setError(null);
-      successToast({
-        title: "Comments Loaded",
-        message: "Your comments have been successfully loaded.",
-      });
-    } catch (err) {
-      setError("Failed to load comments.");
-      errorToast({
-        title: "Fetch Error",
-        message: `An error occurred while fetching comments`,
-      });
-    } finally {
-      setIsLoading(false);
-      if (onRefetchComplete) onRefetchComplete();
-    }
-  };
-
-  useEffect(() => {
-    loadComments();
-  }, [taskID, refetchComments]);
+const CommentsSection: React.FC<CommentsSectionProps> = ({ taskID , children}) => {
+  const {
+    data: comments,
+    isLoading,
+    isError,
+    error,
+  } = useFetchComments(taskID);
 
   return (
     <FetchLoadingAndEmptyState
@@ -66,10 +26,15 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
       emptyState={<CommentsTableEmptyState />}
       data={comments?.length}
     >
-      {error ? (
-        <div className="text-red-500">Failed to load comments: {error}</div>
+      {isError ? (
+        <div className="text-red-500">
+          Failed to load comments: {String(error)}
+        </div>
       ) : (
-        <CommentsTable comments={comments} />
+          <div>
+            {children}
+          <CommentsTable comments={comments || []} />
+        </div>
       )}
     </FetchLoadingAndEmptyState>
   );

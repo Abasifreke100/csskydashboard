@@ -228,9 +228,9 @@ const AdminTable = ({ users }: AdminTableProps) => {
                           Delete
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-h-[550px] max-w-[350px] rounded-md overflow-scroll">
+                      <DialogContent className="max-h-[550px] max-w-[400px] lg:w-[400px] rounded-md overflow-scroll">
                         <DialogHeader>
-                          <DialogTitle>
+                          <DialogTitle >
                             Are you sure you want to delete this user?
                           </DialogTitle>
                           <DialogDescription>

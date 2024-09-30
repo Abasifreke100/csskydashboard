@@ -130,7 +130,9 @@ const SupportOverviewPage = () => {
               </p>
               <button
                 className="flex items-center cursor-pointer"
-                onClick={() => navigate(Cssky_Dashboard_Routes.tickets)}
+                onClick={() =>
+                  navigate(Cssky_Dashboard_Routes.tickets + "?filter=all")
+                }
               >
                 See All <ChevronRight className="h-4" />
               </button>

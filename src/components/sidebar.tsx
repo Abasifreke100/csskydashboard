@@ -168,7 +168,6 @@ export function Sidebar() {
   );
   const userTier = data.user?.tier ?? null;
   const filteredSidebarItems = filterSidebarItems(sidebarItems, userTier);
-  console.log(filteredSidebarItems);
 
   const handleLogOut = () => {
     dispatch(loggedOut());

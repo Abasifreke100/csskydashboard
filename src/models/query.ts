@@ -21,11 +21,36 @@ export class QueryKeys {
   static readonly Get_All_User_Ids = ["userIds"];
 
   static readonly Get_Tickets = (status: string) => ["Get Tickets", status];
+  static readonly GetSingleTicket = (ticketId: string) => [
+    "single-ticket",
+    ticketId,
+  ];
 
   // Query key for fetching a ticket overview by user ID
   static readonly Get_Ticket_Overview = (userId: string) => [
     "ticket",
     "overview",
     userId,
+  ];
+
+  // Notifications
+  static readonly Get_Notifications = (page: number, size: number) => [
+    "notifications",
+    page,
+    size,
+  ];
+
+  // Notification mutation keys
+  static readonly Mark_Notification_As_Read = (notificationID: string) => [
+    "notification",
+    "read",
+    notificationID,
+  ];
+
+  // Query key for fetching comments by task ID
+  static readonly Get_Comments_By_TaskID = (taskID: string) => [
+    "comments",
+    "task",
+    taskID,
   ];
 }

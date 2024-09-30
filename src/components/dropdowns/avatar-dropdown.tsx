@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BiSolidEdit } from "react-icons/bi";
 import { FaCaretDown } from "react-icons/fa";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { User } from "../../types";
 import { getInitials } from "../../utils/getInitials";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -57,7 +57,6 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
           onClick={() => setIsOpen(!isOpen)}
         >
           <Avatar className="w-8 h-8 ">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <p className="font-poppins text-sm">
@@ -76,7 +75,6 @@ const AvatarDropdown = ({ user }: AvatarDropdownProps) => {
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <Avatar className="w-8 h-8 rounded-full">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback className="text-sm">{initials}</AvatarFallback>
             </Avatar>
             <div>

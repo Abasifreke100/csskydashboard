@@ -18,4 +18,5 @@ export const newTaskFormSchema = z.object({
   priority: z.string().optional(),
   // file: z.any().optional(),
   assignee: z.string().optional(),
+  ticketID: z.string().optional(), 
 });

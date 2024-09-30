@@ -36,10 +36,10 @@ const TaskIDDetailsSkeleton = ({ length }: { length: number }) => (
               <Skeleton className="w-20 h-4" /> {/* Placeholder for taskID */}
             </CardTitle>
             <div className="flex flex-col gap-3 mt-3 text-xs mb-4">
-              <p className="font-medium text-gray-400">
+              <div className="font-medium text-gray-400">
                 <Skeleton className="w-60 h-4" />{" "}
                 {/* Placeholder for instruction text */}
-              </p>
+              </div>
             </div>
             <form className="space-y-8">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import {
   Table,
   TableBody,
@@ -15,7 +15,6 @@ import useCheckboxSelection from "../../hooks/useCheckboxSelection";
 import { Checkbox } from "../checkbox";
 import { getInitials } from "../../utils/getInitials";
 import { renderCellContent } from "../store/data/task";
-import { Ticket } from "../../hooks/useFetchTickets";
 
 import {
   Pagination,
@@ -27,6 +26,7 @@ import {
 } from "../ui/pagination"; // Assuming these are UI components for pagination
 import { usePagination } from "../../utils/pagination/usePagination";
 import { formatDateManually } from "../../utils/date";
+import { Ticket } from "../../types/ticket";
 
 interface TicketsTableProps {
   setIsModalVisible: (visible: boolean) => void;
@@ -50,7 +50,7 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
     onNextPage,
     onPrevPage,
     setPage,
-  } = usePagination(tickets, itemsPerPage); // 10 items per page
+  } = usePagination(tickets, itemsPerPage); 
 
   const {
     selectedItems,
@@ -131,7 +131,6 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
                   </TableCell>
                   <TableCell className="flex items-center py-2">
                     <Avatar className="h-10 w-10 mr-1">
-                      <AvatarImage src="https://github.com/max-programming.png" />
                       <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                         {getInitials(assigned_to ?? "")}
                       </AvatarFallback>

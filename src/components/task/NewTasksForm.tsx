@@ -67,6 +67,7 @@ const NewTasksForm = ({
       description: task?.description ?? "",
       priority: task?.priority ?? "",
       assignee: task?.assignee?._id ?? "",
+      ticketID: task?.ticketID ?.toString() ?? undefined,
     },
   });
 
@@ -90,22 +91,28 @@ const NewTasksForm = ({
     }
   }
 
-  function createFormData(values: z.infer<typeof newTaskFormSchema>): FormData {
-    const formData = new FormData();
-    formData.append("title", values.title ?? "");
-    formData.append("description", values.description || "");
-    formData.append("priority", values.priority ?? "");
-    formData.append(
-      "dueDate",
-      values.dueDate.toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    );
-    formData.append("assignee", values.assignee ?? "");
-    return formData;
-  }
+ function createFormData(values: z.infer<typeof newTaskFormSchema>): FormData {
+   const formData = new FormData();
+   formData.append("title", values.title ?? "");
+   formData.append("description", values.description || "");
+   formData.append("priority", values.priority ?? "");
+   formData.append(
+     "dueDate",
+     values.dueDate.toLocaleDateString("en-US", {
+       day: "numeric",
+       month: "long",
+       year: "numeric",
+     })
+   );
+   formData.append("assignee", values.assignee ?? "");
+
+   // Only append ticketID if it's a valid number
+   if (values.ticketID !== undefined) {
+     formData.append("ticketID", values.ticketID.toString());
+   }
+
+   return formData;
+ }
 
   function getRequestConfig(isEditMode: boolean, taskID?: string) {
     const endpoint = isEditMode ? `/task/${taskID}` : "/task";
@@ -137,11 +144,16 @@ const NewTasksForm = ({
       queryKey: QueryKeys.Get_Tasks(currentPage, itemsPerPage),
     });
 
+    
     if (isEditMode && taskID) {
       queryClient.invalidateQueries({
         queryKey: QueryKeys.Get_Single_Task(taskID),
       });
     }
+
+     queryClient.invalidateQueries({
+       queryKey: QueryKeys.Get_Notifications(1, 10), // Replace with the appropriate page and size if dynamic
+     });
   }
 
   function handleError(error: AxiosError) {
@@ -163,12 +175,13 @@ const NewTasksForm = ({
         description: task?.description || "",
         priority: task?.priority || "",
         assignee: task?.assignee?._id ?? "",
+        ticketID: task?.ticketID?.toString() ?? undefined,
       });
     }
   }, [task, form]);
 
   return (
-    <Card className={cn("mt-6 relative mb-12",cardClassName)}>
+    <Card className={cn("mt-6 relative mb-12", cardClassName)}>
       <CardContent
         aria-describedby="task-details-description"
         className="font-poppins rounded-xl"
@@ -307,6 +320,24 @@ const NewTasksForm = ({
                           ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ticketID"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ticket ID (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Ticket ID"
+                        type="text"
+                        className="bg-gray-200"
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

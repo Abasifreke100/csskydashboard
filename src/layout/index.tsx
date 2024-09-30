@@ -59,7 +59,7 @@ const DashboardLayout = () => {
 
               <div
                 ref={outletRef}
-                className="h-full z-0  w-full overflow-y-auto flex-1 pt-3 px-6"
+                className="h-full w-full overflow-y-auto flex-1 pt-3 px-6"
               >
                 <Outlet />
               </div>

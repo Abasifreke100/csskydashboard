@@ -11,7 +11,7 @@ import {
 } from "./ui/accordion";
 import { SidebarButton } from "./sidebar-button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { truncateText } from "../utils/text";
 import { TicketsAccordion } from "./tickets/TicketAccordion";
 
@@ -91,7 +91,7 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
               onClick={toggleSidebar}
             >
               <p className={` ${isExpanded ? "block" : "hidden lg:block"}`}>
-                Cssky Dashboard
+                Connect Surf Smile
               </p>
               <AlignJustify
                 size={20}
@@ -273,7 +273,6 @@ export function SidebarDesktop(props: Readonly<SidebarDesktopProps>) {
                     }`}
                   >
                     <Avatar className="h-8 w-8 mr-1">
-                      <AvatarImage src="https://github.com/max-programming.png" />
                       <AvatarFallback className="text-xs ">
                         {props.initials}
                       </AvatarFallback>

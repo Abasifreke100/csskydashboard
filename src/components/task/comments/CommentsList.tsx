@@ -1,21 +1,46 @@
+import cn from "../../../lib/utils";
 import { CommentResponse } from "../../../types/task";
 import { formatTimeAgo } from "../../../utils/date";
 import { getInitials } from "../../../utils/getInitials";
 import { formatTier, truncateText } from "../../../utils/text";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Avatar, AvatarFallback } from "../../ui/avatar";
 import { Badge } from "../../ui/badge";
+
+interface CommentsHeaderProps {
+  title?: string; 
+  onSeeAllClick?: () => void;
+  className?: string; 
+}
+export const CommentsHeader: React.FC<CommentsHeaderProps> = ({
+  title = "Comments:",
+  onSeeAllClick,
+  className,
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex justify-between border-b pb-3 items-center text-sm mb-2",
+        className
+      )}
+    >
+      <p className="font-medium text-gray-400">{title}</p>
+      {onSeeAllClick && (
+        <button
+          className="font-medium text-black cursor-pointer"
+          onClick={onSeeAllClick}
+        >
+          See all &gt;
+        </button>
+      )}
+    </div>
+  );
+};
 
 const CommentsTable = ({ comments }: { comments: CommentResponse[] }) => {
   return (
-    <div className="mt-3">
-      {/* Comments Header */}
-      <div className="flex justify-between items-center text-sm mb-2">
-        <p className="font-medium text-gray-400">Comments:</p>
-        <p className="font-medium text-black cursor-pointer">See all &gt;</p>
-      </div>
-
+    <div className="">  
       {/* Comments List */}
-      <div className=" border-t h-fit flex flex-col gap-2.5 py-2">
+      <div className="  h-fit flex flex-col gap-2.5 py-2">
         {comments.map((comment) => {
           const fullName =
             comment?.user?.firstName && comment?.user?.lastName
@@ -29,9 +54,6 @@ const CommentsTable = ({ comments }: { comments: CommentResponse[] }) => {
             >
               <div className="flex items-start w-full">
                 <Avatar className="mr-1">
-                  <AvatarImage
-                  // src={comment.author?.avatarUrl || "default-avatar-url"}
-                  />
                   <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                     {getInitials(
                       fullName !== "" ? fullName : comment?.user?.role

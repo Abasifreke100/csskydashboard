@@ -26,3 +26,45 @@ export interface Ticket {
   preferred_time: string;
   time_interval: string;
 }
+
+
+
+export interface Welcome {
+  success: boolean;
+  data: WelcomeData;
+  message: string;
+}
+
+export interface WelcomeData {
+  status: boolean;
+  message: string;
+  data: DataData;
+}
+
+export interface DataData {
+  status: string;
+  errorCode: number;
+  message: Message;
+}
+
+export interface Message {
+  ticket_conversation: TicketConversation[];
+  ticket_details: TicketDetails;
+}
+
+export interface TicketConversation {
+  sender: string;
+  sender_name: string;
+  ticket_message: string;
+  created: Date;
+  show_to_user: string;
+}
+
+export interface TicketDetails {
+  subject: string;
+  type: string;
+  priority: string;
+  status: string;
+  assigned_to: string;
+  created: Date;
+}

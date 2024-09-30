@@ -13,4 +13,50 @@ export class TicketService {
         return response.data.data;
       });
   }
+  
+  static async getTicketAndTask(ticketId: string, dontShowToUser = false) {
+    try {
+      // Create promises for the ticket and task requests
+      const ticketPromise = axiosInstance.get(`/ticket/get`, {
+        params: {
+          ticket_id: ticketId,
+          dontShowToUser: dontShowToUser.toString(),
+        },
+      });
+
+      const taskPromise = axiosInstance.get(`/task/ticket/${ticketId}`);
+
+      // Run both requests in parallel using Promise.allSettled
+      const [ticketResponse, taskResponse] = await Promise.allSettled([
+        ticketPromise,
+        taskPromise,
+      ]);
+
+      // Initialize variables to hold responses
+      let ticketData = null;
+      let taskData = null;
+
+      // Check responses and log errors
+      if (ticketResponse.status === "fulfilled") {
+        ticketData = ticketResponse.value.data.data; // Extract ticket data
+      } else {
+        console.warn(`Failed to fetch ticket data: ${ticketResponse.reason}`);
+      }
+
+      if (taskResponse.status === "fulfilled") {
+        taskData = taskResponse.value.data.data; // Extract task data
+      } else {
+        console.warn(`Failed to fetch task data: ${taskResponse.reason}`);
+      }
+
+      // Return a combined object with available data
+      return {
+        ticket: ticketData,
+        task: taskData,
+      };
+    } catch (error) {
+      console.error("Error fetching ticket or task data:", error);
+      throw error; // Re-throw if there's a problem outside of the requests
+    }
+  }
 }

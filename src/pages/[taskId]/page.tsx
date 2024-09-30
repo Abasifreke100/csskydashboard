@@ -1,56 +1,54 @@
 import { useState } from "react";
-import axiosInstance from "../../api/connectSurfApi";
+import { useParams } from "react-router-dom";
+import { CommentService } from "../../service/comments";
 import { FetchLoadingAndEmptyState } from "../../components/shared/FetchLoadingAndEmptyState";
 import TaskClientPage from "./client";
-import { useParams } from "react-router-dom";
 import TaskIDDetailsSkeleton from "../../components/task/TaskIDDetailsSkeleton";
 import { useFetchTask } from "../../hooks/useTasks";
+import { useQueryClient } from "@tanstack/react-query";
 import { errorToast, successToast } from "../../utils/toast";
+import { QueryKeys } from "../../models/query";
 
 const TaskIDDetailsPage = () => {
   const { taskID } = useParams();
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [message, setMessage] = useState("");
-  const [shouldRefetchComments, setShouldRefetchComments] = useState(false);
-  
+  const queryClient = useQueryClient();
+
   // Use the custom hook to fetch the task
-  const { data: task, isLoading } = useFetchTask({ taskID: taskID ?? " " });
-  
-  const handleAddCommentClick = () => {
-    setIsAddingComment(true);
-  };
+  const { data: task, isLoading } = useFetchTask({ taskID: taskID ?? "" });
 
   const handleSaveComment = async () => {
     try {
-      const response = await axiosInstance.post(`/comment`, {
-        taskId: taskID,
-        message,
+      await CommentService.addComment(taskID!, message);
+      setMessage("");
+      setIsAddingComment(false);
+      successToast({
+        title: "Save Comment Success",
+        message: "Comment saved successfully.",
       });
-      if (response.data.success) {
-        setMessage("");
-        setIsAddingComment(false);
-        setShouldRefetchComments(true);
-        successToast({
-          title: "Save Comment Success",
-          message: "Comment saved successfully.",
+
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.Get_Comments_By_TaskID(taskID!),
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        errorToast({
+          title: "Save Comment Error",
+          message: err.message || "Failed to save comment.",
         });
       } else {
         errorToast({
           title: "Save Comment Error",
-          message: response.data.message || "Failed to save comment.",
+          message: "An unexpected error occurred.",
         });
       }
-    } catch (err) {
-      errorToast({
-        title: "Save Comment Error",
-        message: "Failed to save comment.",
-      });
       console.error(err);
     }
   };
-  
+
   return (
-    <div className=" pb-12 ">
+    <div className="pb-12">
       <FetchLoadingAndEmptyState
         isLoading={isLoading}
         numberOfSkeleton={1}
@@ -58,17 +56,14 @@ const TaskIDDetailsPage = () => {
         emptyState={<div>empty state</div>}
         data={task ? 1 : 0}
       >
-          <TaskClientPage
-            task={task}
-            isAddingComment={isAddingComment}
-            message={message}
-            setIsAddingComment={setIsAddingComment}
-            setMessage={setMessage}
-            handleSaveComment={handleSaveComment}
-            handleAddCommentClick={handleAddCommentClick}
-            shouldRefetchComments={shouldRefetchComments}
-            setShouldRefetchComments={setShouldRefetchComments}
-          />
+        <TaskClientPage
+          task={task}
+          isAddingComment={isAddingComment}
+          message={message}
+          setIsAddingComment={setIsAddingComment}
+          setMessage={setMessage}
+          handleSaveComment={handleSaveComment}
+        />
       </FetchLoadingAndEmptyState>
     </div>
   );
