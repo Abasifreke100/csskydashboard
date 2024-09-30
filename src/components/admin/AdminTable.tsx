@@ -121,7 +121,6 @@ const AdminTable = ({ users }: AdminTableProps) => {
             const { _id, firstName, email, isTierRequest, tier } = user;
             const isDialogOpen = activeUserId === _id;
             const isDeleteDialogOpen = deleteUserId === _id;
-            console.log("user", user);
             return (
               <TableRow
                 key={_id}

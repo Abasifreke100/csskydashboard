@@ -12,7 +12,6 @@ import { Ticket } from "../../types/ticket";
 const LatestTickets = ({ tickets }: { tickets: Ticket[] }) => {
   const navigate = useNavigate();
 
-  console.log("tickets", tickets);
 
   const navigateToInbox = (id: string) => {
     navigate(`/inbox/${id}`);

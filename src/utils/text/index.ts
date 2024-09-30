@@ -1,3 +1,5 @@
+import { errorToast, successToast } from "../toast";
+
 export const truncateText = (str: string, n: number) =>
     str.length > n ? `${str.trim().substring(0, n)}...` : `${str.trim()}`;
   
@@ -62,4 +64,20 @@ export const truncateText = (str: string, n: number) =>
   }
   
  
-  
+export const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log(`Copied to clipboard: ${text}`);
+
+    successToast({
+      title: "Copied to Clipboard",
+      message: "Text has been successfully copied to your clipboard.",
+    });
+  } catch (err) {
+    errorToast({
+      title: "Copy Failed",
+      message: "Failed to copy text to clipboard. Please try again.",
+    });
+    console.error("Failed to copy text to clipboard:", err);
+  }
+};

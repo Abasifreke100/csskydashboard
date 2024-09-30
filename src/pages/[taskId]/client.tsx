@@ -6,10 +6,12 @@ import CommentsSection from "../../components/task/comments/CommentsSection";
 import { ViewOneTaskDataResponse } from "../../types/task";
 import { getStatusColor } from "../../utils/status";
 import Header from "../../components/global/header";
-import { useState } from "react";
+import {  useState } from "react";
 import { formatDate } from "../../utils/date";
 import UpdateStatusDialog from "../../components/shared/UpdateStatusModal";
 import { CommentsHeader } from "../../components/task/comments/CommentsList";
+import { useFetchSpecificTicket } from "../../hooks/useFetchTickets";
+import Conversation from "../../components/shared/TicketConversations";
 
 interface TaskClientPageProps {
   task: ViewOneTaskDataResponse;
@@ -20,8 +22,6 @@ interface TaskClientPageProps {
   handleSaveComment: () => void;
 }
 
-
-
 const TaskClientPage = ({
   task,
   isAddingComment,
@@ -31,52 +31,77 @@ const TaskClientPage = ({
   handleSaveComment,
 }: TaskClientPageProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data } = useFetchSpecificTicket(task?.ticketID?.toString() ?? "");
 
   const statusTextColor = getStatusColor(task.status);
 
-
-
   return (
-    <div className=" h-full w-full ">
+    <div className="h-full w-full">
       <Header title="Task Details" icon={true} />
-      <Card className="mt-3 h-fit ">
+      <Card className="mt-3 h-fit">
         <CardContent
           aria-describedby="task-details-description"
           className="font-poppins rounded-xl"
         >
           <CardTitle className="text-sm mt-5">{task.taskId}</CardTitle>
+          <div className="flex flex-col md:flex-row">
+            {/* Task Details Section */}
+            <div className="flex flex-col gap-3 mt-3 text-xs md:mr-8">
+              <p className="font-medium text-gray-400">
+                Task Title: <span className="text-black">{task.title}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Description: <br />
+                <span className="text-black text-xs">{task.description}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Priority: <span className="text-black">{task.priority}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Status: <span className={statusTextColor}>{task.status}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Assignee:{" "}
+                <span className="text-black">{task.assignee?.email}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Due date: <span className="text-black">{task.dueDate}</span>
+              </p>
+              <p className="font-medium text-gray-400">
+                Last Updated:{" "}
+                <span className="text-black">{formatDate(task.updatedAt)}</span>
+              </p>
+            </div>
 
-          <div className="flex flex-col gap-3 mt-3 text-xs">
-            <p className="font-medium text-gray-400">
-              Task Title: <span className="text-black">{task.title}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Description: <br />
-              <span className="text-black text-xs">{task.description}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Priority: <span className="text-black">{task.priority}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Status: <span className={statusTextColor}>{task.status}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Assignee:{" "}
-              <span className="text-black">{task.assignee?.email}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Due date: <span className="text-black">{task.dueDate}</span>
-            </p>
-            <p className="font-medium text-gray-400">
-              Last Updated:{" "}
-              <span className="text-black">{formatDate(task.updatedAt)}</span>
-            </p>
+            {/* Ticket Conversation Section */}
+            {data?.ticket?.ticket_conversation?.length &&
+              data.ticket.ticket_conversation.length > 0 && (
+                <div className="">
+                  <div className=" max-h-[100px] overflow-y-auto">
+                    {data.ticket.ticket_conversation.length > 0 ? (
+                      <Conversation
+                        messages={data.ticket.ticket_conversation}
+                        title="Conversations"
+                      />
+                    ) : (
+                      <div className="">
+                        <p className="font-medium text-sm text-gray-400">
+                         Conversations
+                        </p>
+                        <p className="text-sm">No conversations found.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
-          <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
-            {/* Comments Section */}
+
+          {/* Comments Section */}
+          <div className="mt-5 max-h-[200px] md:max-h-[300px] overflow-y-auto py-2">
             <CommentsHeader />
             <CommentsSection taskID={task._id} />
 
+            {/* Comment Input Section */}
             {isAddingComment && (
               <div className="mt-2 flex flex-col gap-2">
                 <textarea
@@ -106,6 +131,7 @@ const TaskClientPage = ({
               </div>
             )}
 
+            {/* Action Buttons */}
             <div className="mt-7 flex gap-1.5 flex-wrap">
               <CustomButton
                 icon={Plus}
@@ -114,7 +140,6 @@ const TaskClientPage = ({
                 type="button"
                 onClick={() => setIsAddingComment(true)}
               />
-
               <UpdateStatusDialog
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
