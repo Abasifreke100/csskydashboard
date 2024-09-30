@@ -13,7 +13,7 @@ export class TicketService {
         return response.data.data;
       });
   }
-  
+
   static async getTicketAndTask(ticketId: string, dontShowToUser = false) {
     try {
       // Create promises for the ticket and task requests
@@ -57,6 +57,28 @@ export class TicketService {
     } catch (error) {
       console.error("Error fetching ticket or task data:", error);
       throw error; // Re-throw if there's a problem outside of the requests
+    }
+  }
+
+  static async getSpecificTicket(ticketId: string, dontShowToUser = false) {
+    try {
+      // Request with dynamic ticket_id and dontShowToUser parameters
+      const response = await axiosInstance.get(`/ticket/get`, {
+        params: {
+          ticket_id: ticketId, // Dynamic ticket ID passed as a parameter
+          dontShowToUser: dontShowToUser.toString(), // Dynamic dontShowToUser value
+        },
+      });
+
+      // Check if the response is successful and return data
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to fetch ticket data");
+      }
+
+      return response?.data?.data?.data?.message;
+    } catch (error) {
+      console.error("Error fetching specific ticket data:", error);
+      throw error;
     }
   }
 }

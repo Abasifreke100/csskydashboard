@@ -6,15 +6,14 @@ import { TicketsCommentSkeleton } from "../task/comments/CommentListSkeleton";
 import { renderCellContent } from "../store/data/task";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { getInitials } from "../../utils/getInitials";
-import { truncateText, formatTier } from "../../utils/text";
-import { formatTimeAgo } from "../../utils/date";
+import { formatTier, copyToClipboard } from "../../utils/text";
 import { Badge } from "../ui/badge";
-import { Key } from "react";
 import CommentsSection from "../task/comments/CommentsSection";
 import { useFetchSingleTicket } from "../../hooks/useFetchTickets";
 import { CommentsHeader } from "../task/comments/CommentsList";
 import { useNavigate } from "react-router-dom";
 import TicketsDetailSkeleton from "./TicketsDetailSkeleton";
+import Conversation from "../shared/TicketConversations";
 
 interface TicketDetailsModalProps extends DefaultDialogProps {
   rowId: string | null;
@@ -39,7 +38,15 @@ const TicketDetailsModal = ({
     navigate(`/tasks/${data?.task?._id}`);
   };
 
-  const createdDate = data?.ticket?.ticket_details?.created 
+  const createdDate = data?.ticket?.ticket_details?.created;
+
+  const handleCopyRowId = () => {
+    if (rowId) {
+      copyToClipboard(rowId);
+    }
+  };
+
+  const conversations = data?.ticket?.ticket_conversation || [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onCloseModal}>
@@ -55,7 +62,15 @@ const TicketDetailsModal = ({
           data={data ? 1 : 0}
         >
           <DialogHeader>
-            <DialogTitle className="text-sm">Ticket ID #{rowId}</DialogTitle>
+            <DialogTitle className="text-sm">
+              Ticket ID{" "}
+              <button
+                onClick={handleCopyRowId} // Add onClick to copy rowId
+              >
+                {" "}
+                #{rowId}
+              </button>
+            </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-3 text-xs">
             <p className="font-medium text-gray-400">
@@ -149,86 +164,38 @@ const TicketDetailsModal = ({
             data={data?.ticket?.ticket_conversation?.length}
           >
             {isError ? (
-              <p className="text-red-500">Error: {error?.message}</p>
+              <p className="text-red-500">
+                Error: {error?.message ?? "An unexpected error occurred."}
+              </p>
             ) : (
               <div>
                 {/* Ticket Conversation Section */}
                 {data?.ticket?.ticket_conversation?.length &&
                   data.ticket.ticket_conversation.length > 0 && (
-                    <div className="mt-2">
-                      <p className="font-medium text-sm text-gray-400">
-                        Conversation
-                      </p>
-                      <div className="mt-4 max-h-[100px] overflow-y-auto">
-                        {data?.ticket.ticket_conversation.map(
-                          (
-                            message: {
-                              sender_name: string;
-                              show_to_user: string;
-                              created: string | number | Date;
-                              ticket_message: string;
-                            },
-                            index: Key | null | undefined
-                          ) => (
-                            <div
-                              key={index}
-                              className="flex items-start w-full justify-between mt-2"
-                            >
-                              <div className="flex items-start w-full">
-                                <Avatar className="mr-1">
-                                  <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
-                                    {getInitials(message.sender_name)}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="ml-1 flex-1">
-                                  <div className="font-medium text-gray-400 text-sm whitespace-nowrap">
-                                    <div className="flex items-start justify-between">
-                                      <div className="flex gap-0.5">
-                                        <p className="text-xs text-black">
-                                          {truncateText(
-                                            message.sender_name,
-                                            13
-                                          )}
-                                        </p>
-                                        <Badge className="h-4 px-1 text-xs bg-[#FFFAEF] hover:bg-[#FFFAEF] whitespace-nowrap hover:text-primary text-[#FF7F00]">
-                                          {formatTier(
-                                            message.show_to_user ?? "Unknown"
-                                          )}
-                                        </Badge>
-                                      </div>
-                                      <p className="text-[10px] font-medium">
-                                        {formatTimeAgo(message.created)}
-                                      </p>
-                                    </div>
-                                    <p
-                                      className="text-xs mt-0.5 w-full leading-tight whitespace-normal"
-                                      dangerouslySetInnerHTML={{
-                                        __html: message.ticket_message,
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )
+                    <div className="">
+                      <div className="mt-2 max-h-[100px] overflow-y-auto">
+                        {conversations.length > 0 ? (
+                          <Conversation
+                            messages={conversations}
+                            title="Conversations"
+                          />
+                        ) : (
+                          <p>No conversations found.</p>
                         )}
                       </div>
-                      {!data?.task?._id && (
-                        <CommentsHeader
-                          className="mt-4 pb-2"
-                          title="Task Comments"
-                        />
-                      )}
-
-                      <CommentsSection taskID={data?.task?._id}>
-                        <CommentsHeader
-                          className="mt-5 pb-2"
-                          title="Task Comments"
-                          onSeeAllClick={handleSeeAllTaskComments}
-                        />
-                      </CommentsSection>
                     </div>
                   )}
+                {/* Additional Comments Section */}
+                {!data?.task?._id && (
+                  <CommentsHeader className="mt-4 pb-2" title="Task Comments" />
+                )}
+                <CommentsSection taskID={data?.task?._id ?? ""}>
+                  <CommentsHeader
+                    className="mt-5 pb-2"
+                    title="Task Comments"
+                    onSeeAllClick={handleSeeAllTaskComments}
+                  />
+                </CommentsSection>
               </div>
             )}
           </FetchLoadingAndEmptyState>

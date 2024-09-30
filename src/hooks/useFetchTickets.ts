@@ -118,15 +118,10 @@ export const useFetchTickets = ({ userIds }: UseFetchTicketsProps) => {
   };
 };
 
-
-
-
 type FetchResponse = {
   task: ViewOneTaskDataResponse; // Allow empty object as a fallback
   ticket: Message; // Allow empty object as a fallback
 };
-
-
 
 export const useFetchSingleTicket = (ticketId: string | null) => {
   const { data, isLoading, isSuccess, isError, error } =
@@ -141,8 +136,6 @@ export const useFetchSingleTicket = (ticketId: string | null) => {
         const response = await TicketService.getTicketAndTask(ticketId);
         const ticketDetails = response?.ticket?.data?.message ?? {}; // Use empty object as fallback
         const taskDetails = response?.task ?? {}; // Use empty object as fallback
-        console.log("ticket details:", ticketDetails);
-
         // Structure the response to include both ticket and task data
         return {
           ticket: ticketDetails,
@@ -181,12 +174,76 @@ export const useFetchSingleTicket = (ticketId: string | null) => {
     }
   }, [isSuccess, isError, error, data]);
 
-
   return {
     data, // Contains both ticket and task data
     isLoading,
     isError,
     isSuccess,
     error,
+  };
+};
+
+type FetchSpecificTicketResponse = {
+  ticket: Message;
+};
+
+export const useFetchSpecificTicket = (
+  ticketId: string | null, // Ticket ID to fetch
+  dontShowToUser = false // Optional parameter, defaults to false
+) => {
+  // Use react-query's `useQuery` to fetch specific ticket
+  const { data, isLoading, isError, isSuccess, error } =
+    useQuery<FetchSpecificTicketResponse>({
+      queryKey: QueryKeys.GetSpecificTicket(ticketId ?? ""), // Unique query key
+      queryFn: async () => {
+        if (!ticketId) {
+          throw new Error("Ticket ID is required");
+        }
+
+        const ticketDetails = await TicketService.getSpecificTicket(
+          ticketId,
+          dontShowToUser
+        );
+
+        // Use empty object as fallback to avoid undefined errors
+        return { ticket: ticketDetails ?? {} };
+      },
+      enabled: !!ticketId,
+      meta: {
+        errCode: "SPECIFIC_TICKET_FETCH_ERROR",
+      },
+    });
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (!data?.ticket) {
+        errorToast({
+          title: "Fetch Error",
+          message: "Failed to load the specific ticket data.",
+        });
+      } else {
+        successToast({
+          title: "Ticket Loaded",
+          message: "The specific ticket details have been successfully loaded.",
+        });
+      }
+    }
+
+    if (isError) {
+      errorToast({
+        title: "Fetch Error",
+        message: `An error occurred while fetching the specific ticket: ${
+          error?.message || "Unknown error"
+        }`,
+      });
+    }
+  }, [isSuccess, isError, error, data]);
+
+  return {
+    data, // Contains the fetched ticket data
+    isLoading, // Loading state
+    isError, // Error state
+    isSuccess, // Success state
+    error, // Error object, if any
   };
 };

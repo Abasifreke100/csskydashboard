@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { getStatusColor } from "../../utils/status";
-import { truncateText } from "../../utils/text";
+import { copyToClipboard, truncateText } from "../../utils/text";
 import { ticketTableHeaders } from "../store/data/ticket";
 import useCheckboxSelection from "../../hooks/useCheckboxSelection";
 import { Checkbox } from "../checkbox";
@@ -114,9 +114,15 @@ const TicketsTable: React.FC<TicketsTableProps> = ({
                     />
                   </TableCell>
                   <TableCell className="py-2">
-                    <p className="text-sm whitespace-nowrap">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering row click
+                        copyToClipboard(id); // Use the enhanced function
+                      }}
+                      className="text-sm whitespace-nowrap"
+                    >
                       {truncateText(id, 13)}
-                    </p>
+                    </button>
                   </TableCell>
                   <TableCell className="whitespace-nowrap py-2">
                     {truncateText(subject, 20)}

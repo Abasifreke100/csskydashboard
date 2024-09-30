@@ -33,6 +33,12 @@ export class QueryKeys {
     userId,
   ];
 
+    // New query key for fetching a specific ticket
+  static readonly GetSpecificTicket = (ticketId: string) => [
+    "specific-ticket",
+    ticketId,
+  ];
+  
   // Notifications
   static readonly Get_Notifications = (page: number, size: number) => [
     "notifications",
@@ -53,4 +59,6 @@ export class QueryKeys {
     "task",
     taskID,
   ];
+
+
 }
