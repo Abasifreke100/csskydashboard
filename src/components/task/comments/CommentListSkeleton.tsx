@@ -4,7 +4,7 @@ const CommentsTableSkeleton = ({ length }: { length: number }) => {
       {Array.from({ length }).map((_, index) => (
         <div
           key={index}
-          className="animate-pulse flex items-center w-full col-span-3 justify-between mt-2"
+          className="animate-pulse flex items-center w-full gap-3 col-span-3 justify-between mt-2"
         >
           <div className="flex items-center ">
             <div className="mr-1 bg-gray-300 rounded-full h-6 w-6"></div>

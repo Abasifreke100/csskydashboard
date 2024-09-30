@@ -13,27 +13,27 @@ const TicketsDetailSkeleton = () => {
         </div>
         <div className="font-medium text-gray-400">
           Description: <br />
-          <span className="inline-block w-full h-3 mt-1 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-full h-4 mt-1 bg-gray-300 animate-pulse rounded"></span>
         </div>
-        <div className="font-medium text-gray-400">
+        <div className="font-medium text-gray-400 flex items-center gap-1.5">
           Priority:{" "}
-          <span className="inline-block w-1/4 h-3 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-1/4 h-3.5 bg-gray-300 animate-pulse rounded"></span>
         </div>
-        <div className="font-medium text-gray-400">
+        <div className="font-medium text-gray-400 flex items-center gap-1.5">
           Status:{" "}
-          <span className="inline-block w-1/4 h-3 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-1/4 h-3.5 bg-gray-300 animate-pulse rounded"></span>
         </div>
-        <div className="font-medium text-gray-400">
+        <div className="font-medium text-gray-400 flex items-center gap-1.5">
           Created On:{" "}
-          <span className="inline-block w-1/4 h-3 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-1/4 h-3.5 bg-gray-300 animate-pulse rounded"></span>
         </div>
-        <div className="font-medium text-gray-400">
+        <div className="font-medium text-gray-400 flex items-center gap-1.5">
           Due Date:{" "}
-          <span className="inline-block w-1/4 h-3 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-1/4 h-3.5 bg-gray-300 animate-pulse rounded"></span>
         </div>
-        <div className="font-medium text-gray-400">
+        <div className="font-medium text-gray-400 flex items-center gap-1.5">
           Assignee:{" "}
-          <span className="inline-block w-1/4 h-3 bg-gray-300 animate-pulse rounded"></span>
+          <span className="inline-block w-1/4 h-3.5 bg-gray-300 animate-pulse rounded"></span>
         </div>
         <div className="font-medium text-gray-400">Task Assignee:</div>
         <div className="flex items-center">
