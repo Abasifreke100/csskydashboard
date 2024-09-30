@@ -1,4 +1,4 @@
-import { truncateText } from "../../utils/text";
+import { formatTier, truncateText } from "../../utils/text";
 import { useForm, Controller } from "react-hook-form";
 
 import {
@@ -35,6 +35,7 @@ import CustomButton from "../shared/CustomButton";
 import { adminTableHeaders } from "../store/data/admin";
 import { User } from "../../types";
 import { UserService } from "../../service/user";
+import { Badge } from "../ui/badge";
 
 interface AdminTableProps {
   users: User[];
@@ -117,7 +118,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
         </TableHeader>
         <TableBody className="bg-white hover:bg-white">
           {users?.map((user) => {
-            const { _id, firstName, email, isTierRequest } = user;
+            const { _id, firstName, email, isTierRequest, tier } = user;
             const isDialogOpen = activeUserId === _id;
             const isDeleteDialogOpen = deleteUserId === _id;
             console.log("user", user);
@@ -131,8 +132,11 @@ const AdminTable = ({ users }: AdminTableProps) => {
                     {truncateText(_id ?? " ", 13)}
                   </p>
                 </TableCell>
-                <TableCell className="whitespace-nowrap py-2">
-                  {truncateText(firstName ?? " ", 20)}
+                <TableCell className="whitespace-nowrap py-2 flex  gap-1.5">
+                  <p className="mt-1">{truncateText(firstName ?? " ", 20)}</p>
+                  <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] self-start whitespace-nowrap hover:text-primary hidden md:block text-[#FF7F00]">
+                    {formatTier(tier ?? "N/A")}
+                  </Badge>
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-2">
                   {email}
@@ -230,7 +234,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
                       </DialogTrigger>
                       <DialogContent className="max-h-[550px] max-w-[400px] lg:w-[400px] rounded-md overflow-scroll">
                         <DialogHeader>
-                          <DialogTitle >
+                          <DialogTitle>
                             Are you sure you want to delete this user?
                           </DialogTitle>
                           <DialogDescription>

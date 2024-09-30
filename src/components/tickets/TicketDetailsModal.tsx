@@ -156,9 +156,9 @@ const TicketDetailsModal = ({
                 {data?.ticket?.ticket_conversation?.length &&
                   data.ticket.ticket_conversation.length > 0 && (
                     <div className="mt-2">
-                      <h3 className="font-medium text-gray-400">
+                      <p className="font-medium text-sm text-gray-400">
                         Conversation
-                      </h3>
+                      </p>
                       <div className="mt-4 max-h-[100px] overflow-y-auto">
                         {data?.ticket.ticket_conversation.map(
                           (
@@ -222,7 +222,7 @@ const TicketDetailsModal = ({
 
                       <CommentsSection taskID={data?.task?._id}>
                         <CommentsHeader
-                          className="mt-4 pb-2"
+                          className="mt-5 pb-2"
                           title="Task Comments"
                           onSeeAllClick={handleSeeAllTaskComments}
                         />
