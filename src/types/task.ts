@@ -60,8 +60,9 @@ export interface ViewOneTaskDataResponse {
   dueDate: string;
   taskId: string;
   author: Assignee;
-  file?: File | null
+  file?: File | null;
   assignee: Assignee;
+  ticketID?: number;
   createdAt: Date;
   updatedAt: Date;
   __v: number;
@@ -75,4 +76,8 @@ export interface Assignee {
   createdAt: Date;
   updatedAt: Date;
   __v: number;
+  firstName: string;
+  isTierRequest: boolean;
+  lastName: string;
+  tier: string;
 }

@@ -94,7 +94,7 @@ const CustomersIdPage = () => {
               <ProfileInfo
                 label="Registration Type"
                 value={(data as Corporate)?.registrationNumber}
-                badgeClassName={`bg-grey ${
+                badgeClassName={`bg-grey whitespace-nowrap ${
                   isLoading ? "h-5 shimmer w-24" : ""
                 } hover:bg-grey hover:text-white text-white rounded-md`}
               />

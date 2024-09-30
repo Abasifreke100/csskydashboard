@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader } from "../../../components/ui/card";
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from "../../../components/ui/avatar";
 import { Input } from "../../../components/ui/input";
 import { IoMdAttach } from "react-icons/io";
@@ -72,7 +71,6 @@ const InboxDetailsPage = () => {
                 <Avatar
                   className={`h-10 w-10 ${index % 2 === 0 ? "mr-2" : "ml-2"}`}
                 >
-                  <AvatarImage src="https://github.com/max-programming.png" />
                   <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                     JD
                   </AvatarFallback>

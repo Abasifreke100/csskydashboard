@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { LogOut, MoreHorizontal, X } from "lucide-react";
 import { SidebarMobileButton } from "./sidebar-button";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Link, useLocation } from "react-router-dom";
 import { SidebarItems, Theme, User } from "../types";
 import { useProviderContext } from "../constants";
@@ -164,7 +164,6 @@ export function SidebarMobile(props: Readonly<SidebarMobileProps>) {
                     <div className="flex gap-2">
                       <div className="flex  items-center gap-4">
                         <Avatar className="h-10 w-10">
-                          <AvatarImage src="https://github.com/max-programming.png" />
                           <AvatarFallback>{props.initials}</AvatarFallback>
                         </Avatar>
                         <span className="text-xs">

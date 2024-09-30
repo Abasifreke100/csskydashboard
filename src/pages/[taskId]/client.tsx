@@ -1,4 +1,4 @@
-import { CheckCircle, Plus, Save } from "lucide-react";
+import { Plus, Save } from "lucide-react";
 import { CardTitle, CardContent, Card } from "../../components/ui/card";
 import CustomButton from "../../components/shared/CustomButton";
 import NewTasksForm from "../../components/task/NewTasksForm";
@@ -6,36 +6,10 @@ import CommentsSection from "../../components/task/comments/CommentsSection";
 import { ViewOneTaskDataResponse } from "../../types/task";
 import { getStatusColor } from "../../utils/status";
 import Header from "../../components/global/header";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTrigger,
-} from "../../components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import CustomCompulsoryInputStar from "../../components/task/CustomCompulsoryInputStar";
-import { useForm } from "react-hook-form";
-import axiosInstance from "../../api/connectSurfApi";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { errorToast, successToast } from "../../utils/toast";
-import { QueryKeys } from "../../models/query";
 import { useState } from "react";
 import { formatDate } from "../../utils/date";
+import UpdateStatusDialog from "../../components/shared/UpdateStatusModal";
+import { CommentsHeader } from "../../components/task/comments/CommentsList";
 
 interface TaskClientPageProps {
   task: ViewOneTaskDataResponse;
@@ -44,15 +18,9 @@ interface TaskClientPageProps {
   setIsAddingComment: (value: boolean) => void;
   setMessage: (value: string) => void;
   handleSaveComment: () => void;
-  handleAddCommentClick: () => void;
-  shouldRefetchComments: boolean;
-  setShouldRefetchComments: (value: boolean) => void;
 }
 
-const updateTaskStatus = async (taskId: string, status: string) => {
-  const { data } = await axiosInstance.patch(`/task/${taskId}`, { status });
-  return data;
-};
+
 
 const TaskClientPage = ({
   task,
@@ -61,49 +29,12 @@ const TaskClientPage = ({
   setIsAddingComment,
   setMessage,
   handleSaveComment,
-  handleAddCommentClick,
-  shouldRefetchComments,
-  setShouldRefetchComments,
 }: TaskClientPageProps) => {
-  const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const statusTextColor = getStatusColor(task.status);
 
-  const form = useForm({
-    defaultValues: {
-      status: task.status || "",
-    },
-  });
 
-  const mutation = useMutation({
-    mutationFn: (newStatus: string) => updateTaskStatus(task._id, newStatus),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.Get_Single_Task(task._id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.Get_Tasks(1, 10),
-      });
-      successToast({
-        title: "Task status updated successfully",
-        message: "Your task status has been updated.",
-      });
-      setIsDialogOpen(false); // Close the dialog on success
-    },
-    onError: (error) => {
-      errorToast({
-        title: "Error updating task status",
-        message:
-          "An error occurred while updating your task status. Please try again.",
-      });
-      console.error("Error updating status:", error);
-    },
-  });
-
-  const onSubmit = (data: { status: string }) => {
-    mutation.mutate(data.status);
-  };
 
   return (
     <div className=" h-full w-full ">
@@ -143,11 +74,8 @@ const TaskClientPage = ({
           </div>
           <div className="mt-3 max-h-[150px] border-t overflow-y-auto py-2">
             {/* Comments Section */}
-            <CommentsSection
-              taskID={task._id}
-              refetchComments={shouldRefetchComments}
-              onRefetchComplete={() => setShouldRefetchComments(false)}
-            />
+            <CommentsHeader />
+            <CommentsSection taskID={task._id} />
 
             {isAddingComment && (
               <div className="mt-2 flex flex-col gap-2">
@@ -184,75 +112,15 @@ const TaskClientPage = ({
                 label="Add Comment"
                 variant="secondary"
                 type="button"
-                onClick={handleAddCommentClick}
+                onClick={() => setIsAddingComment(true)}
               />
 
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger>
-                  <CustomButton
-                    icon={CheckCircle}
-                    label="Update Status"
-                    variant="secondary"
-                  />
-                </DialogTrigger>
-                <DialogContent className=" w-[340px] rounded-md  md:w-[400px] ">
-                  <DialogHeader>
-                    <DialogDescription>
-                      <Form {...form}>
-                        <form
-                          onSubmit={form.handleSubmit(onSubmit)}
-                          className="space-y-8 text-start"
-                        >
-                          <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="gap-0.5 flex">
-                                  Update Task Status
-                                  <CustomCompulsoryInputStar />
-                                </FormLabel>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger className="bg-gray-200 outline-none border-none focus:ring-0 focus:ring-ring focus:ring-offset-0">
-                                      <SelectValue placeholder="Select a status" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="pending">
-                                      Pending
-                                    </SelectItem>
-                                    <SelectItem value="in progress">
-                                      In Progress
-                                    </SelectItem>
-                                    <SelectItem value="completed">
-                                      Completed
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <div className="flex justify-end gap-2">
-                            <CustomButton
-                              label="Update"
-                              variant="primary"
-                              icon={Save}
-                              type="submit"
-                              loadingText="Updating Status"
-                              isLoading={mutation.isPending}
-                            />
-                          </div>
-                        </form>
-                      </Form>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+              <UpdateStatusDialog
+                open={isDialogOpen}
+                onOpenChange={setIsDialogOpen}
+                taskId={task._id}
+                currentStatus={task.status}
+              />
             </div>
           </div>
         </CardContent>

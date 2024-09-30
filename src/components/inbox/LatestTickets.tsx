@@ -1,13 +1,13 @@
 import { ChevronRight, CircleAlert } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import { truncateText } from "../../utils/text";
 import { Badge } from "../ui/badge";
 import { getInboxStatusStyle } from "../../utils/status";
 import { useNavigate } from "react-router-dom";
-import { Ticket } from "../../hooks/useFetchTickets";
 import { formatTimeAgo } from "../../utils/date";
 import { getInitials } from "../../utils/getInitials";
+import { Ticket } from "../../types/ticket";
 
 const LatestTickets = ({ tickets }: { tickets: Ticket[] }) => {
   const navigate = useNavigate();
@@ -44,7 +44,6 @@ const LatestTickets = ({ tickets }: { tickets: Ticket[] }) => {
               >
                 <div className="flex gap-1.5">
                   <Avatar className=" h-10 w-10 mr-1">
-                    <AvatarImage src="https://github.com/max-programming.png" />
                     <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                       {initials}
                     </AvatarFallback>

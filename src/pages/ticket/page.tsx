@@ -60,7 +60,7 @@ const TicketPage = () => {
         isOpen={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         rowId={rowId}
-        tickets={filteredTickets}
+        // tickets={filteredTickets}
       />
     </div>
   );

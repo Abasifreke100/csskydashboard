@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import {
   Table,
   TableBody,
@@ -155,6 +155,7 @@ const TasksTable: React.FC<TasksTableProps> = ({
             return (
               <TableRow
                 key={_id}
+                onClick={() => handleRowClick(_id)} // Add onClick handler to the row
                 className="border group py-2 border-b cursor-pointer transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted bg-white border-[#F5F5F7]"
               >
                 <TableCell className="whitespace-nowrap py-2">
@@ -185,7 +186,6 @@ const TasksTable: React.FC<TasksTableProps> = ({
                 </TableCell>
                 <TableCell className="flex items-center py-2">
                   <Avatar className="h-10 w-10 mr-1">
-                    <AvatarImage src="https://github.com/max-programming.png" />
                     <AvatarFallback className="group-hover:bg-gray-300 group-hover:text-black">
                       {initials}
                     </AvatarFallback>
@@ -207,10 +207,20 @@ const TasksTable: React.FC<TasksTableProps> = ({
                     <DropdownMenuContent className="w-56" align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => openModal(_id)}>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openModal(_id);
+                        }}
+                      >
                         Delete Task
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleRowClick(_id)}>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRowClick(_id);
+                        }}
+                      >
                         View Details
                       </DropdownMenuItem>
                     </DropdownMenuContent>

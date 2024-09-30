@@ -30,6 +30,7 @@ export default function ProvidersClient({ children }: Readonly<LayoutProps>) {
         theme="dark"
         position="top-right"
         richColors={true}
+        duration={1000}
         toastOptions={{
           classNames: {
             error:

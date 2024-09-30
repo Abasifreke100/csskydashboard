@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import axiosInstance from "../api/connectSurfApi";
 import { formatTitle } from "../constants";
 import GoToTop from "../utils/scroll-into-view";
@@ -202,14 +202,6 @@ const Home = () => {
                 >
                   <div className="flex items-start">
                     <Avatar className="w-10 h-10 group-hover:bg-gray-300">
-                      <AvatarImage
-                        src={
-                          (item as Response)?.biometrics?.selfie
-                            ? (item as Response)?.biometrics?.selfie
-                            : (item as Corporate)?.bioMetrics?.selfie
-                        }
-                        alt="@shadcn"
-                      />
                       <AvatarFallback>
                         {(item as Response)?.firstName &&
                         (item as Response)?.surName
