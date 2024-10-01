@@ -12,8 +12,16 @@ import NotificationSkeleton from "../notification/NotificationSkeleton";
 import NotificationEmptyState from "../notification/NotificationEmptyState";
 import getNotificationSVG from "../../store/notification";
 import { formatTimeAgo } from "../../utils/date";
-  
-const NotificationDropdown: React.FC = () => {
+import { generateNotificationMessage } from "../../utils/notification";
+import { User } from "../../types";
+
+interface NotificationDropdownProps {
+  user: User;
+}
+
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
+  user,
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedNotificationId, setSelectedNotificationId] = useState<
     string | null
@@ -29,7 +37,7 @@ const NotificationDropdown: React.FC = () => {
 
   // Fetch a single notification when an ID is selected
   const { data: singleNotification, isLoading: isSingleLoading } =
-    useNotificationById(selectedNotificationId || "");
+    useNotificationById(selectedNotificationId ?? "");
 
   const { mutate: markAllAsRead } = useMarkAllAsRead();
 
@@ -118,37 +126,42 @@ const NotificationDropdown: React.FC = () => {
           data={notifications?.length} // Show total notifications instead of unread
         >
           <div className="max-h-[200px] overflow-y-auto">
-            {notifications?.map((notification) => (
-              <div
-                key={notification?._id}
-                className={`flex justify-between items-center mt-4 font-poppins cursor-pointer ${
-                  notification.markAsRead ? "text-gray-500" : "text-black"
-                }`}
-                onClick={() => setSelectedNotificationId(notification?._id)}
-              >
-                <div className="flex items-center gap-1">
-                  {getNotificationSVG("ticket")}
-                  <div className="text-xs">
-                    <p className="font-semibold w-32 truncate">
-                      {notification?.title}
+            {notifications?.map((notification) => {
+              const res = generateNotificationMessage(notification,user);
+              return (
+                <div
+                  key={notification?._id}
+                  className={`flex justify-between items-center mt-4 font-poppins cursor-pointer ${
+                    notification.markAsRead ? "text-gray-500" : "text-black"
+                  }`}
+                  onClick={() => setSelectedNotificationId(notification?._id)}
+                >
+                  <div className="flex items-center gap-1">
+                    {getNotificationSVG(notification.type)}
+                    <div className="text-xs">
+                      <p className="font-semibold w-32 truncate">
+                        {res?.message}
+                      </p>
+                      <p className="text-gray-400 truncate w-[128px]">
+                        {user?.tier === "tier-4" && notification.type == "tier"
+                          ? notification?.description
+                          : res.description}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <p className="text-[9px] text-gray-300 truncate">
+                      {formatTimeAgo(notification?.createdAt)}
                     </p>
-                    <p className="text-gray-400 truncate w-[128px]">
-                      {notification?.description}
-                    </p>
+                    {notification.markAsRead && (
+                      <div className="text-blue-500 text-xs flex items-center">
+                        <span>✓✓</span>{" "}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
-                  <p className="text-[9px] text-gray-300 truncate">
-                    {formatTimeAgo(notification?.createdAt)}
-                  </p>
-                  {notification.markAsRead && (
-                    <div className="text-blue-500 text-xs flex items-center">
-                      <span>✓✓</span>{" "}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Pagination Controls */}
@@ -182,19 +195,24 @@ const NotificationDropdown: React.FC = () => {
             {isSingleLoading ? (
               <NotificationSkeleton length={1} />
             ) : (
-              singleNotification && (
-                <div className="font-poppins">
-                  <h2 className="font-bold text-sm">
-                    {singleNotification.title}
-                  </h2>
-                  <p className="text-gray-500 text-xs">
-                    {singleNotification.description}
-                  </p>
-                  <p className="text-[9px] text-gray-300 truncate mt-2">
-                    {formatTimeAgo(singleNotification.createdAt)}
-                  </p>
-                </div>
-              )
+              singleNotification &&
+              (() => {
+                const result = generateNotificationMessage(singleNotification,user);
+                return (
+                  <div className="font-poppins">
+                    <h2 className="font-bold text-sm mt-1">{result.message}</h2>
+                    <p className="text-gray-500 text-xs mt-2">
+                      {user?.tier === "tier-4" &&
+                      singleNotification.type == "tier"
+                        ? singleNotification?.description
+                        : result.description}{" "}
+                    </p>
+                    <p className="text-[9px] text-gray-300 truncate mt-2">
+                      {formatTimeAgo(singleNotification.createdAt)}
+                    </p>
+                  </div>
+                );
+              })()
             )}
           </div>
         )}
