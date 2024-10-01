@@ -19,6 +19,7 @@ export const useFetchComments = (taskID: string) => {
   const { data, isLoading, isSuccess, isError, error } = useQuery({
     queryKey: QueryKeys.Get_Comments_By_TaskID(taskID),
     queryFn: () => CommentService.fetchComments(taskID),
+    enabled:!!taskID, // Ensure taskID is provided before making the query
   });
 
   // Show toast notifications based on success or error state

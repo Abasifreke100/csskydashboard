@@ -32,6 +32,9 @@ const TaskIDDetailsPage = () => {
       queryClient.invalidateQueries({
         queryKey: QueryKeys.Get_Comments_By_TaskID(taskID!),
       });
+       queryClient.invalidateQueries({
+         queryKey: QueryKeys.Get_Notifications(1, 10), // Replace with the appropriate page and size if dynamic
+       });
     } catch (err) {
       if (err instanceof Error) {
         errorToast({

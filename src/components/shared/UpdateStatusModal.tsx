@@ -67,6 +67,9 @@ const UpdateStatusDialog = ({
       queryClient.invalidateQueries({
         queryKey: QueryKeys.Get_Tasks(1, 10),
       });
+       queryClient.invalidateQueries({
+         queryKey: QueryKeys.Get_Notifications(1, 10), 
+       });
       successToast({
         title: "Task status updated successfully",
         message: "Your task status has been updated.",
