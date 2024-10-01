@@ -20,7 +20,7 @@ const Navbar = () => {
         <img src={logo} alt="logo" className="object-cover w-20 md:w-fit" />
         <div className="flex items-center gap-3">
           <div className="relative flex items-center">
-           <NotificationDropdown/>
+            {user.user && <NotificationDropdown user={user.user} />}
           </div>
           {user.user && userTier !== "tier-4" && (
             <TierDropdown user={user.user} />

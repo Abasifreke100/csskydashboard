@@ -37,7 +37,7 @@ interface Assignee {
 export interface Notification {
   _id: string;
   title: string;
-  type: string;
+  type: "tier" | "ticket" | "normal";
   channel: string;
   description: string;
   markAsRead: boolean;

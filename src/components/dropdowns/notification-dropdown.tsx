@@ -13,9 +13,15 @@ import NotificationEmptyState from "../notification/NotificationEmptyState";
 import getNotificationSVG from "../../store/notification";
 import { formatTimeAgo } from "../../utils/date";
 import { generateNotificationMessage } from "../../utils/notification";
+import { User } from "../../types";
 
+interface NotificationDropdownProps {
+  user: User;
+}
 
-const NotificationDropdown: React.FC = () => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
+  user,
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedNotificationId, setSelectedNotificationId] = useState<
     string | null
@@ -85,8 +91,6 @@ const NotificationDropdown: React.FC = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1)); // Prevent going to negative pages
   };
 
-  console.log("notifications",notifications)
-
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger className="relative">
@@ -123,7 +127,7 @@ const NotificationDropdown: React.FC = () => {
         >
           <div className="max-h-[200px] overflow-y-auto">
             {notifications?.map((notification) => {
-              const res = generateNotificationMessage(notification)
+              const res = generateNotificationMessage(notification,user);
               return (
                 <div
                   key={notification?._id}
@@ -133,13 +137,15 @@ const NotificationDropdown: React.FC = () => {
                   onClick={() => setSelectedNotificationId(notification?._id)}
                 >
                   <div className="flex items-center gap-1">
-                    {getNotificationSVG("ticket")}
+                    {getNotificationSVG(notification.type)}
                     <div className="text-xs">
                       <p className="font-semibold w-32 truncate">
                         {res?.message}
                       </p>
                       <p className="text-gray-400 truncate w-[128px]">
-                        {res?.description}
+                        {user?.tier === "tier-4" && notification.type == "tier"
+                          ? notification?.description
+                          : res.description}
                       </p>
                     </div>
                   </div>
@@ -191,12 +197,15 @@ const NotificationDropdown: React.FC = () => {
             ) : (
               singleNotification &&
               (() => {
-                const result = generateNotificationMessage(singleNotification);
+                const result = generateNotificationMessage(singleNotification,user);
                 return (
                   <div className="font-poppins">
                     <h2 className="font-bold text-sm mt-1">{result.message}</h2>
                     <p className="text-gray-500 text-xs mt-2">
-                      {result.description}
+                      {user?.tier === "tier-4" &&
+                      singleNotification.type == "tier"
+                        ? singleNotification?.description
+                        : result.description}{" "}
                     </p>
                     <p className="text-[9px] text-gray-300 truncate mt-2">
                       {formatTimeAgo(singleNotification.createdAt)}
