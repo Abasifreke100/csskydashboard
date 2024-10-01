@@ -2,24 +2,12 @@ import { Notification } from "../../hooks/useNotifications";
 import { User } from "../../types";
 import { formatTier } from "../text";
 
-
 /**
  * Generates a notification object with a message and description based on the type, channel, and task details provided.
  *
  * @param {Notification} notification - The notification object containing details about the event.
  * @param {User} user - The user object containing details about the current user's tier and other information.
  * @returns {Object} - An object containing a `message` string and a `description` string.
- *
- * @example
- * const sampleNotification = {
- *   type: "ticket",
- *   channel: "reassigned",
- *   task: { taskId: "#TASK997787" },
- *   title: "Update the landing page content"
- * };
- * const result = generateNotificationMessage(sampleNotification, user);
- * console.log(result.message); // Output: "Task #TASK997787 has been reassigned to John Doe."
- * console.log(result.description); // Output: "Please review the details and proceed accordingly."
  */
 export function generateNotificationMessage(
   notification: Notification,
@@ -39,16 +27,18 @@ export function generateNotificationMessage(
   ) {
     const taskId = task ? task.taskId : "No Task ID";
 
-    // Custom message for "reassigned" channel if `user.tier` is "tier-4"
-    if (
-      user.tier === "tier-4" &&
-      channel === "reassigned" &&
-      assignee?.firstName &&
-      assignee?.lastName
-    ) {
-      message = `Task ${taskId} has been reassigned to ${assignee.firstName} ${assignee.lastName}.`;
-      description = "Please review the details and proceed accordingly.";
+    // Custom messages for "tier-4" users based on the `channel`
+    if (user.tier === "tier-4" && assignee?.firstName && assignee?.lastName) {
+      if (channel === "reassigned") {
+        message = `Task ${taskId} has been reassigned to ${assignee.firstName} ${assignee.lastName}.`;
+        description = "Please review the details and proceed accordingly.";
+      } else if (channel === "assigned") {
+        message = `Task ${taskId} has been assigned to ${assignee.firstName} ${assignee.lastName}.`;
+        description =
+          "Monitor the progress and provide supervision as necessary.";
+      }
     } else {
+      // Fallback for non "tier-4" users or other channel types
       switch (channel) {
         case "reassigned":
           message = `Task ${taskId} has been reassigned to you.`;
@@ -74,10 +64,19 @@ export function generateNotificationMessage(
 
   // Handle "tier" type notifications
   if (type === "tier" && assignee?.tier) {
-    message = "Access Upgrade Successful";
-    description = `Your request was approved. You’re now in ${formatTier(
-      assignee.tier
-    )}.`;
+    if (user.tier === "tier-4") {
+      // Custom message for "tier-4" users when the type is "tier"
+      message = `Access Upgrade Successful for ${assignee.firstName} ${assignee.lastName}`;
+      description = `Request was approved. ${assignee.firstName} ${
+        assignee.lastName
+      } is now in ${formatTier(assignee.tier)}.`;
+    } else {
+      // Default message for non "tier-4" users
+      message = "Access Upgrade Successful";
+      description = `Your request was approved. You’re now in ${formatTier(
+        assignee.tier
+      )}.`;
+    }
   }
 
   return { message, description };
