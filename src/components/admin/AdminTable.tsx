@@ -133,7 +133,7 @@ const AdminTable = ({ users }: AdminTableProps) => {
                 </TableCell>
                 <TableCell className="whitespace-nowrap py-2 flex  gap-1.5">
                   <p className="mt-1">{truncateText(firstName ?? " ", 20)}</p>
-                  <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] self-start whitespace-nowrap hover:text-primary hidden md:block text-[#FF7F00]">
+                  <Badge className="bg-[#FFFAEF] hover:bg-[#FFFAEF] self-start whitespace-nowrap hover:text-primary  text-[#FF7F00]">
                     {formatTier(tier ?? "N/A")}
                   </Badge>
                 </TableCell>

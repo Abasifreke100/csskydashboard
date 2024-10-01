@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import navigation hook
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { Separator } from "../ui/separator";
@@ -29,13 +30,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalNotifications, setTotalNotifications] = useState<number>(0);
 
-  // Fetch list of notifications based on the current page
+  // Add a navigation hook to navigate to specific task pages
+  const navigate = useNavigate();
+
   const { data: notifications, isLoading } = useNotifications({
     page: currentPage,
     size: 10,
   });
 
-  // Fetch a single notification when an ID is selected
   const { data: singleNotification, isLoading: isSingleLoading } =
     useNotificationById(selectedNotificationId ?? "");
 
@@ -47,7 +49,6 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   }, [notifications]);
 
-  // Request permission for desktop notifications when the component mounts
   useEffect(() => {
     if (Notification.permission !== "granted") {
       Notification.requestPermission().then((permission) => {
@@ -58,21 +59,22 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     }
   }, []);
 
-  // Show a browser notification for only unread notifications
-  useEffect(() => {
-    if (notifications && notifications.length > 0) {
-      const unreadNotifications = notifications.filter(
-        (notification) => !notification.markAsRead
-      );
-      if (unreadNotifications.length > 0) {
-        const latestNotification = unreadNotifications[0];
-        showBrowserNotification(
-          latestNotification?.title,
-          latestNotification?.description
-        );
-      }
-    }
-  }, [notifications]);
+ useEffect(() => {
+   if (notifications && notifications.length > 0) {
+     const unreadNotifications = notifications.filter(
+       (notification) => !notification.markAsRead
+     );
+     if (unreadNotifications.length > 0) {
+       const latestNotification = unreadNotifications[0];
+
+       // Use generateNotificationMessage to get title and description
+       const res = generateNotificationMessage(latestNotification, user);
+
+       showBrowserNotification(res?.message, res?.description);
+     }
+   }
+ }, [notifications, user]);
+
 
   const showBrowserNotification = (title: string, message: string) => {
     if (Notification.permission === "granted") {
@@ -89,6 +91,11 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
   const handlePreviousPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1)); // Prevent going to negative pages
+  };
+
+  const handleGoToTask = (taskId: string) => {
+    setIsOpen(false)
+    navigate(`/tasks/${taskId}`);
   };
 
   return (
@@ -117,17 +124,16 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         </div>
         <Separator />
 
-        {/* Render list of notifications */}
         <FetchLoadingAndEmptyState
           isLoading={isLoading}
           numberOfSkeleton={1}
           skeleton={<NotificationSkeleton length={3} />}
           emptyState={<NotificationEmptyState />}
-          data={notifications?.length} // Show total notifications instead of unread
+          data={notifications?.length}
         >
           <div className="max-h-[200px] overflow-y-auto">
             {notifications?.map((notification) => {
-              const res = generateNotificationMessage(notification,user);
+              const res = generateNotificationMessage(notification, user);
               return (
                 <div
                   key={notification?._id}
@@ -164,7 +170,6 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             })}
           </div>
 
-          {/* Pagination Controls */}
           <div className="flex justify-between mt-2">
             <button
               onClick={handlePreviousPage}
@@ -176,7 +181,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             <button
               onClick={handleNextPage}
               className="text-xs text-blue-500 disabled:opacity-50 disabled:text-gray-300"
-              disabled={totalNotifications < 10} // Assuming 10 is the size
+              disabled={totalNotifications < 10}
             >
               Next
             </button>
@@ -184,9 +189,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         </FetchLoadingAndEmptyState>
 
         {selectedNotificationId && (
-          <div className="">
+          <div>
             <button
-              className=" mt-2 flex text-end gap-2 items-center text-blue-500 text-xs"
+              className="mt-2 flex text-end gap-2 items-center text-blue-500 text-xs"
               onClick={() => setSelectedNotificationId(null)}
               aria-label="Close notification details"
             >
@@ -197,7 +202,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
             ) : (
               singleNotification &&
               (() => {
-                const result = generateNotificationMessage(singleNotification,user);
+                const result = generateNotificationMessage(
+                  singleNotification,
+                  user
+                  );
                 return (
                   <div className="font-poppins">
                     <h2 className="font-bold text-sm mt-1">{result.message}</h2>
@@ -210,6 +218,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     <p className="text-[9px] text-gray-300 truncate mt-2">
                       {formatTimeAgo(singleNotification.createdAt)}
                     </p>
+                    {singleNotification.type === "ticket" && (
+                      <button
+                        onClick={() => handleGoToTask(singleNotification?.task?._id)}
+                        className="mt-2 text-xs text-white bg-blue-500 rounded px-2 py-1"
+                      >
+                        Go to Task
+                      </button>
+                    )}
                   </div>
                 );
               })()

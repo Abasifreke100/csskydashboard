@@ -18,6 +18,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ taskID , children}) =
     error,
   } = useFetchComments(taskID);
 
+  console.log("comments", comments);
+
   return (
     <FetchLoadingAndEmptyState
       isLoading={isLoading}

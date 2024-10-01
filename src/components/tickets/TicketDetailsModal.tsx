@@ -47,6 +47,7 @@ const TicketDetailsModal = ({
   };
 
   const conversations = data?.ticket?.ticket_conversation || [];
+  console.log("data", data?.task?._id);
 
   return (
     <Dialog open={isOpen} onOpenChange={onCloseModal}>

@@ -36,6 +36,9 @@ export function generateNotificationMessage(
         message = `Task ${taskId} has been assigned to ${assignee.firstName} ${assignee.lastName}.`;
         description =
           "Monitor the progress and provide supervision as necessary.";
+      } else if (channel === "updated") {
+        message = `Task ${taskId} has been updated.`;
+        description = "Check the changes to stay on top of your tasks.";
       }
     } else {
       // Fallback for non "tier-4" users or other channel types
