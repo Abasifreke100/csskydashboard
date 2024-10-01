@@ -34,7 +34,7 @@ interface Assignee {
   lastName: string;
 }
 
-interface Notification {
+export interface Notification {
   _id: string;
   title: string;
   type: string;
