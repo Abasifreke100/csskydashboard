@@ -63,7 +63,7 @@ const NewTasksForm = ({
     resolver: zodResolver(newTaskFormSchema),
     defaultValues: {
       title: task?.title ?? "",
-      dueDate: task ? new Date(task.dueDate) : new Date(),
+      dueDate: task ? new Date(task?.dueDate) : new Date(),
       description: task?.description ?? "",
       priority: task?.priority ?? "",
       assignee: task?.assignee?._id ?? "",
