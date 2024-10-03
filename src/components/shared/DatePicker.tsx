@@ -17,14 +17,15 @@ const CustomDatePicker = <T extends FieldValues>({ control, name, buttonClassNam
   const { field } = useController({ control, name });
 
   return (
-    <Popover >
+    <Popover>
       <PopoverTrigger asChild>
         <FormControl>
           <Button
             variant={"outline"}
             className={cn(
               " text-left font-normal hover:bg-gray-200 py-2",
-              !field.value && "text-muted-foreground", buttonClassName
+              !field.value && "text-muted-foreground",
+              buttonClassName
             )}
           >
             {field.value ? (
@@ -39,11 +40,12 @@ const CustomDatePicker = <T extends FieldValues>({ control, name, buttonClassNam
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={field.value}
-          onSelect={field.onChange}
-          // disabled={(date) =>
-          //   date > new Date() || date < new Date("1900-01-01")
-          // }
+          selected={field.value ? new Date(field.value) : undefined}
+          onSelect={(date) => {
+            if (date) {
+              field.onChange(date);
+            }
+          }}
           initialFocus
         />
       </PopoverContent>
