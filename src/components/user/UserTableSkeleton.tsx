@@ -11,11 +11,11 @@ import { Skeleton } from "../ui/skeleton";
 import { Checkbox } from "../ui/checkbox"; // Import Checkbox component
 import { adminTableHeaders } from "../store/data/admin";
 
-interface AdminTableSkeletonProps {
+interface UserTableSkeletonProps {
   length: number;
 }
 
-export const AdminTableSkeleton: React.FC<AdminTableSkeletonProps> = ({
+export const UserTableSkeleton: React.FC<UserTableSkeletonProps> = ({
   length,
 }) => {
   const renderTableHeaders = (

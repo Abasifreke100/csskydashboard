@@ -23,9 +23,32 @@ export const renderCellContent = (status: Status): JSX.Element => {
   if (status === "Closed" || status === "completed") {
     badgeBgColor =
       "bg-lightGreen capitalize hover:bg-lightGreen text-deepGreen";
-  } else if (status === "in progress" || status === "low") {
+  } else if (status === "in progress" || status === "low" ) {
     badgeBgColor = "bg-secondary capitalize hover:bg-secondary text-primary";
   } else if (status === "Open" || status === "pending" || status == 'high') {
+    badgeBgColor = "bg-lightRed capitalize hover:bg-lightRed text-deepRed";
+  }
+
+  return <Badge className={badgeBgColor}>{status}</Badge>;
+};
+
+
+
+export type UserStatus =
+  | "Active"
+  | "Inactive"
+  | "Pending"
+ ;
+
+export const renderUserCellContent = (status: UserStatus): JSX.Element => {
+  let badgeBgColor = "";
+
+  if (status === "Active") {
+    badgeBgColor =
+      "bg-lightGreen capitalize hover:bg-lightGreen text-deepGreen";
+  } else if (status === "Pending") {
+    badgeBgColor = "bg-secondary capitalize hover:bg-secondary text-primary";
+  } else if (status === "Inactive") {
     badgeBgColor = "bg-lightRed capitalize hover:bg-lightRed text-deepRed";
   }
 

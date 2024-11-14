@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Badge } from "../../components/ui/badge";
-import { Search } from "lucide-react";
+import { CircleCheckBig, Search, Upload } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -26,6 +26,7 @@ import { Checkbox } from "../../components/checkbox";
 import { CustomerTableSkeleton } from "../../skeleton/customerTable";
 import Header from "../../components/global/header";
 import { errorToast, successToast } from "../../utils/toast";
+import { Button } from "../../components/ui/button";
 
 const renderCellContent = (cellData: Response | Corporate): JSX.Element => {
   let badgeBgColor = "";
@@ -268,19 +269,21 @@ const CustomersPage = () => {
             </div>
           </div>
           {selectedRows.length > 0 && selected === "pending" && (
-            <div className="w-full  mt-4 lg:mt-0 lg:w-fit h-fit p-0  flex justify-end ">
-              <button
-                className="relative bg-primary hover:scale-95 h-fit w-[200px] mt-0 text-white text-xs px-4 py-2 shadow rounded-md overflow-hidden group transform transition duration-300 ease-in-out"
+            <div className="w-full  mt-4 lg:mt-0 lg:w-fit h-fit p-0 gap-3 flex justify-end ">
+              <Button
+                variant="outline"
+                className="flex gap-2 rounded-full"
                 onClick={handleVerifySelected}
               >
-                <span className="absolute inset-0  opacity-0 transition-opacity duration-300 group-hover:opacity-10"></span>
-                <span className="relative group-hover:scale-105 group-focus:scale-105">
-                  {loading
-                    ? "Verifying..."
-                    : ` Verify Selected
-                  ${type === "individual" ? "Individuals" : "Corporate"}`}
+                <CircleCheckBig />
+                <span className="relative">
+                  {loading ? "Verifying..." : ` Verify`}
                 </span>
-              </button>
+              </Button>
+              <Button className="flex gap-2 rounded-full" variant="outline">
+                <Upload />
+                Export
+              </Button>
             </div>
           )}
         </div>

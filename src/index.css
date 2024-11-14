@@ -214,3 +214,10 @@
 .recharts-surface {
   padding: 0;
 }
+
+
+.apexchart-legend-column .apexcharts-legend {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
