@@ -1,1 +1,1 @@
-export const adminTableHeaders = ["ID", "Name", "Email", "Actions"];
+export const adminTableHeaders = ["Name", "User ID", "Tier", "Date Created","Actions"];

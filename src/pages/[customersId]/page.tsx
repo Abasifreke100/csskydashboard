@@ -25,14 +25,25 @@ import { getInitials } from "../../utils/getInitials";
 import Header from "../../components/global/header";
 import CustomImageView from "../../components/shared/CustomImageView";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { CircleCheckBig, Upload, Zap } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import CustomDialog from "../../components/shared/CustomDialog";
+import VerifyUser from "./modal/VerifyUser";
+import VerifySuccessModal from "./modal/VerifySuccessModal";
+import ActivateUserModal from "./modal/ActivateUserModal";
 
 const CustomersIdPage = () => {
   const { type, customerId } = useParams<{
     type: string;
     customerId: string;
   }>();
+  const [verifyStatus, setVerifyStatus] = useState({
+    verify: false,
+    verifySuccess: false,
+  });
   const [data, setData] = useState<Response | Corporate>();
   const [isLoading, setIsLoading] = useState(false);
+  const [activateUser, setActivateUser] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,7 +93,89 @@ const CustomersIdPage = () => {
   return (
     <div className="customersContainer  w-full">
       <div className="h-screen w-full">
-        <Header title="Customer Profile" icon={true} />
+        <div className="flex justify-between items-center">
+          <Header title="Customer Profile" icon={true} />
+          <div className="w-full  mt-5 lg:w-fit h-fit p-0 gap-3 flex justify-end ">
+            <CustomDialog
+              triggerComponent={
+                <Button className="flex gap-2 bg-primary rounded-full">
+                  <CircleCheckBig />
+                  <span className="relative">Verify User </span>
+                </Button>
+              }
+              open={verifyStatus.verify}
+              onOpenChange={() =>
+                setVerifyStatus((prevState) => ({
+                  ...prevState,
+                  verify: !prevState.verify,
+                }))
+              }
+            >
+              <VerifyUser
+                onVerify={() =>
+                  setVerifyStatus((prevState) => ({
+                    ...prevState,
+                    verify: false,
+                  }))
+                }
+                type={type}
+                data={data}
+                verifyStatus={() =>
+                  setVerifyStatus((prevState) => ({
+                    ...prevState,
+                    verifySuccess: true,
+                  }))
+                }
+              />{" "}
+            </CustomDialog>
+            <Dialog
+              open={verifyStatus.verifySuccess}
+              onOpenChange={() =>
+                setVerifyStatus((prevState) => ({
+                  ...prevState,
+                  verifySuccess: !prevState.verifySuccess,
+                }))
+              }
+            >
+              <DialogContent>
+                <VerifySuccessModal
+                  verifySuccessModal={() =>
+                    setVerifyStatus((prevState) => ({
+                      ...prevState,
+                      verifySuccess: false,
+                    }))
+                  }
+                />
+              </DialogContent>
+            </Dialog>
+            <CustomDialog
+              open={activateUser}
+              onOpenChange={() => setActivateUser(!activateUser)}
+              triggerComponent={
+                <Button className="flex gap-2 bg-primary rounded-full">
+                  <Zap />
+                  <span className="relative">Activate User </span>
+                </Button>
+              }
+            >
+              <ActivateUserModal
+                verifyStatus={() =>
+                  setVerifyStatus((prevState) => ({
+                    ...prevState,
+                    verifySuccess: true,
+                  }))
+                }
+                data={data}
+                closeActivateUser={() => setActivateUser(false)}
+              />
+            </CustomDialog>
+
+            <Button className="flex gap-2 rounded-full" variant="outline">
+              <Upload />
+              Export
+            </Button>
+          </div>
+        </div>
         <div className="w-full mt-3 bg-white overflow-x-auto  rounded-2xl shadow-md">
           <div className="  px-4 w-fit lg:w-full gap-6 lg:gap-0 h-12 flex items-center justify-between">
             <ProfileInfo

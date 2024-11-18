@@ -8,6 +8,8 @@ import {
   Unplug,
   Mail,
   Ticket,
+  Gift,
+  UsersRound,
 } from "lucide-react";
 import { useMediaQuery } from "usehooks-ts";
 import { SidebarMobile } from "./sidebar-mobile";
@@ -82,7 +84,11 @@ const sidebarItems: SidebarItems = {
           icon: Ticket,
           label: "Tickets",
         },
-
+        {
+          href: Cssky_Dashboard_Routes.users,
+          icon: UsersRound ,
+          label: "Users",
+        },
         {
           href: Cssky_Dashboard_Routes.admin,
           icon: Mail,
@@ -103,6 +109,11 @@ const sidebarItems: SidebarItems = {
           icon: Mail,
           label: "Inbox",
         },
+        {
+          href: Cssky_Dashboard_Routes.plans,
+          icon: Gift,
+          label: "Plans",
+        },
       ],
     },
     // Add more themes as needed
@@ -112,7 +123,7 @@ const sidebarItems: SidebarItems = {
 type TierKey = "tier-1" | "tier-2" | "tier-3" | "tier-4" | "null";
 
 const tierAccess: Record<TierKey, string[]> = {
-  "tier-1": ["API Bindings", "Admin", "Billing Info", "Overview"],
+  "tier-1": ["API Bindings", "Admin", "Billing Info", "Overview", "Plans"],
   "tier-2": ["Admin"], // Tier 2 users have no restrictions
   "tier-3": ["Admin"], // Tier 3 users have no restrictions
   "tier-4": [], // Tier 3 users have no restrictions

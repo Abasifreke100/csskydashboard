@@ -1,4 +1,4 @@
-export class Cssky_Dashboard_Routes {
+export class  Cssky_Dashboard_Routes {
   // Auth
   static readonly signIn = "/auth/sign-in";
   static readonly signUp = "/auth/sign-up";
@@ -17,7 +17,10 @@ export class Cssky_Dashboard_Routes {
   static readonly tickets = "/ticket";
   static readonly inbox = "/inbox";
   static readonly inboxDetail = "/inbox/:inboxId";
+  static readonly users = "/users"
+  static readonly userId = "/users/:user_id"
   // static readonly history = "/history"
   static readonly admin = "/admin";
   static readonly billingInfo = "/billing-info";
+  static readonly plans = "/plans"
 }

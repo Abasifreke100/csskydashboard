@@ -92,6 +92,8 @@ export interface User {
   message?: string;
   tier: string | null;
   isTierRequest: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface UsersResponse {
