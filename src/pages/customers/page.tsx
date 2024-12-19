@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Badge } from "../../components/ui/badge";
-import { CircleCheckBig, Search, Upload } from "lucide-react";
+import {
+  CircleCheckBig,
+  EllipsisVertical,
+  Search,
+  Upload,
+} from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -27,6 +32,12 @@ import { CustomerTableSkeleton } from "../../skeleton/customerTable";
 import Header from "../../components/global/header";
 import { errorToast, successToast } from "../../utils/toast";
 import { Button } from "../../components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../components/ui/popover";
+import DeleteCustomerDialog from "../../components/reusables/modal/DeleteUser";
 
 const renderCellContent = (cellData: Response | Corporate): JSX.Element => {
   let badgeBgColor = "";
@@ -65,6 +76,7 @@ const CustomersPage = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<CustomerResponse | null>(null);
   const { currentPage, setCurrentPage } = useProviderContext();
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -83,8 +95,8 @@ const CustomersPage = () => {
       } else if (selected === "verified") {
         statusParam = "&isNinVerified=1";
       }
-      const url = `/${type}?currentPage=${currentPage}${statusParam}`;
-
+      const searchParam = searchQuery ? `&search=${searchQuery}` : "";
+      const url = `/${type}?currentPage=${currentPage}${statusParam}${searchParam}`;
       // Fetch data from the API
       const response = await axiosInstance.get(url);
       if (response.data.success) {
@@ -103,10 +115,14 @@ const CustomersPage = () => {
     if (type === "corporate" || type === "individual") {
       fetchData();
     }
-  }, [type, currentPage, selected]);
+  }, [type, currentPage, selected, searchQuery]);
 
   const itemsPerPage = 10;
   const totalItems = data?.data?.pagination?.total ?? 0;
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -258,14 +274,19 @@ const CustomersPage = () => {
                     type="text"
                     name=""
                     id=""
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e)}
                     placeholder="Search Customer "
                     className="flex-1 lg:ml-2 border-none h-7 text-xs placeholder:text-sm outline-none"
                   />
                 </div>
               </div>
-              <p className="bg-grey rounded-[12px] text-white py-1.5 px-2 text-xs h-full">
+              <Button
+                onClick={fetchData}
+                className="bg-grey rounded-[12px] text-white py-1.5 px-2 text-xs h-full"
+              >
                 Search
-              </p>
+              </Button>
             </div>
           </div>
           {selectedRows.length > 0 && selected === "pending" && (
@@ -408,6 +429,25 @@ const CustomersPage = () => {
                   </td>
                   <td className="px-6 py-2 capitalize text-grey text-sm">
                     {type}
+                  </td>
+                  <td className="px-6 py-2 capitalize text-grey text-sm">
+                    <Popover>
+                      <PopoverTrigger
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <EllipsisVertical />{" "}
+                      </PopoverTrigger>
+                      <PopoverContent>
+                        <DeleteCustomerDialog
+                          id={cellData._id}
+                          type={type}
+                          onDelete={fetchData}
+                          
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </td>
                 </tr>
               ))

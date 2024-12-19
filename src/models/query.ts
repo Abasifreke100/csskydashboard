@@ -1,6 +1,7 @@
 export class QueryKeys {
   // Auth
   static readonly SignUp_User = ["user", "signup"];
+  static readonly Delete_Customer = "delete_custome"
 
   // Query key for fetching a list of tasks
   static readonly Get_Tasks = (currentPage: number, itemsPerPage: number) => [
