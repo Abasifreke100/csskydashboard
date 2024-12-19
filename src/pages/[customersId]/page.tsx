@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -25,12 +25,13 @@ import { getInitials } from "../../utils/getInitials";
 import Header from "../../components/global/header";
 import CustomImageView from "../../components/shared/CustomImageView";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { CircleCheckBig, Upload, Zap } from "lucide-react";
+import { CircleCheckBig, Upload, Trash2, Zap } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import CustomDialog from "../../components/shared/CustomDialog";
 import VerifyUser from "./modal/VerifyUser";
 import VerifySuccessModal from "./modal/VerifySuccessModal";
 import ActivateUserModal from "./modal/ActivateUserModal";
+import DeleteCustomerDialog from "../../components/reusables/modal/DeleteUser";
 
 const CustomersIdPage = () => {
   const { type, customerId } = useParams<{
@@ -41,27 +42,27 @@ const CustomersIdPage = () => {
     verify: false,
     verifySuccess: false,
   });
+  const navigate = useNavigate()
   const [data, setData] = useState<Response | Corporate>();
   const [isLoading, setIsLoading] = useState(false);
   const [activateUser, setActivateUser] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axiosInstance.get(`/${type}/${customerId}`);
-        if (response.data.success) {
-          setData(response.data.data);
-        } else {
-          console.error("Failed to fetch data:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.get(`/${type}/${customerId}`);
+      if (response.data.success) {
+        setData(response.data.data);
+      } else {
+        console.error("Failed to fetch data:", response.data.message);
       }
-    };
-
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     if (type === "corporate" || type === "individual") {
       fetchData();
     }
@@ -89,10 +90,14 @@ const CustomersIdPage = () => {
     (data as Response)?.documents?.documentType?.trim() ||
     (data as Corporate)?.documents?.type?.trim() ||
     "Not Provided";
+  
+  const onDelete = () => {
+    navigate(`/customers/${type}`)
+  }
 
   return (
     <div className="customersContainer  w-full">
-      <div className="h-screen w-full">
+      <div className="min-h-screen w-full ">
         <div className="flex justify-between items-center">
           <Header title="Customer Profile" icon={true} />
           <div className="w-full  mt-5 lg:w-fit h-fit p-0 gap-3 flex justify-end ">
@@ -392,6 +397,20 @@ const CustomersIdPage = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mb-6 ">
+          <DeleteCustomerDialog
+            id={customerId ?? ""}
+            type={type}
+            onDelete={onDelete}
+            trigger={
+              <Button className="flex gap-2  bg-[#FFF0EF] rounded-full hover:bg-[#FFF0EF] text-[#FF3B30]">
+                <Trash2 />
+                <span className="relative">Delete User </span>
+              </Button>
+            }
+          />
         </div>
       </div>
     </div>
